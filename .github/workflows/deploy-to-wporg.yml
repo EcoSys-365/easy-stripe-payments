@@ -27,9 +27,9 @@ jobs:
           echo "message<<EOF" >> $GITHUB_OUTPUT
           echo "$MESSAGE" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-		  
+
       - name: Install SVN
-        run: sudo apt-get update && sudo apt-get install -y subversion		       
+        run: sudo apt-get update && sudo apt-get install -y subversion
 
       - name: Setup SVN and checkout repository
         run: |
@@ -39,7 +39,7 @@ jobs:
             --password "${{ secrets.SVN_PASSWORD }}" \
             --non-interactive --no-auth-cache
 
-      - name: Copy plugin files to trunk/ (Including local assets)
+      - name: Copy plugin files to trunk (including local assets)
         run: |
           # Kopiere alle Plugin-Dateien, inkl. "assets/", in den trunk/
           rsync -av --delete \
@@ -53,7 +53,7 @@ jobs:
         run: |
           # Füge neue/geänderte Dateien hinzu und entferne gelöschte Dateien
           svn add --force . --auto-props --parents --depth infinity
-          svn st | grep ^! | awk '{print $2}' | xargs -I{} svn rm {}
+          svn st | grep ^! | awk '{print $2}' | xargs -r svn rm
           
           # Commit des aktualisierten trunk
           svn commit -m "Update trunk: ${{ steps.get_info.outputs.message }}" \
@@ -61,10 +61,12 @@ jobs:
             --password "${{ secrets.SVN_PASSWORD }}" \
             --non-interactive --no-auth-cache
 
-      - name: Create and Commit SVN Tag
+      - name: Create and commit SVN tag
         run: |
-          # Kopiere den trunk/ in den tags/<VERSION>/ Ordner
-          svn copy svn/trunk svn/tags/${{ steps.get_info.outputs.tag_name }} -m "Tagging version ${{ steps.get_info.outputs.tag_name }}" \
+          # Kopiere den trunk in den tags/<VERSION>/ Ordner und committe direkt
+          svn copy svn/trunk svn/tags/${{ steps.get_info.outputs.tag_name }} \
+            -m "Tagging version ${{ steps.get_info.outputs.tag_name }}" \
             --username "${{ secrets.SVN_USERNAME }}" \
             --password "${{ secrets.SVN_PASSWORD }}" \
             --non-interactive --no-auth-cache
+ 
