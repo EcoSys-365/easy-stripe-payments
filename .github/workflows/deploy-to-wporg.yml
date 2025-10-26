@@ -27,6 +27,9 @@ jobs:
           echo "message<<EOF" >> $GITHUB_OUTPUT
           echo "$MESSAGE" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
+		  
+      - name: Install SVN
+        run: sudo apt-get update && sudo apt-get install -y subversion		  
 
       - name: Setup SVN and checkout repository
         run: |
