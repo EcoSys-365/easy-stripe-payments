@@ -5,7 +5,7 @@ Tags: stripe, payments, subscription, donation, stripe checkout
 Requires at least: 5.5
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,7 +15,19 @@ A lightweight and flexible Stripe payment solution for WordPress. Accept one-tim
 
 **Easy Stripe Payments** lets you integrate Stripe Checkout into your WordPress site with minimal setup. Perfect for donations, simple eCommerce needs, services, or subscriptions.
 
-Watch the demo video here: https://www.youtube.com/watch?v=iPNCHNTb_CI
+https://www.youtube.com/watch?v=iPNCHNTb_CI
+
+== Screenshots ==
+ 
+1. Campaign Checkout example with donation total
+2. Example of a physical product (Smartwatch) integrated with Stripe Checkout
+3. Demo of an annual fitness or coaching program with custom Stripe Checkout form, image, and description
+4. Admin settings page (Stripe Checkout configuration)
+5. Example of received payments in the WordPress Dashboard
+6. Settings to manage confirmation emails (toggle on/off)
+7. Create a new Stripe subscription product without logging into Stripe
+8. Edit an existing Stripe subscription product and link it with a checkout button
+9. Example of a Stripe-hosted checkout page for subscription payments
 
 ### Three checkout modes included:
 
@@ -47,18 +59,6 @@ Other features include:
 4. Enter your Stripe API keys (Live or Test).
 5. Create payment forms for one-time payments, campaigns, or subscriptions using the intuitive form builder.
 6. Use shortcodes to place payment buttons or forms wherever needed on your site.
- 
-== Screenshots ==
- 
-1. Campaign Checkout example with donation total
-2. Example of a physical product (Smartwatch) integrated with Stripe Checkout
-3. Demo of an annual fitness or coaching program with custom Stripe Checkout form, image, and description
-4. Admin settings page (Stripe Checkout configuration)
-5. Example of received payments in the WordPress Dashboard
-6. Settings to manage confirmation emails (toggle on/off)
-7. Create a new Stripe subscription product without logging into Stripe
-8. Edit an existing Stripe subscription product and link it with a checkout button
-9. Example of a Stripe-hosted checkout page for subscription payments
   
 == External services ==
    
@@ -116,7 +116,7 @@ These requests are required to manage payments, subscriptions, and products in t
 Yes, core functionality is free. Premium upgrades are available separately via external service.
 
 = Can I track donations for campaigns? =  
-Yes, the Campaign Checkout mode shows the current collected total on the frontend using a shortcode.
+Yes, the Campaign Checkout mode shows the current collected total on the frontend using a shortcode. The payments are also displayed in the WordPress dashboard and stored in a separate WordPress database table.
 
 = Can I accept recurring payments? =  
 Yes, using the **Stripe Subscription Button**, which integrates with Stripe’s recurring billing system.
@@ -129,6 +129,10 @@ No. All payment information is securely handled by Stripe.
 
 == Changelog ==
 
+= 1.0.1 =
+* Documentation update: improvements and clarifications in readme.txt
+* No changes to plugin functionality
+ 
 = 1.0.0 =
 * Initial release of Easy Stripe Payments
 * Standard Checkout for one-time payments
@@ -136,6 +140,10 @@ No. All payment information is securely handled by Stripe.
 * Stripe Subscription Button for recurring payments
 
 == Upgrade Notice ==
+
+= 1.0.1 =
+* Updated documentation for clarity and additional instructions
+* Plugin functionality remains unchanged
 
 = 1.0.0 =
 Initial stable release with support for one-time payments, recurring payments, campaigns and Stripe subscriptions.
