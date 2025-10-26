@@ -13,16 +13,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # wichtig, damit Tags verfügbar sind
+          fetch-depth: 0
 
       - name: Get tag name and commit message
         id: get_info
         run: |
-          # Speichert den Tag-Namen (z. B. 1.2.3)
           TAG_NAME=${GITHUB_REF_NAME}
           echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
-          
-          # Holt die Commit-Message des Tags für den SVN-Commit
+
           MESSAGE=$(git log -1 --pretty=%B)
           echo "message<<EOF" >> $GITHUB_OUTPUT
           echo "$MESSAGE" >> $GITHUB_OUTPUT
@@ -31,42 +29,40 @@ jobs:
       - name: Install SVN
         run: sudo apt-get update && sudo apt-get install -y subversion
 
-      - name: Setup SVN and checkout repository
+      - name: Checkout WordPress SVN repo
         run: |
-          # Führt den Checkout nur der Hauptverzeichnisse durch
-          svn checkout "${{ secrets.SVN_REPO }}" svn \
+          svn checkout "${{ secrets.SVN_REPO }}" wordpress-svn \
             --username "${{ secrets.SVN_USERNAME }}" \
             --password "${{ secrets.SVN_PASSWORD }}" \
             --non-interactive --no-auth-cache
 
-      - name: Copy plugin files to trunk (including local assets)
+      - name: Copy plugin files to trunk
         run: |
-          # Kopiere alle Plugin-Dateien, inkl. "assets/", in den trunk/
+          # Kopiere alle Plugin-Dateien in trunk/
           rsync -av --delete \
             --exclude=".git*" \
             --exclude=".github" \
             --exclude="node_modules" \
-            ./ svn/trunk/
+            --exclude="wordpress-svn" \
+            ./ wordpress-svn/trunk/
 
       - name: Commit new version to SVN trunk
-        working-directory: svn/trunk
+        working-directory: wordpress-svn/trunk
         run: |
-          # Füge neue/geänderte Dateien hinzu und entferne gelöschte Dateien
           svn add --force . --auto-props --parents --depth infinity
           svn st | grep ^! | awk '{print $2}' | xargs -r svn rm
-          
-          # Commit des aktualisierten trunk
+
           svn commit -m "Update trunk: ${{ steps.get_info.outputs.message }}" \
             --username "${{ secrets.SVN_USERNAME }}" \
             --password "${{ secrets.SVN_PASSWORD }}" \
             --non-interactive --no-auth-cache
 
       - name: Create and commit SVN tag
+        working-directory: wordpress-svn
         run: |
-          # Kopiere den trunk in den tags/<VERSION>/ Ordner und committe direkt
-          svn copy svn/trunk svn/tags/${{ steps.get_info.outputs.tag_name }} \
+          svn copy trunk tags/${{ steps.get_info.outputs.tag_name }} \
             -m "Tagging version ${{ steps.get_info.outputs.tag_name }}" \
             --username "${{ secrets.SVN_USERNAME }}" \
             --password "${{ secrets.SVN_PASSWORD }}" \
             --non-interactive --no-auth-cache
- 
+  
