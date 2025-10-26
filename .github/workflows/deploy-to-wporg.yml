@@ -29,10 +29,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 		  
       - name: Install SVN
-        run: sudo apt-get update && sudo apt-get install -y subversion		  
-
-      - name: Install SVN
-        run: sudo apt-get update && sudo apt-get install -y subversion        
+        run: sudo apt-get update && sudo apt-get install -y subversion		       
 
       - name: Setup SVN and checkout repository
         run: |
