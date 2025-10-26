@@ -1,0 +1,1577 @@
+# Copyright (C) 2025 EcoSys365
+# This file is distributed under the GPLv2 or later.
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Easy Stripe Payments and Donations 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/easy-stripe-"
+"payments\n"
+"POT-Creation-Date: 2025-07-04 19:32+0300\n"
+"PO-Revision-Date: 2025-07-05 16:54+0300\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.6\n"
+"X-Domain: easy-stripe-payments\n"
+
+#. Plugin Name of the plugin
+#: easy-stripe-payments.php
+msgid "Easy Stripe Payments and Donations"
+msgstr "Einfache Stripe-Zahlungen und Spenden"
+
+#. Plugin URI of the plugin
+#: easy-stripe-payments.php
+msgid "https://www.payments-and-donations.com"
+msgstr "https://www.payments-and-donations.com"
+
+#. Description of the plugin
+#: easy-stripe-payments.php
+msgid ""
+"A user-friendly WordPress plugin for accepting <strong>one-time and "
+"recurring Stripe payments</strong>. Perfect for businesses, freelancers and "
+"Non-Profit organizations. Secure, fast and fully PCI-compliant."
+msgstr ""
+"Ein benutzerfreundliches WordPress-Plugin für die Annahme von "
+"<strong>einmaligen und wiederkehrenden Stripe-Zahlungen</strong>. Perfekt "
+"für Unternehmen, Freiberufler und Non-Profit-Organisationen. Sicher, schnell "
+"und vollständig PCI-konform."
+
+#. Author of the plugin
+#: easy-stripe-payments.php
+msgid "EcoSys365"
+msgstr "EcoSys365"
+
+#. Author URI of the plugin
+#: easy-stripe-payments.php
+msgid "https://www.ecosys365.com"
+msgstr "https://www.ecosys365.com"
+
+#: admin/forms.php:23 admin/recurring.php:21 inc/functions.php:919
+msgid "Your domain is not registered"
+msgstr "Ihre Domain ist nicht registriert"
+
+#: admin/forms.php:24 admin/recurring.php:22
+msgid ""
+"Sign up now and enjoy unlimited forms, unlimited Stripe subscription buttons "
+"and your exclusive discount!"
+msgstr ""
+"Melden Sie sich jetzt an und genießen Sie unbegrenzte Formulare, unbegrenzte "
+"Stripe-Abonnement-Buttons und Ihren exklusiven Rabatt!"
+
+#: admin/forms.php:25 admin/recurring.php:23
+msgid "Register your domain"
+msgstr "Registrieren Sie Ihre Domain"
+
+#: admin/forms.php:51
+msgid ""
+"Premium members gain access to advanced features such as priority support "
+"and enhanced Stripe payment workflows, while all core functionality remains "
+"freely available."
+msgstr ""
+"Premium-Mitglieder erhalten Zugang zu erweiterten Funktionen wie vorrangigem "
+"Support und verbesserten Stripe-Zahlungsabläufen, während alle "
+"Kernfunktionen frei verfügbar bleiben."
+
+#: admin/forms.php:66 admin/sections/nav-tabs.php:16 admin/setup.php:20
+#: inc/functions.php:450 inc/functions.php:454
+msgid "Payment Forms"
+msgstr "Bezahlformulare"
+
+#: admin/forms.php:71 admin/forms.php:80
+msgid "Add Standard Checkout"
+msgstr "Standard-Checkout hinzufügen"
+
+#: admin/forms.php:75 admin/forms.php:82
+msgid "Add Campaign Checkout"
+msgstr "Kampagnen-Checkout hinzufügen"
+
+#: admin/forms.php:106
+msgid "ID"
+msgstr "ID"
+
+#: admin/forms.php:107 admin/sections/campaign-checkout.php:12
+#: admin/sections/standard-checkout.php:12
+msgid "Form Name"
+msgstr "Formular Name"
+
+#: admin/forms.php:108 admin/payments.php:104
+msgid "Mode"
+msgstr "Modus"
+
+#: admin/forms.php:109 admin/sections/campaign-checkout.php:16
+#: admin/sections/campaign-checkout.php:49
+#: admin/sections/standard-checkout.php:16
+#: admin/sections/standard-checkout.php:49
+msgid "Fix Amount"
+msgstr "Fixer Betrag"
+
+#: admin/forms.php:110 admin/payments.php:103 admin/recurring.php:315
+#: admin/sections/campaign-checkout.php:33
+#: admin/sections/standard-checkout.php:33
+msgid "Currency"
+msgstr "Währung"
+
+#: admin/forms.php:111 admin/recurring.php:119 admin/recurring.php:302
+#: admin/sections/campaign-checkout.php:211
+#: admin/sections/standard-checkout.php:160
+msgid "Description"
+msgstr "Beschreibung"
+
+#: admin/forms.php:112 admin/recurring.php:369
+msgid "Shortcode"
+msgstr "Shortcode"
+
+#: admin/forms.php:113 admin/forms.php:145 admin/recurring.php:371
+#: admin/recurring.php:478
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: admin/forms.php:114 admin/forms.php:153 admin/payments.php:111
+#: admin/payments.php:172 admin/recurring.php:372 admin/recurring.php:486
+msgid "Delete"
+msgstr "Löschen"
+
+#: admin/forms.php:115 admin/forms.php:160 admin/sections/nav-tabs.php:19
+#: admin/setup.php:27
+msgid "Preview"
+msgstr "Vorschau"
+
+#: admin/forms.php:138 admin/recurring.php:442
+msgid "Copy"
+msgstr "Kopieren"
+
+#: admin/forms.php:166 admin/payments.php:178
+msgid "No forms have been created yet."
+msgstr "Es wurden keine Formulare erstellt."
+
+#: admin/help.php:65 admin/sections/nav-tabs.php:34
+msgid "Help &amp; FAQ"
+msgstr "Hilfe &amp; FAQ"
+
+#: admin/help.php:68
+msgid ""
+"Please copy and paste the following system information into your support "
+"email to"
+msgstr ""
+"Bitte kopieren Sie die folgenden Systeminformationen und fügen Sie sie in "
+"Ihre Support-E-Mail ein:"
+
+#: admin/help.php:70
+msgid "This helps us troubleshoot your issue faster."
+msgstr "Das hilft uns, Ihr Problem schneller zu beheben."
+
+#: admin/help.php:73
+msgid "Copy to Clipboard"
+msgstr "In die Zwischenablage kopieren"
+
+#: admin/help.php:83
+msgid "How do I connect my Stripe account?"
+msgstr "Wie verbinde ich mein Stripe-Konto?"
+
+#: admin/help.php:85
+msgid ""
+"Go to the plugin settings and enter your Stripe Public Key and Stripe Secret "
+"Key."
+msgstr ""
+"Gehe zu den Plugin-Einstellungen und gib deinen Stripe Public Key sowie "
+"deinen Stripe Secret Key ein."
+
+#: admin/help.php:89
+msgid "Test Payments ( Stripe Sandbox )"
+msgstr "Testzahlungen (Stripe Sandbox)"
+
+#: admin/help.php:91
+msgid "You can test credit card payments using the following test data:"
+msgstr "Du kannst Kreditkartenzahlungen mit den folgenden Testdaten testen:"
+
+#: admin/help.php:92
+msgid "Card Number:"
+msgstr "Kartennummer:"
+
+#: admin/help.php:93
+msgid "Expiration date:"
+msgstr "Ablaufdatum:"
+
+#: admin/help.php:93
+msgid "future valid date"
+msgstr "ein zukünftiges gültiges Datum"
+
+#: admin/help.php:94
+msgid "CVC:"
+msgstr "CVC:"
+
+#: admin/help.php:94
+msgid "or any number"
+msgstr "oder eine beliebige Nummer"
+
+#: admin/help.php:95
+msgid "Stripe Test Card Numbers"
+msgstr "Stripe Testkartennummern"
+
+#: admin/help.php:99
+msgid "How are sensitive Stripe API keys stored in this plugin?"
+msgstr "Wie werden sensible Stripe API-Schlüssel in diesem Plugin gespeichert?"
+
+#: admin/help.php:101
+msgid ""
+"Your Stripe keys are securely encrypted and stored in your own WordPress "
+"database, on the site where the plugin is installed. At no point are these "
+"keys shared with any third party."
+msgstr ""
+"Deine Stripe-Schlüssel werden sicher verschlüsselt in deiner eigenen "
+"WordPress-Datenbank gespeichert, also auf der Seite, auf der das Plugin "
+"installiert ist. Zu keinem Zeitpunkt werden diese Schlüssel an Dritte "
+"weitergegeben."
+
+#: admin/help.php:103
+msgid ""
+"Security and trust are extremely important to us. We understand the "
+"responsibility that comes with handling sensitive data. That’s why we’ve "
+"built the plugin in a way that ensures unauthorized access is not possible."
+msgstr ""
+"Sicherheit und Vertrauen sind uns äußerst wichtig. Wir sind uns der "
+"Verantwortung bewusst, die mit dem Umgang sensibler Daten einhergeht. "
+"Deshalb haben wir das Plugin so entwickelt, dass ein unbefugter Zugriff "
+"ausgeschlossen ist."
+
+#: admin/help.php:105
+msgid ""
+"All settings and credentials exist strictly within the plugin’s own "
+"namespace, following best practices in the WordPress ecosystem to prevent "
+"interference or data leaks."
+msgstr ""
+"Alle Einstellungen und Zugangsdaten befinden sich ausschließlich im eigenen "
+"Namensraum des Plugins und folgen den Best Practices im WordPress-Ökosystem, "
+"um Interferenzen oder Datenlecks zu verhindern."
+
+#: admin/help.php:109
+msgid "How do I receive payments?"
+msgstr "Wie erhalte ich Zahlungen?"
+
+#: admin/help.php:111
+msgid ""
+"Payments are deposited directly into your Stripe account. You can manage "
+"payouts in your Stripe Dashboard."
+msgstr ""
+"Zahlungen werden direkt auf dein Stripe-Konto eingezahlt. Auszahlungen "
+"kannst du in deinem Stripe-Dashboard verwalten."
+
+#: admin/help.php:115
+msgid "Can I use test mode and live mode at the same time?"
+msgstr "Kann ich den Testmodus und den Live-Modus gleichzeitig verwenden?"
+
+#: admin/help.php:117
+msgid ""
+"No, you can only have one mode active at a time — either test or live. You "
+"can switch the mode using the Stripe Public and Secret Keys in the plugin "
+"settings."
+msgstr ""
+"Nein, du kannst immer nur einen Modus aktiv haben – entweder den Testmodus "
+"oder den Live-Modus. Den Modus kannst du über die Stripe Public und Secret "
+"Schlüssel in den Plugin-Einstellungen wechseln."
+
+#: admin/help.php:121
+msgid "Which currencies are supported?"
+msgstr "Welche Währungen werden unterstützt?"
+
+#: admin/help.php:123
+msgid "The plugin supports all currencies supported by your "
+msgstr "Das Plugin unterstützt alle Währungen, die von deinem"
+
+#: admin/help.php:125
+msgid ""
+"account. Please note that your connected bank account must also be "
+"compatible with the currency."
+msgstr ""
+"Konto angeboten werden. Bitte beachte, dass dein verbundenes Bankkonto "
+"ebenfalls mit der Währung kompatibel sein muss."
+
+#: admin/help.php:129
+msgid "Can I create recurring payments ( Subscriptions )?"
+msgstr "Kann ich wiederkehrende Zahlungen (Abonnements) erstellen?"
+
+#: admin/help.php:131
+msgid ""
+"Yes, the plugin supports Stripe subscriptions. You can configure these "
+"( Recurring Payments ) via product settings with intervals like \"monthly\" "
+"or \"yearly.\""
+msgstr ""
+"Ja, das Plugin unterstützt Stripe-Abonnements. Du kannst diese "
+"(wiederkehrenden Zahlungen) über die Produkteinstellungen mit Intervallen "
+"wie „monatlich“ oder „jährlich“ konfigurieren."
+
+#: admin/help.php:135
+msgid "How secure is the plugin?"
+msgstr "Wie sicher ist das Plugin?"
+
+#: admin/help.php:137
+msgid ""
+"All payments are processed directly through the Stripe API. The plugin does "
+"not store any sensitive payment data on your server. Additionally, "
+"recommended WordPress security measures like nonces, sanitizing and prepared "
+"statements are implemented."
+msgstr ""
+"Alle Zahlungen werden direkt über die Stripe API verarbeitet. Das Plugin "
+"speichert keine sensiblen Zahlungsdaten auf deinem Server. Zudem sind "
+"empfohlene WordPress-Sicherheitsmaßnahmen wie Nonces, Datenbereinigung und "
+"vorbereitete Statements implementiert."
+
+#: admin/help.php:141
+msgid "What happens if I uninstall the plugin?"
+msgstr "Was passiert, wenn ich das Plugin deinstalliere?"
+
+#: admin/help.php:143
+msgid ""
+"On normal deactivation, your Stripe connections and settings – including "
+"your encrypted API keys – remain stored in the database. A complete deletion "
+"via the plugin overview page will remove all plugin data."
+msgstr ""
+"Bei einer normalen Deaktivierung bleiben deine Stripe-Verbindungen und "
+"Einstellungen – einschließlich deiner verschlüsselten API-Schlüssel – in der "
+"Datenbank gespeichert. Eine vollständige Löschung über die Plugin-"
+"Übersichtsseite entfernt alle Plugin-Daten."
+
+#: admin/help.php:147
+msgid "How can I issue refunds?"
+msgstr "Wie kann ich Rückerstattungen durchführen?"
+
+#: admin/help.php:149
+msgid ""
+"Refunds must be made directly through the Stripe dashboard. The plugin "
+"currently does not offer an in-plugin refund feature."
+msgstr ""
+"Rückerstattungen müssen direkt über das Stripe-Dashboard vorgenommen werden. "
+"Das Plugin bietet derzeit keine Rückerstattungsfunktion innerhalb des "
+"Plugins an."
+
+#: admin/help.php:153
+msgid "How do I troubleshoot payment failures?"
+msgstr "Wie behebe ich Zahlungsfehler?"
+
+#: admin/help.php:155
+msgid ""
+"Check your Stripe dashboard for detailed error messages. Common reasons "
+"include invalid API keys, currency mismatches, or card declines. Make sure "
+"your keys are correct and the plugin is in the correct mode ( Test / Live )."
+msgstr ""
+"Überprüfe dein Stripe-Dashboard auf detaillierte Fehlermeldungen. Häufige "
+"Ursachen sind ungültige API-Schlüssel, Währungsinkompatibilitäten oder "
+"abgelehnte Karten. Stelle sicher, dass deine Schlüssel korrekt sind und das "
+"Plugin im richtigen Modus (Test / Live) läuft."
+
+#: admin/help.php:159
+msgid "Can I customize the Checkout payment form?"
+msgstr "Kann ich das Checkout-Zahlungsformular anpassen?"
+
+#: admin/help.php:161
+msgid ""
+"Yes, the plugin offers options to customize labels, button texts, payment "
+"types, images, campaigns, appearance, Stripe Metadata etc."
+msgstr ""
+"Ja, das Plugin bietet Optionen zur Anpassung von Beschriftungen, Button-"
+"Texten, Zahlungsmethoden, Bildern, Kampagnen, dem Erscheinungsbild, Stripe-"
+"Metadaten und mehr."
+
+#: admin/help.php:165
+msgid "Is PCI compliance handled by the plugin?"
+msgstr "Wird die PCI-Konformität vom Plugin übernommen?"
+
+#: admin/help.php:167
+msgid ""
+"Stripe handles all sensitive payment data, so PCI compliance burden on your "
+"server is minimal. However, you should still follow best practices for "
+"website security."
+msgstr ""
+"Stripe übernimmt alle sensiblen Zahlungsdaten, daher ist die PCI-Konformität "
+"auf deinem Server minimal. Dennoch solltest du weiterhin die besten "
+"Sicherheitspraktiken für deine Webseite einhalten."
+
+#: admin/help.php:171
+msgid "Can I accept payments in multiple currencies?"
+msgstr "Kann ich Zahlungen in mehreren Währungen akzeptieren?"
+
+#: admin/help.php:173
+msgid ""
+"You can accept payments in any currency supported by your Stripe account. "
+"Ensure your products and pricing are set up accordingly."
+msgstr ""
+"Du kannst Zahlungen in jeder Währung akzeptieren, die von deinem Stripe-"
+"Konto unterstützt wird. Stelle sicher, dass deine Produkte und Preise "
+"entsprechend eingerichtet sind."
+
+#: admin/help.php:177
+msgid "Does the plugin support Apple Pay, Google Pay, PayPal, Alipay etc.?"
+msgstr "Unterstützt das Plugin Apple Pay, Google Pay, PayPal, Alipay usw.?"
+
+#: admin/help.php:179
+msgid ""
+"Yes, plugin users can manage all payment methods directly through their "
+"Stripe Dashboard and these will be automatically displayed on the website’s "
+"checkout form."
+msgstr ""
+"Ja, Plugin-Nutzer können alle Zahlungsmethoden direkt über ihr Stripe-"
+"Dashboard verwalten, und diese werden automatisch im Checkout-Formular der "
+"Website angezeigt."
+
+#: admin/help.php:181
+msgid "All Stripe Payment Methods"
+msgstr "Alle Stripe-Zahlungsmethoden"
+
+#: admin/help.php:185
+msgid "Can I connect the plugin to multiple different Stripe accounts?"
+msgstr ""
+"Kann ich das Plugin mit mehreren verschiedenen Stripe-Konten verbinden?"
+
+#: admin/help.php:187
+msgid ""
+"Yes, that is possible. However, we recommend fully deleting the plugin using "
+"the delete function on the plugin overview page before connecting it to a "
+"different Stripe account. Otherwise, inconsistencies with the database "
+"(payments, subscription buttons, etc.) may occur."
+msgstr ""
+"Ja, das ist möglich. Wir empfehlen jedoch, das Plugin mit der Löschfunktion "
+"auf der Plugin-Übersichtsseite vollständig zu löschen, bevor Sie es mit "
+"einem anderen Stripe-Konto verbinden. Andernfalls kann es zu Inkonsistenzen "
+"mit der Datenbank (Zahlungen, Abo-Buttons etc.) kommen."
+
+#: admin/help.php:191
+msgid "Can my Premium Membership be revoked under certain conditions?"
+msgstr ""
+"Kann meine Premium-Mitgliedschaft unter bestimmten Bedingungen widerrufen "
+"werden?"
+
+#: admin/help.php:193
+msgid ""
+"Yes. We reserve the right to terminate a premium membership without refund "
+"if a website using our plugin contains illegal, prohibited or content we "
+"deem morally unacceptable."
+msgstr ""
+"Ja. Wir behalten uns das Recht vor, eine Premium-Mitgliedschaft ohne "
+"Rückerstattung zu beenden, wenn eine Website, die unser Plugin verwendet, "
+"illegale, verbotene oder von uns als moralisch inakzeptabel angesehene "
+"Inhalte enthält."
+
+#: admin/help.php:195
+msgid ""
+"We do not support the use of our plugin on websites that promote hate, "
+"violence, discrimination or any content that violates applicable laws or our "
+"ethical standards. If such content is detected, we may suspend or revoke "
+"access to premium features at any time, without prior notice and without a "
+"refund."
+msgstr ""
+"Wir unterstützen nicht die Verwendung unseres Plugins auf Websites, die "
+"Hass, Gewalt, Diskriminierung oder andere Inhalte fördern, die gegen "
+"geltende Gesetze oder unsere ethischen Standards verstoßen. Wenn solche "
+"Inhalte entdeckt werden, können wir den Zugang zu den Premium-Funktionen "
+"jederzeit ohne vorherige Ankündigung und ohne Rückerstattung aussetzen oder "
+"widerrufen."
+
+#: admin/help.php:197
+msgid ""
+"We encourage all users to ensure that their websites align with legal "
+"standards and basic ethical principles. If you are unsure whether your "
+"content meets these guidelines, feel free to contact us in advance."
+msgstr ""
+"Wir ermutigen alle Nutzer, dafür zu sorgen, dass ihre Websites mit den "
+"rechtlichen Standards und den grundlegenden ethischen Prinzipien "
+"übereinstimmen. Wenn Sie sich nicht sicher sind, ob Ihr Inhalt diesen "
+"Richtlinien entspricht, können Sie uns gerne im Voraus kontaktieren."
+
+#: admin/help.php:201
+msgid ""
+"Do you, as the plugin developers, assume liability for payments or the use "
+"of the plugin?"
+msgstr ""
+"Übernehmen Sie als Plugin-Entwickler die Haftung für Zahlungen oder die "
+"Nutzung des Plugins?"
+
+#: admin/help.php:203
+msgid ""
+"No. We accept no liability for any damages, outages or losses that may arise "
+"from the use of this plugin. The use of the plugin is at your own risk. You "
+"are solely responsible for correctly configuring your Stripe settings, "
+"monitoring payments and complying with applicable legal and tax regulations. "
+"We provide the plugin \"as is\" without any warranties or guarantees."
+msgstr ""
+"Nein. Wir übernehmen keine Haftung für Schäden, Ausfälle oder Verluste, die "
+"durch die Nutzung dieses Plugins entstehen können. Die Verwendung des "
+"Plugins erfolgt auf eigenes Risiko. Sie sind allein verantwortlich für die "
+"korrekte Konfiguration Ihrer Stripe-Einstellungen, die Überwachung der "
+"Zahlungen sowie die Einhaltung der geltenden gesetzlichen und steuerlichen "
+"Vorschriften. Wir stellen das Plugin „wie gesehen“ bereit – ohne jegliche "
+"Gewährleistung oder Garantie."
+
+#: admin/mails.php:22
+msgid "Successfully saved"
+msgstr "Erfolgreich gespeichert"
+
+#: admin/mails.php:28
+msgid "Confirmation Emails"
+msgstr "Bestätigungs-E-Mails"
+
+#: admin/mails.php:29
+msgid ""
+"Set up confirmation Emails for your users and configure them to be "
+"automatically sent upon each successful payment."
+msgstr ""
+"Richten Sie Bestätigungs-E-Mails für Ihre Nutzer ein und konfigurieren Sie "
+"diese so, dass sie bei jeder erfolgreichen Zahlung automatisch versendet "
+"werden."
+
+#: admin/mails.php:83
+msgid "✅ Payment Confirmation – Thank You"
+msgstr "✅ Zahlungsbestätigung – Vielen Dank"
+
+#: admin/mails.php:109
+msgid "Enable Email Notification"
+msgstr "E-Mail-Benachrichtigung aktivieren"
+
+#: admin/mails.php:119
+msgid "Subject"
+msgstr "Betreff"
+
+#: admin/mails.php:124
+msgid "Sender Email"
+msgstr "Absender-E-Mail"
+
+#: admin/mails.php:129
+msgid "Mail Content"
+msgstr "E-Mail Inhalt"
+
+#: admin/mails.php:147 admin/settings.php:106
+msgid "Save"
+msgstr "Speichern"
+
+#: admin/payments.php:8 admin/sections/nav-tabs.php:13
+msgid "Payments"
+msgstr "Zahlungen"
+
+#: admin/payments.php:83
+msgid "There are no payments at this time."
+msgstr "Zurzeit liegen keine Zahlungen vor."
+
+#: admin/payments.php:95
+msgid "Export as CSV"
+msgstr "Als CSV exportieren"
+
+#: admin/payments.php:101
+msgid "Name"
+msgstr "Name"
+
+#: admin/payments.php:102
+msgid "Amount"
+msgstr "Betrag"
+
+#: admin/payments.php:105
+msgid "Contact Details"
+msgstr "Kontaktdaten"
+
+#: admin/payments.php:106
+msgid "Payment Method"
+msgstr "Zahlungsmethode"
+
+#: admin/payments.php:107
+msgid "Stripe Payment ID"
+msgstr "Stripe-Zahlungs-ID"
+
+#: admin/payments.php:108
+msgid "Stripe Metadata"
+msgstr "Stripe-Metadaten"
+
+#: admin/payments.php:109
+msgid "Checkout Form ID"
+msgstr "Checkout-Formular-ID"
+
+#: admin/payments.php:110
+msgid "Creation Date"
+msgstr "Erstellungsdatum"
+
+#: admin/payments.php:144
+msgid "Campaign"
+msgstr "Kampagne"
+
+#: admin/payments.php:151
+msgid "Project"
+msgstr "Projekt"
+
+#: admin/payments.php:158
+msgid "Product"
+msgstr "Produkt"
+
+#: admin/premium.php:38 inc/functions.php:772 inc/functions.php:912
+msgid ""
+"As a Premium &#x1F48E; Member, you'll get <b>Priority Support</b> and access "
+"to <b class=\"blue\">Multiple Stripe Checkouts</b>, <b>Multiple Subscription "
+"Payments</b> &amp; <b class=\"blue\">Stripe Metadata</b>.<br /><br /"
+">Membership is quick &amp; easy — register your website for a full year in "
+"minutes."
+msgstr ""
+"Als Premium &#x1F48E; Mitglied erhalten Sie <b>Priorisierten Support</b> "
+"sowie Zugriff auf <b class=\"blue\">Mehrere Stripe-Checkouts</b>, <b>Mehrere "
+"Abonnementzahlungen</b> &amp; <b class=\"blue\">Stripe-Metadaten</b>.<br /"
+"><br />Die Mitgliedschaft ist schnell &amp; einfach — registrieren Sie Ihre "
+"Website innerhalb weniger Minuten für ein ganzes Jahr."
+
+#: admin/premium.php:42
+msgid "Premium Membership"
+msgstr "Premium-Mitgliedschaft"
+
+#: admin/premium.php:49
+msgid "Check Premium Status"
+msgstr "Premium-Status prüfen"
+
+#: admin/premium.php:53 admin/setup.php:51
+msgid "Become a Premium Member"
+msgstr "Premium-Mitglied werden"
+
+#: admin/preview.php:13
+msgid "Please choose a form"
+msgstr "Bitte Formular auswählen"
+
+#: admin/preview.php:21
+msgid "No forms found"
+msgstr "Keine Formulare gefunden"
+
+#: admin/preview.php:25
+msgid "Preview Desktop"
+msgstr "Desktop-Vorschau"
+
+#: admin/preview.php:33
+msgid "Preview Tablet"
+msgstr "Tablet-Vorschau"
+
+#: admin/preview.php:41
+msgid "Preview Mobile"
+msgstr "Mobilgerät-Vorschau"
+
+#: admin/preview.php:50
+msgid "Desktop"
+msgstr "Desktop"
+
+#: admin/preview.php:51
+msgid "Tablet"
+msgstr "Tablet"
+
+#: admin/preview.php:52
+msgid "Mobile"
+msgstr "Mobilgerät"
+
+#: admin/recurring.php:44 admin/settings.php:81 admin/welcome.php:99
+msgid "Please enter your Stripe Public Key and Stripe Secret Key"
+msgstr "Bitte geben Sie Ihren Stripe Public Key und Stripe Secret Key ein"
+
+#: admin/recurring.php:46 admin/sections/nav-tabs.php:25 admin/setup.php:13
+#: admin/welcome.php:101
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: admin/recurring.php:58
+msgid ""
+"Prices cannot be changed once created — this ensures consistency in billing "
+"history and records.\n"
+"If a price needs to change, a new price must be created and assigned to the "
+"product.\n"
+"You can manually delete &amp; change a product through the Stripe Dashboard."
+msgstr ""
+"Preise können nach der Erstellung nicht mehr geändert werden — dies "
+"gewährleistet die Konsistenz in der Abrechnungshistorie und den "
+"Aufzeichnungen.\n"
+"Wenn ein Preis geändert werden muss, muss ein neuer Preis erstellt und dem "
+"Produkt zugewiesen werden.\n"
+"Sie können ein Produkt manuell über das Stripe-Dashboard löschen und ändern."
+
+#: admin/recurring.php:60
+msgid ""
+"Stripe does not allow updating the price of an active product via the API.\n"
+"You can manually delete &amp; change a product through the Stripe Dashboard."
+msgstr ""
+"Stripe erlaubt es nicht, den Preis eines aktiven Produkts über die API zu "
+"aktualisieren.\n"
+"Sie können ein Produkt manuell über das Stripe-Dashboard löschen und ändern."
+
+#: admin/recurring.php:79
+msgid "Stripe Recurring Payments"
+msgstr "Stripe Abonnementzahlungen"
+
+#: admin/recurring.php:109
+msgid "Stripe Product"
+msgstr "Stripe Produkt"
+
+#: admin/recurring.php:114 admin/recurring.php:365
+msgid "Product Name"
+msgstr "Produktname"
+
+#: admin/recurring.php:128 admin/recurring.php:305 admin/recurring.php:368
+#: admin/sections/campaign-checkout.php:84
+msgid "Image"
+msgstr "Bild"
+
+#: admin/recurring.php:130 admin/recurring.php:308
+#: admin/sections/campaign-checkout.php:95
+msgid "Select image"
+msgstr "Bild auswählen"
+
+#: admin/recurring.php:134 admin/recurring.php:319
+#: admin/sections/campaign-checkout.php:158
+#: admin/sections/standard-checkout.php:110
+msgid "Language"
+msgstr "Sprache"
+
+#: admin/recurring.php:139 admin/recurring.php:311 admin/recurring.php:367
+msgid "Price"
+msgstr "Preis"
+
+#: admin/recurring.php:153
+msgid "Subscription Button Preview"
+msgstr "Abonnement-Button-Vorschau"
+
+#: admin/recurring.php:155 admin/recurring.php:161
+msgid "Subscribe"
+msgstr "Abonnieren"
+
+#: admin/recurring.php:160
+msgid "Button Title"
+msgstr "Button-Titel"
+
+#: admin/recurring.php:165
+msgid "Button Size"
+msgstr "Button-Größe"
+
+#: admin/recurring.php:167
+msgid "Small"
+msgstr "Klein"
+
+#: admin/recurring.php:168
+msgid "Medium"
+msgstr "Mittel"
+
+#: admin/recurring.php:169
+msgid "Large"
+msgstr "Groß"
+
+#: admin/recurring.php:170
+msgid "X-Large"
+msgstr "XL"
+
+#: admin/recurring.php:171
+msgid "XX-Large"
+msgstr "XXL"
+
+#: admin/recurring.php:177
+msgid "Button Color"
+msgstr "Button-Farbe"
+
+#: admin/recurring.php:183
+msgid "Font Color"
+msgstr "Schriftfarbe"
+
+#: admin/recurring.php:192
+msgid "Update"
+msgstr "Update"
+
+#: admin/recurring.php:253
+msgid "Product created: "
+msgstr "Produkt erstellt:"
+
+#: admin/recurring.php:272 admin/recurring.php:278
+msgid "Add new Stripe product"
+msgstr "Neues Stripe-Produkt hinzufügen"
+
+#: admin/recurring.php:299
+msgid "Product name"
+msgstr "Produkt Name"
+
+#: admin/recurring.php:323
+msgid "Payment interval"
+msgstr "Zahlungsintervall"
+
+#: admin/recurring.php:326
+msgid "Monthly"
+msgstr "Monatlich"
+
+#: admin/recurring.php:327
+msgid "Every 3 months"
+msgstr "Alle 3 Monate"
+
+#: admin/recurring.php:328
+msgid "Every 6 months"
+msgstr "Alle 6 Monate"
+
+#: admin/recurring.php:329
+msgid "Annually"
+msgstr "Jährlich"
+
+#: admin/recurring.php:336
+msgid "Create product"
+msgstr "Produkt erstellen"
+
+#: admin/recurring.php:366
+msgid "Product ID"
+msgstr "Produkt ID"
+
+#: admin/recurring.php:370
+msgid "Subscription Button"
+msgstr "Abonnement-Button"
+
+#: admin/recurring.php:373 admin/recurring.php:494
+msgid "View"
+msgstr "Ansicht"
+
+#: admin/recurring.php:434
+msgid "No image choosed"
+msgstr "Kein Bild ausgewählt"
+
+#: admin/recurring.php:502
+msgid "No products added yet."
+msgstr "Noch keine Produkte hinzugefügt."
+
+#: admin/sections/campaign-checkout.php:21
+#: admin/sections/campaign-checkout.php:22
+#: admin/sections/standard-checkout.php:21
+#: admin/sections/standard-checkout.php:22
+msgid "This field can be left empty depending on the selected amount type"
+msgstr "Dieses Feld kann je nach ausgewähltem Betragstyp leer gelassen werden"
+
+#: admin/sections/campaign-checkout.php:40
+#: admin/sections/standard-checkout.php:40
+msgid ""
+"Fixed amount e.g.: 50 $\n"
+"Variable amount is entered by the user.\n"
+"Select amount e.g.: 100 $, 200 $, 300 $, 400 $, 500 $\n"
+"After saving the form, you can check it in the preview."
+msgstr ""
+"Fester Betrag, z. B.: 50 $\n"
+"Variabler Betrag wird vom Nutzer eingegeben.\n"
+"Wählen Sie einen Betrag, z. B.: 100 $, 200 $, 300 $, 400 $, 500 $\n"
+"Nach dem Speichern des Formulars können Sie es in der Vorschau überprüfen."
+
+#: admin/sections/campaign-checkout.php:43
+#: admin/sections/standard-checkout.php:43
+msgid "Amount type"
+msgstr "Betragstyp"
+
+#: admin/sections/campaign-checkout.php:50
+#: admin/sections/standard-checkout.php:50
+msgid "Variable Amount"
+msgstr "Variabler Betrag"
+
+#: admin/sections/campaign-checkout.php:51
+#: admin/sections/standard-checkout.php:51
+msgid "Select Amount"
+msgstr "Betrag auswählen"
+
+#: admin/sections/campaign-checkout.php:52
+#: admin/sections/standard-checkout.php:52
+msgid "Select &amp; Variable Amount"
+msgstr "Auswahlbetrag &amp; variabler Betrag"
+
+#: admin/sections/campaign-checkout.php:56
+#: admin/sections/standard-checkout.php:56
+msgid "Please select a price list"
+msgstr "Bitte Preisliste auswählen"
+
+#: admin/sections/campaign-checkout.php:100
+#: admin/sections/standard-checkout.php:131
+msgid ""
+"Select how the available payment methods are displayed in the Checkout "
+"Form.\n"
+"Choose (Auto) to let Stripe optimize the layout based on the user's device "
+"and context."
+msgstr ""
+"Wählen Sie aus, wie die verfügbaren Zahlungsmethoden im Checkout-Formular "
+"angezeigt werden sollen.\n"
+"Wählen Sie (Auto), damit Stripe das Layout basierend auf dem Gerät und "
+"Kontext des Nutzers optimiert."
+
+#: admin/sections/campaign-checkout.php:102
+#: admin/sections/standard-checkout.php:133
+msgid "Payment Layout"
+msgstr "Zahlungs-Layout"
+
+#: admin/sections/campaign-checkout.php:110
+#: admin/sections/standard-checkout.php:141
+msgid "Auto – Stripe selects the layout"
+msgstr "Automatisch – Stripe bestimmt das Layout"
+
+#: admin/sections/campaign-checkout.php:111
+#: admin/sections/standard-checkout.php:142
+msgid "Tabs – Payment methods as tabs"
+msgstr "Tabs – Zahlungsmethoden als Registerkarten"
+
+#: admin/sections/campaign-checkout.php:112
+#: admin/sections/standard-checkout.php:143
+msgid "Accordion – Collapsible sections"
+msgstr "Akkordeon – Zusammenklappbare Abschnitte"
+
+#: admin/sections/campaign-checkout.php:116
+#: admin/sections/standard-checkout.php:147
+msgid "Button"
+msgstr "Button"
+
+#: admin/sections/campaign-checkout.php:121
+#: admin/sections/standard-checkout.php:152
+msgid "Customize your button text"
+msgstr "Button-Text anpassen"
+
+#: admin/sections/campaign-checkout.php:123
+#: admin/sections/preview/form-db.php:61 admin/sections/preview/form-db.php:99
+#: admin/sections/standard-checkout.php:154
+msgid "Pay"
+msgstr "Zahlen"
+
+#: admin/sections/campaign-checkout.php:124
+#: admin/sections/standard-checkout.php:155
+msgid "Donate"
+msgstr "Spenden"
+
+#: admin/sections/campaign-checkout.php:125
+#: admin/sections/standard-checkout.php:156
+msgid "Book"
+msgstr "Buchen"
+
+#: admin/sections/campaign-checkout.php:134
+#: admin/sections/standard-checkout.php:86
+msgid ""
+"Choose the fields you want to display in the Checkout Form.\n"
+"Name &amp; Email are always required fields, as this information is "
+"mandatory for Stripe to handle payments."
+msgstr ""
+"Wählen Sie die Felder aus, die im Checkout-Formular angezeigt werden "
+"sollen.\n"
+"Name & E-Mail sind stets Pflichtfelder, da diese Informationen für Stripe "
+"zur Zahlungsabwicklung erforderlich sind."
+
+#: admin/sections/campaign-checkout.php:137
+#: admin/sections/standard-checkout.php:89
+msgid "Show Fields"
+msgstr "Felder anzeigen"
+
+#: admin/sections/campaign-checkout.php:145
+#: admin/sections/standard-checkout.php:97
+msgid "Name &amp; Email (Required fields)"
+msgstr "Name &amp; E-Mail (Pflichtfelder)"
+
+#: admin/sections/campaign-checkout.php:146
+#: admin/sections/standard-checkout.php:98
+msgid "Name &amp; Email &amp; Full Address"
+msgstr "Name &amp; Email &amp; Vollständige Adresse"
+
+#: admin/sections/campaign-checkout.php:147
+#: admin/sections/standard-checkout.php:99
+msgid "Name &amp; Email &amp; Full Address &amp; Telephone"
+msgstr "Name &amp; E-Mail &amp; Vollständige Adresse &amp; Telefon"
+
+#: admin/sections/campaign-checkout.php:149
+#: admin/sections/standard-checkout.php:101
+msgid "Name &amp; Email &amp; Full Address (Required fields)"
+msgstr "Name &amp; E-Mail &amp; Vollständige Adresse (Pflichtfelder)"
+
+#: admin/sections/campaign-checkout.php:152
+#: admin/sections/standard-checkout.php:104
+msgid "Name &amp; Email &amp; Full Address &amp; Telephone (Required fields)"
+msgstr ""
+"Name &amp; E-Mail &amp; Vollständige Adresse &amp; Telefon (Pflichtfelder)"
+
+#: admin/sections/campaign-checkout.php:164
+#: admin/sections/standard-checkout.php:116
+msgid "Color"
+msgstr "Farbe"
+
+#: admin/sections/campaign-checkout.php:172
+#: admin/sections/standard-checkout.php:124
+msgid "Choose a color for the Checkout Form"
+msgstr "Wählen Sie eine Farbe für das Checkout-Formular"
+
+#: admin/sections/campaign-checkout.php:178
+msgid ""
+"Set the current amount for the campaign, or leave this field empty to start "
+"from zero.\n"
+"This value is automatically updated in the database after each successful "
+"payment.\n"
+"If necessary, you can manually override the current database value from here."
+msgstr ""
+"Legen Sie den aktuellen Betrag für die Kampagne fest, oder lassen Sie dieses "
+"Feld leer, um bei null zu starten.\n"
+"Dieser Wert wird nach jeder erfolgreichen Zahlung automatisch in der "
+"Datenbank aktualisiert.\n"
+"Bei Bedarf können Sie den aktuellen Datenbankwert hier manuell überschreiben."
+
+#: admin/sections/campaign-checkout.php:181
+msgid "Campaign Current Amount"
+msgstr "Aktueller Kampagnenbetrag"
+
+#: admin/sections/campaign-checkout.php:195
+msgid "Campaign Goal Amount"
+msgstr "Zielbetrag der Kampagne"
+
+#: admin/sections/campaign-checkout.php:201
+msgid ""
+"Enter the target amount for this campaign, or leave it empty to hide the "
+"progress bar."
+msgstr ""
+"Geben Sie den Zielbetrag für diese Kampagne ein oder lassen Sie das Feld "
+"leer, um die Fortschrittsanzeige auszublenden."
+
+#: admin/sections/campaign-checkout.php:216
+#: admin/sections/standard-checkout.php:165
+msgid ""
+"Stripe will redirect the user to the specified landing page after the "
+"payment process."
+msgstr ""
+"Stripe leitet den Nutzer nach dem Zahlungsprozess auf die angegebene "
+"Zielseite weiter."
+
+#: admin/sections/campaign-checkout.php:225
+#: admin/sections/standard-checkout.php:174
+msgid "Success URL"
+msgstr "Erfolgs-URL"
+
+#: admin/sections/campaign-checkout.php:232
+#: admin/sections/campaign-checkout.php:249
+#: admin/sections/standard-checkout.php:181
+#: admin/sections/standard-checkout.php:198
+msgid "You can leave this field empty or define your own landing page"
+msgstr ""
+"Sie können dieses Feld leer lassen oder Ihre eigene Zielseite festlegen"
+
+#: admin/sections/campaign-checkout.php:242
+#: admin/sections/standard-checkout.php:191
+msgid "Cancel URL"
+msgstr "Abbruch-URL"
+
+#: admin/sections/campaign-checkout.php:257
+#: admin/sections/standard-checkout.php:207
+msgid ""
+"You can define custom metadata such as campaign_id, project_name, or "
+"product_name to help track your payments more effectively.\n"
+"E.g. campaign_id: 5872,\n"
+"project_name: Winter Campaign,\n"
+"product_name: Blue Hoodie\n"
+"You can fill out any combination of the three metadata fields, or just one, "
+"depending on your needs. The metadata will be saved in Stripe accordingly "
+"for each payment."
+msgstr ""
+"Sie können benutzerdefinierte Metadaten wie campaign_id, project_name oder "
+"product_name definieren, um Ihre Zahlungen effektiver zu verfolgen.\n"
+"Beispiel: campaign_id: 5872,\n"
+"project_name: Winterkampagne,\n"
+"product_name: Blauer Hoodie\n"
+"Sie können eine beliebige Kombination der drei Metadatenfelder ausfüllen "
+"oder nur eines, je nach Bedarf. Die Metadaten werden entsprechend für jede "
+"Zahlung in Stripe gespeichert."
+
+#: admin/sections/campaign-checkout.php:259
+#: admin/sections/standard-checkout.php:209
+msgid ""
+"You can define custom metadata such as campaign_id, project_name, or "
+"product_name to help track your payments more effectively."
+msgstr ""
+"Sie können benutzerdefinierte Metadaten wie campaign_id, project_name oder "
+"product_name definieren, um Ihre Zahlungen effektiver nachzuverfolgen."
+
+#: admin/sections/campaign-checkout.php:269
+#: admin/sections/campaign-checkout.php:286
+#: admin/sections/campaign-checkout.php:303
+#: admin/sections/standard-checkout.php:219
+#: admin/sections/standard-checkout.php:236
+#: admin/sections/standard-checkout.php:253
+msgid "Stripe Metadata:"
+msgstr "Stripe Metadaten:"
+
+#: admin/sections/campaign-checkout.php:276
+#: admin/sections/standard-checkout.php:226
+msgid "E.g. 5872"
+msgstr "Beispiel: 5872"
+
+#: admin/sections/campaign-checkout.php:293
+#: admin/sections/standard-checkout.php:243
+msgid "E.g. Winter Campaign"
+msgstr "Beispiel: Winterkampagne"
+
+#: admin/sections/campaign-checkout.php:310
+#: admin/sections/standard-checkout.php:260
+msgid "E.g. Blue Hoodie"
+msgstr "Beispiel: Blauer Hoodie"
+
+#: admin/sections/campaign-checkout.php:320
+#: admin/sections/standard-checkout.php:270
+msgid "Save Form"
+msgstr "Formular speichern"
+
+#: admin/sections/currency.php:5
+msgid "These currencies are accepted by Stripe"
+msgstr "Diese Währungen werden von Stripe akzeptiert"
+
+#: admin/sections/form-languages.php:5
+msgid "Select a language for the Checkout Form"
+msgstr "Wählen Sie eine Sprache für das Checkout-Formular aus"
+
+#: admin/sections/nav-tabs.php:3
+msgid "Easy Stripe Payments &amp; Donations"
+msgstr "Easy Stripe Payments &amp; Donations"
+
+#: admin/sections/nav-tabs.php:7
+msgid "Overview"
+msgstr "Übersicht"
+
+#: admin/sections/nav-tabs.php:10 admin/setup.php:9
+msgid "Setup"
+msgstr "Setup"
+
+#: admin/sections/nav-tabs.php:22 admin/setup.php:34 admin/setup.php:41
+#: inc/functions.php:458
+msgid "Recurring Payments"
+msgstr "Abonnementzahlungen"
+
+#: admin/sections/nav-tabs.php:28
+msgid "Emails"
+msgstr "Emails"
+
+#: admin/sections/nav-tabs.php:31
+msgid "Premium"
+msgstr "Premium"
+
+#: admin/sections/powered-by.php:2
+msgid "This plugin is powered by"
+msgstr "This plugin is powered by"
+
+#: admin/sections/premium/active.php:4
+msgid "Premium is active"
+msgstr "Premium ist aktiv"
+
+#: admin/sections/premium/active.php:9
+msgid "Your domain is registered."
+msgstr "Ihre Domain ist registriert."
+
+#: admin/sections/premium/inactive.php:4
+msgid "No Premium – inactive"
+msgstr "Kein Premium – inaktiv"
+
+#: admin/sections/premium/inactive.php:9
+msgid "Your domain is not registered."
+msgstr "Ihre Domain ist nicht registriert."
+
+#: admin/sections/preview/city-telephone.php:7
+#: admin/sections/preview/city.php:7
+msgid "City"
+msgstr "Stadt"
+
+#: admin/sections/preview/city-telephone.php:16
+msgid "Phone number"
+msgstr "Telefonnummer"
+
+#. translators: %s is a link to the plugin settings page.
+#: admin/sections/preview/form-db.php:42
+#, php-format
+msgid ""
+"Please enter your <b>Stripe Public Key</b> &amp; <b>Stripe Secret Key</b> in "
+"the <a href=\"%s\">Settings</a> section."
+msgstr ""
+"Bitte geben Sie Ihren <b>Stripe Public Key</b> &amp; <b>Stripe Secret Key</"
+"b> im Bereich <a href=\"%s\">Einstellungen</a> ein."
+
+#: admin/sections/preview/main-form.php:93
+msgid "Our Goal"
+msgstr "Unser Ziel"
+
+#: admin/sections/preview/main-form.php:102
+msgid "Amount Raised"
+msgstr "Gesammelter Betrag"
+
+#: admin/sections/preview/main-form.php:188
+msgid "Enter amount"
+msgstr "Betrag eingeben"
+
+#: admin/sections/preview/main-form.php:243
+msgid "Protected payment powered by Stripe"
+msgstr "Geschützte Zahlung, powered by Stripe"
+
+#: admin/sections/preview/name-email.php:7
+msgid "Full name"
+msgstr "Vollständiger Name"
+
+#: admin/sections/preview/name-email.php:17
+msgid "Email"
+msgstr "Email"
+
+#: admin/sections/preview/street-postal-code.php:7
+msgid "Street &amp; No."
+msgstr "Straße &amp; Nummer"
+
+#: admin/sections/preview/street-postal-code.php:16
+msgid "Postal code"
+msgstr "Postleitzahl"
+
+#: admin/settings.php:25
+msgid "Settings saved."
+msgstr "Einstellungen gespeichert."
+
+#: admin/settings.php:67
+msgid "Successfully connected to Stripe"
+msgstr "Erfolgreich mit Stripe verbunden"
+
+#: admin/settings.php:89
+msgid "Stripe Settings"
+msgstr "Stripe-Einstellungen"
+
+#: admin/settings.php:97
+msgid "Stripe Public Key"
+msgstr "Stripe öffentlicher Schlüssel"
+
+#: admin/settings.php:101
+msgid "Stripe Secret Key"
+msgstr "Stripe privater Schlüssel"
+
+#: admin/setup.php:11
+msgid "1. Provide Stripe Public Key &amp Stripe Private Key"
+msgstr "1. Geben Sie den öffentlichen und privaten Stripe-Schlüssel an."
+
+#: admin/setup.php:18
+msgid "2. Create a Payment Form ( Checkout Form or Campaign Form )"
+msgstr ""
+"2. Erstellen Sie ein Formular für die Zahlung (Checkout-Formular oder "
+"Kampagnenformular)"
+
+#: admin/setup.php:25
+msgid "2.1 Testing purposes: Choose your form in the \"Preview\" section"
+msgstr "2.1 Zu Testzwecken: Wählen Sie Ihr Formular im Bereich „Vorschau“ aus."
+
+#: admin/setup.php:32
+msgid "3. Create a Stripe Product for recurring Payments"
+msgstr "3. Erstellen Sie ein Stripe-Produkt für wiederkehrende Zahlungen."
+
+#: admin/setup.php:39
+msgid ""
+"3.1 Testing purposes: Click the button to test your product. You will be "
+"redirected to Stripe’s secure hosted Checkout page"
+msgstr ""
+"3.1 Zu Testzwecken: Klicken Sie auf die Schaltfläche, um Ihr Produkt zu "
+"testen. Sie werden zur sicheren, gehosteten Checkout-Seite von Stripe "
+"weitergeleitet."
+
+#: admin/setup.php:46
+msgid "4. Add the shortcodes to the appropriate page"
+msgstr "4. Fügen Sie die Shortcodes auf der entsprechenden Seite hinzu."
+
+#: admin/setup.php:49
+msgid ""
+"5. Register your domain and get priority support &amp; access to Multiple "
+"Stripe Checkouts, Multiple Subscription Payments &amp; Stripe Metadata"
+msgstr ""
+"5. Registrieren Sie Ihre Domain und erhalten Sie bevorzugten Support sowie "
+"Zugriff auf mehrere Stripe-Checkouts, mehrere Abonnementzahlungen &amp; "
+"Stripe-Metadaten."
+
+#: admin/welcome.php:12
+msgid ""
+"Stripe is not a traditional bank account, but a Payment Gateway.\n"
+"This means: Funds from customer payments are not stored permanently in a "
+"Stripe balance account.\n"
+"Instead, available amounts are automatically transferred to your linked bank "
+"account through what are called payouts."
+msgstr ""
+"Stripe ist keine traditionelle Bank, sondern ein Zahlungs-Gateway.\n"
+"Das bedeutet: Gelder aus Kundenzahlungen werden nicht dauerhaft auf einem "
+"Stripe-Guthabenkonto gespeichert.\n"
+"Stattdessen werden verfügbare Beträge über sogenannte Auszahlungen "
+"automatisch auf Ihr verknüpftes Bankkonto überwiesen."
+
+#: admin/welcome.php:21
+msgid "Stripe overview"
+msgstr "Stripe Übersicht"
+
+#: admin/welcome.php:47
+msgid "Available balance"
+msgstr "Verfügbares Guthaben"
+
+#: admin/welcome.php:54
+msgid "Pending balance"
+msgstr "Ausstehendes Guthaben"
+
+#: admin/welcome.php:60
+msgid "Stripe subscriptions"
+msgstr "Stripe-Abonnements"
+
+#: admin/welcome.php:65
+msgid "Total Stripe products"
+msgstr "Gesamtzahl der Stripe-Produkte"
+
+#: admin/welcome.php:72
+msgid "Active Stripe products"
+msgstr "Aktive Stripe Produkte"
+
+#: admin/welcome.php:77
+msgid "Inactive Stripe products"
+msgstr "Inaktive Stripe Produkte"
+
+#: admin/welcome.php:82
+msgid "Failed Payments"
+msgstr "Fehlgeschlagene Zahlungen"
+
+#: admin/welcome.php:87
+msgid "Total number of Stripe customers"
+msgstr "Gesamtzahl der Stripe-Kunden"
+
+#: easy-stripe-payments.php:371
+msgid "Invalid payment form ID."
+msgstr "Ungültige Zahlungsformular-ID."
+
+#: easy-stripe-payments.php:427
+msgid "Invalid payment product ID."
+msgstr "Ungültige Zahlungsprodukt-ID."
+
+#: easy-stripe-payments.php:598 easy-stripe-payments.php:599
+msgid "Stripe Payments"
+msgstr "Stripe Zahlungen"
+
+#: easy-stripe-payments.php:610 easy-stripe-payments.php:611
+msgid "Overview &#10024;"
+msgstr "Übersicht &#10024;"
+
+#: easy-stripe-payments.php:620 easy-stripe-payments.php:621
+msgid "Payments &#128176;"
+msgstr "Zahlungen &#128176;"
+
+#: easy-stripe-payments.php:630 easy-stripe-payments.php:631
+msgid "Settings &#128295;"
+msgstr "Einstellungen &#128295;"
+
+#: easy-stripe-payments.php:640 easy-stripe-payments.php:641
+msgid "Premium &#9733;"
+msgstr "Premium &#9733;"
+
+#: easy-stripe-payments.php:650 easy-stripe-payments.php:651
+msgid "Help &amp; FAQ &#10068;"
+msgstr "Hilfe &amp; FAQ &#10068;"
+
+#: easy-stripe-payments.php:730
+msgid "Stripe Subscription Product &amp; Button"
+msgstr "Stripe Abonnement-Produkt &amp; Button"
+
+#: easy-stripe-payments.php:731
+msgid "Stripe Standard Checkout"
+msgstr "Stripe Standard Checkout"
+
+#: easy-stripe-payments.php:732
+msgid "Stripe Campaign Checkout"
+msgstr "Stripe Kampagnen Checkout"
+
+#: frontend/sections/payment-failed.php:13
+#: frontend/sections/recurring-payment-failed.php:4
+msgid "Payment failed"
+msgstr "Zahlung fehlgeschlagen"
+
+#: frontend/sections/payment-failed.php:19
+#: frontend/sections/recurring-payment-failed.php:9
+msgid "Your payment has failed. Please contact us."
+msgstr "Ihre Zahlung ist fehlgeschlagen. Bitte kontaktieren Sie uns."
+
+#: frontend/sections/payment-pending.php:4
+msgid "Payment is still pending"
+msgstr "Zahlung ist noch ausstehend"
+
+#: frontend/sections/payment-pending.php:9
+msgid "This page will refresh automatically in 10 seconds. Please wait."
+msgstr ""
+"Diese Seite wird in 10 Sekunden automatisch aktualisiert. Bitte warten Sie."
+
+#: frontend/sections/payment-successful-reload.php:4
+#: frontend/sections/payment-successful.php:4
+#: frontend/sections/recurring-payment-success.php:4
+msgid "Payment successful"
+msgstr "Zahlung erfolgreich"
+
+#: frontend/sections/payment-successful-reload.php:16
+#: frontend/sections/payment-successful.php:16
+msgid "Telephone:"
+msgstr "Telefon:"
+
+#: frontend/sections/payment-successful-reload.php:25
+#: frontend/sections/payment-successful.php:25
+msgid "Address:"
+msgstr "Adresse:"
+
+#: frontend/sections/payment-successful-reload.php:33
+#: frontend/sections/payment-successful.php:33
+msgid "Amount:"
+msgstr "Betrag:"
+
+#: frontend/sections/payment-successful-reload.php:41
+#: frontend/sections/payment-successful.php:41
+msgid "Method:"
+msgstr "Methode:"
+
+#: frontend/sections/payment-successful-reload.php:50
+#: frontend/sections/payment-successful.php:50
+msgid "Name:"
+msgstr "Name:"
+
+#: frontend/sections/payment-successful-reload.php:54
+#: frontend/sections/payment-successful.php:54
+msgid "Email:"
+msgstr "Email:"
+
+#: frontend/sections/payment-successful-reload.php:62
+msgid "Payment has already been processed"
+msgstr "Die Zahlung wurde bereits bearbeitet."
+
+#: frontend/sections/recurring-payment-success.php:9
+msgid "Your subscription has been successfully created"
+msgstr "Ihre Abonnementzahlung wurde erfolgreich erstellt."
+
+#: inc/functions.php:154
+msgid "Domain is not registered"
+msgstr "Domain ist nicht registriert"
+
+#: inc/functions.php:154
+msgid "Register now"
+msgstr "Jetzt registrieren"
+
+#: inc/functions.php:298
+msgid "Active Stripe payment methods for Subscription Payments: "
+msgstr "Aktive Stripe-Zahlungsmethoden für Abonnementzahlungen: "
+
+#: inc/functions.php:300
+msgid "You can manage these in your Stripe Dashboard."
+msgstr "Sie können diese in Ihrem Stripe-Dashboard verwalten."
+
+#: inc/functions.php:447
+msgid "Easily accept payments with three flexible Stripe options"
+msgstr "Akzeptieren Sie Zahlungen einfach mit drei flexiblen Stripe-Optionen"
+
+#: inc/functions.php:448
+msgid "1. Stripe Checkout integration"
+msgstr "1. Stripe Checkout-Integration"
+
+#: inc/functions.php:452
+msgid "2. Campaign-based payments with built-in Stripe Checkout"
+msgstr "2. Kampagnenbasierte Zahlungen mit integriertem Stripe Checkout"
+
+#: inc/functions.php:456
+msgid ""
+"3. Recurring payments via button and redirect to Stripe’s secure hosted "
+"Checkout page"
+msgstr ""
+"3. Wiederkehrende Zahlungen per Button und Weiterleitung zur sicheren, "
+"gehosteten Checkout-Seite von Stripe"
+
+#: inc/functions.php:752 inc/functions.php:910
+msgid ""
+"Don\\'t miss this opportunity - We\\'re currently offering <b "
+"class='green'>a 20% discount!</b>"
+msgstr ""
+"Verpassen Sie diese Gelegenheit nicht - Wir bieten Ihnen derzeit <b "
+"class='green'>20 % Rabatt!</b>"
+
+#: inc/functions.php:754
+msgid "Welcome to Easy Stripe Payments &amp; Donations!"
+msgstr "Willkommen zu Easy Stripe Payments &amp; Donations!"
+
+#: inc/functions.php:756
+msgid "Thank you for installing Easy Stripe Payments &amp; Donations."
+msgstr ""
+"Vielen Dank für die Installation von Easy Stripe Payments &amp; Donations."
+
+#: inc/functions.php:758
+msgid ""
+"With this plugin, you can set up secure Stripe payments on your website in "
+"just a few minutes — no coding skills required. Choose from three flexible "
+"checkout options: simple payment forms, campaign forms &amp; subscription "
+"payments."
+msgstr ""
+"Mit diesem Plugin können Sie in wenigen Minuten sichere Stripe-Zahlungen auf "
+"Ihrer Website einrichten – keine Programmierkenntnisse erforderlich. Wählen "
+"Sie aus drei flexiblen Checkout-Optionen: einfache Zahlungsformulare, "
+"Kampagnenformulare und Abonnementzahlungen."
+
+#. translators: %1$s is the URL to the setup guide link, %2$s is the linked text "Setup Guide"
+#: inc/functions.php:761
+#, php-format
+msgid ""
+"Tip: The <a href=\"%1$s\" target=\"_blank\">%2$s</a> includes a step-by-step "
+"walkthrough to help you get started in just a few minutes."
+msgstr ""
+"Tipp: Die <a href=\"%1$s\" target=\"_blank\">%2$s</a> enthält eine Schritt-"
+"für-Schritt-Anleitung, die Ihnen den Einstieg in wenigen Minuten erleichtert."
+
+#: inc/functions.php:765
+msgid "Setup Guide"
+msgstr "Einrichtungsanleitung"
+
+#: inc/functions.php:768
+msgid ""
+"Wishing you great success and secure payments with Easy Stripe Payments "
+"&amp; Donations!"
+msgstr ""
+"Wir wünschen Ihnen viel Erfolg und sichere Zahlungen mit Easy Stripe "
+"Payments &amp; Donations!"
+
+#: inc/functions.php:770
+msgid ""
+"Premium Members receive additional features and access to priority support, "
+"while <b class=\"blue\">all core functionality remains freely available.</"
+"b><br /><br />&#128274; <b>Want to get even more out of it?</b><br />Become "
+"a Premium &#x1F48E; Member for Multiple Stripe Checkouts, Multiple "
+"Subscription Payments &amp; Stripe Metadata."
+msgstr ""
+"Premium-Mitglieder erhalten zusätzliche Funktionen und Zugang zu bevorzugtem "
+"Support, während <b class=\"blue\">alle Kernfunktionen weiterhin kostenlos "
+"verfügbar sind.</b><br /><br />&#128274; <b>Du möchtest noch mehr "
+"herausholen?</b><br />Werde Premium &#x1F48E; Mitglied für mehrere Stripe-"
+"Checkouts, mehrere Abonnementzahlungen &amp; Stripe-Metadaten."
+
+#: inc/functions.php:863
+msgid ""
+"Check out the Demo Campaign under the Payment Forms tab and see a live "
+"preview in the Preview section – you can even run a test payment there to "
+"experience the full payment flow, including the confirmation Email. The "
+"Checkout Form ID is also stored as Stripe metadata for each payment, so you "
+"can later assign payments to the corresponding form."
+msgstr ""
+"Sehen Sie sich die Demo-Kampagne unter dem Tab \"Zahlungsformulare\" an und "
+"nutzen Sie die Live-Vorschau im Bereich \"Vorschau\" – dort können Sie sogar "
+"eine Testzahlung durchführen, um den gesamten Zahlungsablauf inklusive der "
+"Bestätigungs-E-Mail zu erleben. Die Checkout-Formular-ID wird zudem als "
+"Stripe-Metadaten für jede Zahlung gespeichert, sodass Sie Zahlungen später "
+"dem entsprechenden Formular zuordnen können."
+
+#: inc/functions.php:866
+msgid "Demo content installed successfully"
+msgstr "Demo-Inhalte erfolgreich installiert"
+
+#: inc/functions.php:908
+msgid ""
+"Become a Member &#x1F48E; now &amp;<br />unlock your exclusive discount!"
+msgstr ""
+"Jetzt Mitglied &#x1F48E; werden &amp;<br />Ihren exklusiven Rabatt sichern!"
+
+#: inc/setup/stripe-connection.php:7
+msgid "Plugin not connected to Stripe"
+msgstr "Plugin nicht mit Stripe verbunden"
+
+#: inc/setup/stripe-connection.php:10
+msgid ""
+"To accept payments with Stripe, you need to connect your Stripe account."
+msgstr ""
+"Um Zahlungen mit Stripe zu akzeptieren, müssen Sie Ihr Stripe-Konto "
+"verbinden."
+
+#: inc/setup/stripe-connection.php:26
+msgid "Connect to Stripe now"
+msgstr "Jetzt mit Stripe verbinden"
+
+#: payment-process.php:69 payment-process.php:194
+#: recurring-payment-process.php:83
+msgid "No payment method selected."
+msgstr "Keine Zahlungsmethode ausgewählt."
+
+#: recurring-payment-process.php:51
+msgid "No session_id supported."
+msgstr "Keine session_id gefunden."
+
+#: recurring-payment-process.php:179
+msgid "No invoice found."
+msgstr "Keine Rechnung gefunden."

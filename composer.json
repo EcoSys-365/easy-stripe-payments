@@ -1,0 +1,18 @@
+{
+    "name": "ecosys365/easy-stripe-payments",
+    "description": "A user-friendly WordPress plugin for accepting one-time and recurring Stripe payments. Perfect for businesses, freelancers and Non-Profit organizations.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "EcoSys365",
+            "homepage": "https://www.ecosys365.com"
+        }
+    ],
+    "homepage": "https://www.payments-and-donations.com",
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=7.3",
+        "stripe/stripe-php": "^18.0"
+    }
+}   

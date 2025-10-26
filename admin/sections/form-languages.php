@@ -1,0 +1,96 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
+
+<select  
+        id="form_language" 
+        name="form_language" 
+        class="form-control has-tooltip"
+        data-tooltip="<?php echo esc_html(__( 'Select a language for the Checkout Form', 'easy-stripe-payments' )); ?>"
+        required> 
+    <option value="en">EN &#x1F1EC;&#x1F1E7;</option>
+    <option value="de">DE &#x1F1E9;&#x1F1EA;</option>
+    <option value="el">EL &#x1F1EC;&#x1F1F7;</option>
+    <option value="es">ES &#x1F1EA;&#x1F1F8;</option>
+    <option value="et">ET &#x1F1EA;&#x1F1EA;</option>
+    <option value="fi">FI &#x1F1EB;&#x1F1EE;</option>
+    <option value="fr">FR &#x1F1EB;&#x1F1F7;</option>
+    <option value="ga">GA &#x1F1EE;&#x1F1EA;</option>
+    <option value="hr">HR &#x1F1ED;&#x1F1F7;</option>
+    <option value="it">IT &#x1F1EE;&#x1F1F9;</option>
+    <option value="ja">JA &#x1F1EF;&#x1F1F5;</option>
+    <option value="lt">LT &#x1F1F1;&#x1F1F9;</option>
+    <option value="lv">LV &#x1F1F1;&#x1F1FB;</option>
+    <option value="mt">MT &#x1F1F2;&#x1F1F9;</option>
+    <option value="nl">NL &#x1F1F3;&#x1F1F1;</option>
+    <option value="pt">PT &#x1F1F5;&#x1F1F9;</option>
+    <option value="sk">SK &#x1F1F8;&#x1F1F0;</option>
+    <option value="sl">SL &#x1F1F8;&#x1F1EE;</option>
+    <option value="zh">ZH &#x1F1E8;&#x1F1F3;</option>
+
+    <option disabled>──────────</option> 
+
+    <option value="af">AF &#x1F1E6;&#x1F1EB;</option>
+    <option value="am">AM &#x1F1E6;&#x1F1F2;</option>
+    <option value="ar">AR &#x1F1E6;&#x1F1F7;</option>
+    <option value="az">AZ &#x1F1E6;&#x1F1FF;</option>
+    <option value="be">BE &#x1F1E7;&#x1F1EA;</option>
+    <option value="bg">BG &#x1F1E7;&#x1F1EC;</option>
+    <option value="bi">BI &#x1F1E7;&#x1F1EE;</option>
+    <option value="bn">BN &#x1F1E7;&#x1F1E9;</option>
+    <option value="bs">BS &#x1F1E7;&#x1F1F8;</option>
+    <option value="da">DA &#x1F1E9;&#x1F1F0;</option>
+    <option value="dv">DV &#x1F1F2;&#x1F1FB;</option>
+    <option value="dz">DZ &#x1F1E7;&#x1F1F9;</option>
+    <option value="fa">FA &#x1F1EE;&#x1F1F7;</option>
+    <option value="fj">FJ &#x1F1EB;&#x1F1EF;</option>
+    <option value="gn">GN &#x1F1EC;&#x1F1F3;</option>
+    <option value="he">HE &#x1F1EE;&#x1F1F1;</option>
+    <option value="hi">HI &#x1F1EE;&#x1F1F3;</option>
+    <option value="ht">HT &#x1F1ED;&#x1F1F9;</option>
+    <option value="hu">HU &#x1F1ED;&#x1F1FA;</option>
+    <option value="hy">HY &#x1F1E6;&#x1F1F2;</option>
+    <option value="id">ID &#x1F1EE;&#x1F1E9;</option>
+    <option value="is">IS &#x1F1EE;&#x1F1F8;</option>
+    <option value="ka">KA &#x1F1EC;&#x1F1EA;</option>
+    <option value="kk">KK &#x1F1F0;&#x1F1F7;</option>
+    <option value="km">KM &#x1F1F0;&#x1F1F2;</option>
+    <option value="ko">KO &#x1F1F0;&#x1F1F7;</option>
+    <option value="ky">KY &#x1F1F0;&#x1F1EC;</option>
+    <option value="mg">MG &#x1F1F2;&#x1F1EC;</option>
+    <option value="mi">MI &#x1F1F3;&#x1F1FF;</option>
+    <option value="mk">MK &#x1F1F2;&#x1F1F0;</option>
+    <option value="mn">MN &#x1F1F2;&#x1F1F3;</option>
+    <option value="ms">MS &#x1F1F2;&#x1F1E8;</option>
+    <option value="my">MY &#x1F1F2;&#x1F1FE;</option>
+    <option value="ne">NE &#x1F1F3;&#x1F1F5;</option>
+    <option value="no">NO &#x1F1F3;&#x1F1F4;</option>
+    <option value="ny">NY &#x1F1F2;&#x1F1FC;</option>
+    <option value="pl">PL &#x1F1F5;&#x1F1F1;</option>
+    <option value="pt">PT &#x1F1F5;&#x1F1F9;</option>
+    <option value="ro">RO &#x1F1F7;&#x1F1F4;</option>
+    <option value="ru">RU &#x1F1F7;&#x1F1FA;</option>
+    <option value="rw">RW &#x1F1F7;&#x1F1FC;</option>
+    <option value="si">SI &#x1F1F1;&#x1F1F0;</option>
+    <option value="sm">SM &#x1F1F8;&#x1F1F4;</option>
+    <option value="so">SO &#x1F1F8;&#x1F1F4;</option>
+    <option value="sq">SQ &#x1F1E6;&#x1F1F1;</option>
+    <option value="sr">SR &#x1F1F7;&#x1F1F8;</option>
+    <option value="ss">SS &#x1F1F8;&#x1F1FF;</option>
+    <option value="st">ST &#x1F1F1;&#x1F1F8;</option>
+    <option value="sv">SV &#x1F1F8;&#x1F1EA;</option>
+    <option value="sw">SW &#x1F1F0;&#x1F1EA;</option>
+    <option value="ta">TA &#x1F1F1;&#x1F1F0;</option>
+    <option value="th">TH &#x1F1F9;&#x1F1ED;</option>
+    <option value="ti">TI &#x1F1F9;&#x1F1EC;</option>
+    <option value="tk">TK &#x1F1F9;&#x1F1F2;</option>
+    <option value="tl">TL &#x1F1F5;&#x1F1EB;</option>
+    <option value="tn">TN &#x1F1F9;&#x1F1F3;</option>
+    <option value="to">TO &#x1F1F9;&#x1F1F4;</option>
+    <option value="tr">TR &#x1F1F9;&#x1F1F7;</option>
+    <option value="tt">TT &#x1F1F9;&#x1F1F9;</option>
+    <option value="uk">UK &#x1F1FA;&#x1F1E6;</option>
+    <option value="ur">UR &#x1F1F5;&#x1F1F0;</option>
+    <option value="uz">UZ &#x1F1FA;&#x1F1FF;</option>
+    <option value="vi">VI &#x1F1FB;&#x1F1F3;</option>
+    <option value="zu">ZU &#x1F1FF;&#x1F1E6;</option>
+    <option value="xh">XH &#x1F1FF;&#x1F1E6;</option>
+</select>    

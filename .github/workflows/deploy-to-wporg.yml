@@ -1,0 +1,71 @@
+name: Deploy to WordPress SVN
+
+on:
+  push:
+    tags:
+      - "*" # Löst bei jedem Tag-Push aus
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # wichtig, damit Tags verfügbar sind
+
+      - name: Get tag name and commit message
+        id: get_info
+        run: |
+          # Speichert den Tag-Namen (z.B. 1.2.3)
+          TAG_NAME=${GITHUB_REF_NAME}
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+          
+          # Holt die Commit-Message des Tags für den SVN-Commit
+          MESSAGE=$(git log -1 --pretty=%B)
+          echo "message<<EOF" >> $GITHUB_OUTPUT
+          echo "$MESSAGE" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Setup SVN and checkout repository
+        run: |
+          # Führt den Checkout nur der Hauptverzeichnisse durch
+          svn checkout "${{ secrets.SVN_REPO }}" svn \
+            --username "${{ secrets.SVN_USERNAME }}" \
+            --password "${{ secrets.SVN_PASSWORD }}" \
+            --non-interactive --no-auth-cache
+
+      - name: Copy plugin files to trunk/ (Including local assets)
+        run: |
+          # Kopiere alle Plugin-Dateien, inkl. "assets/", in den trunk/
+          rsync -av --delete \
+            --exclude=".git*" \
+            --exclude=".github" \
+            --exclude="node_modules" \
+            ./ svn/trunk/
+
+      - name: Commit new version to SVN trunk
+        run: |
+          cd svn/trunk
+          # Füge neue/geänderte Dateien hinzu und entferne gelöschte Dateien
+          svn add --force . --auto-props --parents --depth infinity
+          svn st | grep ^! | awk '{print $2}' | xargs -I{} svn rm {}
+          
+          cd ../..
+          # Commit des aktualisierten trunk
+          svn commit -m "Update trunk: ${{ steps.get_info.outputs.message }}" \
+            --username "${{ secrets.SVN_USERNAME }}" \
+            --password "${{ secrets.SVN_PASSWORD }}" \
+            --non-interactive --no-auth-cache
+
+      - name: Create and Commit SVN Tag
+        run: |
+          # Kopiere den trunk/ in den tags/<VERSION>/ Ordner
+          svn copy svn/trunk svn/tags/${{ steps.get_info.outputs.tag_name }}
+          
+          # Commit des neuen Tags
+          svn commit -m "Tagging version ${{ steps.get_info.outputs.tag_name }}" \
+            --username "${{ secrets.SVN_USERNAME }}" \
+            --password "${{ secrets.SVN_PASSWORD }}" \
+            --non-interactive --no-auth-cache
