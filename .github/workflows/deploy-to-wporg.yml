@@ -57,12 +57,12 @@ jobs:
             --password "${{ secrets.SVN_PASSWORD }}" \
             --non-interactive --no-auth-cache
 
-      - name: Create and commit SVN tag
-        working-directory: wordpress-svn
+      - name: Create and commit SVN tag (remote)
         run: |
-          svn copy trunk tags/${{ steps.get_info.outputs.tag_name }} \
+          svn copy \
+            "${{ secrets.SVN_REPO }}/trunk" \
+            "${{ secrets.SVN_REPO }}/tags/${{ steps.get_info.outputs.tag_name }}" \
             -m "Tagging version ${{ steps.get_info.outputs.tag_name }}" \
             --username "${{ secrets.SVN_USERNAME }}" \
             --password "${{ secrets.SVN_PASSWORD }}" \
             --non-interactive --no-auth-cache
-  
