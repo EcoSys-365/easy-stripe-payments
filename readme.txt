@@ -5,7 +5,7 @@ Tags: stripe, payments, subscription, donation, stripe checkout
 Requires at least: 5.5
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,11 +29,11 @@ https://www.youtube.com/watch?v=iPNCHNTb_CI
 8. Edit an existing Stripe subscription product and link it with a checkout button
 9. Example of a Stripe-hosted checkout page for subscription payments
 
-### Three checkout modes included:
+== Three checkout modes included: ==
 
-1. **Standard Checkout** – Accept one-time payments with customizable product name, amount, and currency.  
-2. **Campaign Checkout** – Track fundraising campaigns with a frontend progress display showing how much has already been collected.  
-3. **Stripe Subscription Button** – Let users subscribe to recurring payments (monthly/yearly) using Stripe's subscription system.
+1. **Standard Checkout** Accept one-time payments with customizable product name, amount, and currency.  
+2. **Campaign Checkout** Track fundraising campaigns with a frontend progress display showing how much has already been collected.  
+3. **Stripe Subscription Button** Let users subscribe to recurring payments (monthly/yearly) using Stripe's subscription system.
  
 Other features include:
 
@@ -49,7 +49,7 @@ Other features include:
 - Stripe metadata (e.g. campaign name, custom user data)
 - Multiple Stripe checkouts and multiple Stripe subscription payments
 
-> Note: This plugin requires a free [Stripe account](https://stripe.com). No additional fees are charged by the plugin author.
+Note: This plugin requires a free [Stripe account](https://stripe.com). No additional fees are charged by the plugin author.
 
 == Installation == 
 
@@ -129,6 +129,10 @@ No. All payment information is securely handled by Stripe.
 
 == Changelog ==
 
+= 1.0.2 =
+* Documentation update
+* No changes to plugin functionality
+
 = 1.0.1 =
 * Documentation update: improvements and clarifications in readme.txt
 * No changes to plugin functionality
@@ -140,6 +144,10 @@ No. All payment information is securely handled by Stripe.
 * Stripe Subscription Button for recurring payments
 
 == Upgrade Notice ==
+
+= 1.0.2 =
+* Updated documentation for clarity
+* Plugin functionality remains unchanged
 
 = 1.0.1 =
 * Updated documentation for clarity and additional instructions
