@@ -5,7 +5,7 @@ Tags: stripe, payments, subscription, donation, stripe checkout
 Requires at least: 5.5
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ A lightweight and flexible Stripe payment solution for WordPress. Accept one-tim
 
 == Description ==
 
-**Easy Stripe Payments** lets you integrate Stripe Checkout into your WordPress site with minimal setup. Perfect for donations, simple eCommerce needs, services, or subscriptions.
+**Easy Stripe Payments & Donations** lets you integrate Stripe Checkout into your WordPress site with minimal setup. Perfect for donations, simple eCommerce needs, services, or subscriptions.
 
 https://www.youtube.com/watch?v=iPNCHNTb_CI
 
@@ -42,7 +42,7 @@ Other features include:
 - Lightweight and privacy-conscious (no tracking or bloat)
 - Compatible with most themes and page builders
 
-**Premium features** (available via a separate service):
+Premium features (available via a separate service):
 
 - Domain-based license activation
 - Priority support
@@ -129,6 +129,9 @@ No. All payment information is securely handled by Stripe.
 
 == Changelog ==
 
+= 1.0.3 =
+* Updating readme and assets
+
 = 1.0.2 =
 * Documentation update
 * No changes to plugin functionality
@@ -144,6 +147,9 @@ No. All payment information is securely handled by Stripe.
 * Stripe Subscription Button for recurring payments
 
 == Upgrade Notice ==
+
+= 1.0.3 =
+* Updated readme and plugin assets for clarity and presentation improvements.
 
 = 1.0.2 =
 * Updated documentation for clarity
