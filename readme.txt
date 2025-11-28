@@ -3,9 +3,9 @@ Contributors: ecosys365
 Donate link: https://buymeacoffee.com/ecosys365
 Tags: stripe, payments, subscription, donation, stripe checkout
 Requires at least: 5.5
-Tested up to: 6.8
+Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.0.3
+Stable tag: 1.0.4 
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,13 +34,54 @@ https://www.youtube.com/watch?v=iPNCHNTb_CI
 1. **Standard Checkout** Accept one-time payments with customizable product name, amount, and currency.  
 2. **Campaign Checkout** Track fundraising campaigns with a frontend progress display showing how much has already been collected.  
 3. **Stripe Subscription Button** Let users subscribe to recurring payments (monthly/yearly) using Stripe's subscription system.
+
+== Supported Payment Methods & Currencies ==
+
+Easy Stripe Payments & Donations supports all payment methods offered by Stripe, as well as all currencies available through Stripe.
+You can easily enable or disable payment methods directly from your Stripe Dashboard, and they will automatically appear in the checkout on your website — no additional configuration required.
+
+**Popular Stripe Payment Methods Supported**
+
+Credit and debit cards (Visa, MasterCard, American Express, Discover, etc.)
+Apple Pay
+Google Pay
+Klarna
+PayPal via Stripe (if enabled in your Stripe account)
+SEPA Direct Debit
+Bancontact
+iDEAL
+Sofort
+EPS
+Giropay
+Przelewy24 (P24)
+Afterpay / Clearpay
+Alipay
+WeChat Pay
+
+**Common Currencies Supported**
+
+Easy Stripe Payments & Donations accepts all currencies supported by Stripe, including major global currencies such as:
+
+**USD** – United States Dollar
+**EUR** – Euro
+**GBP** – British Pound
+**AUD** – Australian Dollar
+**CAD** – Canadian Dollar
+**CHF** – Swiss Franc
+**JPY** – Japanese Yen
+**SEK** – Swedish Krona
+**NOK** – Norwegian Krone
+**DKK** – Danish Krone
+**NZD** – New Zealand Dollar
+**SGD** – Singapore Dollar
+
+Stripe automatically handles currency conversion and processing according to your account settings.
  
 Other features include:
 
-- Easy Stripe API integration (Live/Test)
 - Shortcode-based checkout button embedding
-- Lightweight and privacy-conscious (no tracking or bloat)
 - Compatible with most themes and page builders
+- Lightweight and privacy-conscious (no tracking or bloat)
 
 Premium features (available via a separate service):
 
@@ -129,6 +170,10 @@ No. All payment information is securely handled by Stripe.
 
 == Changelog ==
 
+= 1.0.4 =
+* Tested up to WordPress 6.9 to ensure full compatibility.
+* Updated and improved the readme.txt file (added supported payment methods, currencies, and general documentation enhancements).
+
 = 1.0.3 =
 * Updating readme and assets
 
@@ -147,6 +192,9 @@ No. All payment information is securely handled by Stripe.
 * Stripe Subscription Button for recurring payments
 
 == Upgrade Notice ==
+ 
+= 1.0.4 =
+* This update ensures full compatibility with WordPress 6.9 and includes important documentation improvements.
 
 = 1.0.3 =
 * Updated readme and plugin assets for clarity and presentation improvements.
