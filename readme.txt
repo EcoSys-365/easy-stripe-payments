@@ -5,7 +5,7 @@ Tags: stripe, payments, subscription, donation, stripe checkout
 Requires at least: 5.5
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.0.4 
+Stable tag: 1.0.5 
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,21 +42,21 @@ You can easily enable or disable payment methods directly from your Stripe Dashb
 
 **Popular Stripe Payment Methods Supported**
 
-Credit and debit cards (Visa, MasterCard, American Express, Discover, etc.)
-Apple Pay
-Google Pay
-Klarna
-PayPal via Stripe (if enabled in your Stripe account)
-SEPA Direct Debit
-Bancontact
-iDEAL
-Sofort
-EPS
-Giropay
-Przelewy24 (P24)
-Afterpay / Clearpay
-Alipay
-WeChat Pay
+**Credit & debit cards** (Visa, MasterCard, American Express, Discover, etc.)
+**Apple Pay**
+**Google Pay**
+**Klarna**
+**PayPal via Stripe** (if enabled in your Stripe account)
+**SEPA Direct Debit**
+**Bancontact**
+**iDEAL**
+**Sofort**
+**EPS**
+**Giropay**
+**Przelewy24 (P24)**
+**Afterpay / Clearpay**
+**Alipay**
+**WeChat Pay**
 
 **Common Currencies Supported**
 
@@ -170,6 +170,10 @@ No. All payment information is securely handled by Stripe.
 
 == Changelog ==
 
+= 1.0.5 =
+* Updated and refined the readme.txt documentation.
+* Updated plugin assets (images) for improved presentation.
+
 = 1.0.4 =
 * Tested up to WordPress 6.9 to ensure full compatibility.
 * Updated and improved the readme.txt file (added supported payment methods, currencies, and general documentation enhancements).
@@ -192,6 +196,9 @@ No. All payment information is securely handled by Stripe.
 * Stripe Subscription Button for recurring payments
 
 == Upgrade Notice ==
+
+= 1.0.5 =
+* This update includes documentation refinements and updated plugin assets. No functional changes.
  
 = 1.0.4 =
 * This update ensures full compatibility with WordPress 6.9 and includes important documentation improvements.
