@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Easy Stripe Payments
  * Description: A user-friendly WordPress plugin for accepting <strong>one-time and recurring Stripe payments</strong>. Perfect for businesses, freelancers and Non-Profit organizations. Secure, fast and fully PCI-compliant.
- * Version: 1.0.5 
+ * Version: 1.0.6 
  * Author: EcoSys365
  * Author URI: https://www.ecosys365.com
  * Plugin URI: https://www.payments-and-donations.com
@@ -125,7 +125,7 @@ function espd_preview_add_scripts() {
     
     // Enqueue CSS styles
     wp_enqueue_style('espd-bootstrap-scoped', ESPAD_PLUGIN_URL . 'assets/css/bootstrap-scoped.css', [], '1.0.1');
-    wp_enqueue_style('espd-checkout-css', ESPAD_PLUGIN_URL . 'inc/stripeCheckout/checkout.css', [], '1.0.7');
+    wp_enqueue_style('espd-checkout-css', ESPAD_PLUGIN_URL . 'inc/stripeCheckout/checkout.css', [], '1.0.8');
 
     // Register Stripe.js as an external script
     wp_register_script(
