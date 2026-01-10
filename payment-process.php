@@ -16,15 +16,15 @@ defined('ABSPATH') || exit; // Direct access is prohibited!
  * This script is a crucial part of the payment flow, providing server-side validation
  * and handling after payment submission through Stripe.
  */
-        
-// Safe, this GET param is from Stripe redirect. Token validation is in: admin/sections/preview/main-form.php
-// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Instead of nonce verification, we are using token validation because this is a redirect from Stripe
+          
+// Safe, this GET param is from Stripe redirect. Stripe Payment Intent validation is in: admin/sections/preview/main-form.php
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Instead of nonce verification, we are checking the status of each payment because this is a redirect from Stripe
 if ( isset($_GET['payment_intent']) && preg_match('/^pi_[a-zA-Z0-9]+$/', sanitize_text_field( wp_unslash($_GET['payment_intent']) )) ) {    
      
     // Load the Stripe manager class if not already loaded
     class_exists( 'ESPAD\Stripe\StripeESPADManager' ) || espad_stripe_manager_init(); 
     
-    // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Instead of nonce verification, we are using token validation because this is a redirect from Stripe
+    // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Instead of nonce verification, we are checking the status of each payment because this is a redirect from Stripe
     $payment_intent_id        = sanitize_text_field( wp_unslash($_GET['payment_intent']) );
     $espad_form_id            = sanitize_text_field( wp_unslash($_GET['espad_form_id'] ?? '' ) );
     $success_url              = sanitize_text_field( wp_unslash($_GET['success_url'] ?? '' ) );
@@ -32,7 +32,7 @@ if ( isset($_GET['payment_intent']) && preg_match('/^pi_[a-zA-Z0-9]+$/', sanitiz
     $stripe_metadata_campaign = sanitize_text_field( wp_unslash($_GET['stripe_metadata_campaign'] ?? '' ) );
     $stripe_metadata_project  = sanitize_text_field( wp_unslash($_GET['stripe_metadata_project'] ?? '' ) );
     $stripe_metadata_product  = sanitize_text_field( wp_unslash($_GET['stripe_metadata_product'] ?? '' ) );
-    // phpcs:enable WordPress.Security.NonceVerification.Recommended -- Instead of nonce verification, we are using token validation because this is a redirect from Stripe
+    // phpcs:enable WordPress.Security.NonceVerification.Recommended -- Instead of nonce verification, we are checking the status of each payment because this is a redirect from Stripe
  
     try {
         

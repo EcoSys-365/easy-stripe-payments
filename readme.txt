@@ -5,7 +5,7 @@ Tags: stripe, payments, subscription, donation, stripe checkout
 Requires at least: 5.5
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.0.6 
+Stable tag: 1.0.7 
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -170,6 +170,11 @@ No. All payment information is securely handled by Stripe.
 
 == Changelog ==
 
+= 1.0.7 =
+* Replaced session-based payment validation with secure Stripe Payment Intent verification.
+* Improved compatibility with caching plugins, CDNs, and Cloudflare setups.
+* Enhanced payment reliability by validating each transaction directly against Stripe.
+
 = 1.0.6 =
 * Fixed an issue where the payment form was displayed incorrectly on mobile devices.
 
@@ -199,6 +204,9 @@ No. All payment information is securely handled by Stripe.
 * Stripe Subscription Button for recurring payments
 
 == Upgrade Notice ==
+
+= 1.0.7 =
+* Improves payment security and reliability by replacing session-based validation with direct Stripe Payment Intent verification. 
  
 = 1.0.6 =
 * Fixes a mobile display issue with the payment form. Recommended update for users accepting payments on smartphones.

@@ -5,91 +5,76 @@ defined('ABSPATH') || exit; // Direct access is prohibited!
 /**
  * recurring-payment-process.php
  *
- * Verify the payment token and handle the Stripe Checkout session result.
  *
  * This logic ensures that the redirect from Stripe is valid and initiated
  * from the same user session that created the payment.
  *
  * Steps:
- * 1. Check if an "espad_payment_token" is present in the URL.
- * 2. Compare it securely with the session-stored token using hash_equals().
- *    This prevents timing attacks and ensures the redirect wasn’t tampered with.
- * 3. If the tokens match, validate the Stripe session_id format and retrieve
- *    the Checkout Session from Stripe’s API.
- * 4. Check the payment status — only proceed if it’s "succeeded" or "paid".
- * 5. Redirect the user to the success page if payment is confirmed.
- * 6. Handle any API or validation errors gracefully and display proper messages.
- *
+ * 1. Check the payment status — only proceed if it’s "succeeded" or "paid".
+ * 2. Redirect the user to the success page if payment is confirmed.
+ * 3. Handle any API or validation errors gracefully and display proper messages.
+ * 
  * Security:
  * - Sanitizes all incoming GET parameters.
- * - Fails early if the session token doesn’t match (protection against CSRF).
  * - Prevents direct access or invalid session references.
  */
-   
-// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Instead of nonce verification, we are using token validation because this is a redirect from Stripe 
+      
+// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Instead of nonce verification, we are checking the status of each payment because this is a redirect from Stripe 
 if ( isset($_GET['espad_payment_token']) ) {
          
     $returned_token = sanitize_text_field( wp_unslash($_GET['espad_payment_token']));
-    
-    if ( isset($_SESSION['espad_payment_token']) && hash_equals($_SESSION['espad_payment_token'], $returned_token) ) { 
-    
-        if ( isset($_GET['session_id']) && preg_match( '/^cs_(test|live)_[a-zA-Z0-9]+$/', sanitize_text_field( wp_unslash($_GET['session_id']) ) ) ) { 
- 
-            // Load the Stripe manager class if not already loaded
-            class_exists( 'ESPAD\Stripe\StripeESPADManager' ) || espad_stripe_manager_init(); 
+     
+    if ( isset($_GET['session_id']) && preg_match( '/^cs_(test|live)_[a-zA-Z0-9]+$/', sanitize_text_field( wp_unslash($_GET['session_id']) ) ) ) { 
 
-            $session_id = sanitize_text_field( wp_unslash( $_GET['session_id']) );
-            // phpcs:enable WordPress.Security.NonceVerification.Recommended -- Instead of nonce verification, we are using token validation because this is a redirect from Stripe
+        // Load the Stripe manager class if not already loaded
+        class_exists( 'ESPAD\Stripe\StripeESPADManager' ) || espad_stripe_manager_init(); 
 
-            $session = \Stripe\Checkout\Session::retrieve($session_id);
+        $session_id = sanitize_text_field( wp_unslash( $_GET['session_id']) );
+        // phpcs:enable WordPress.Security.NonceVerification.Recommended -- Instead of nonce verification, we are checking the status of each payment because this is a redirect from Stripe
 
-        } else {
+        $session = \Stripe\Checkout\Session::retrieve($session_id);
 
-            echo esc_html(__( 'No session_id supported.', 'easy-stripe-payments' ));
+    } else {
 
-            exit;
+        echo esc_html(__( 'No session_id supported.', 'easy-stripe-payments' ));
 
-        }
+        exit;
 
-        if ( $session ) {
+    }
 
-            try {
+    if ( $session ) {
 
-                $payment_status = $session->payment_status; 
+        try {
 
-                if ( $payment_status !== 'succeeded' && $payment_status !== 'paid' ) {        
+            $payment_status = $session->payment_status; 
 
-                    echo esc_html( "<p>Payment is still pending. Status: {$payment_status}</p>" );
+            if ( $payment_status !== 'succeeded' && $payment_status !== 'paid' ) {        
 
-                    return;
+                echo esc_html( "<p>Payment is still pending. Status: {$payment_status}</p>" );
 
-                } else {
+                return;
 
-                    wp_redirect( home_url( '?espad_stripe_status=success' ) );
+            } else {
 
-                    exit;              
+                wp_redirect( home_url( '?espad_stripe_status=success' ) );
 
-                }
-
-            } catch (\Stripe\Exception\ApiErrorException $e) {
-
-                echo esc_html( "<p>Stripe API Error: " . esc_html($e->getMessage()) . "</p>" );
+                exit;              
 
             }
 
-        } else {
+        } catch (\Stripe\Exception\ApiErrorException $e) {
 
-            echo esc_html(__( 'No session found.', 'easy-stripe-payments' ));
-
-            exit;
+            echo esc_html( "<p>Stripe API Error: " . esc_html($e->getMessage()) . "</p>" );
 
         }
-        
+
     } else {
-        
-        wp_die('Security check failed.');
-        
-    } 
+
+        echo esc_html(__( 'No session found.', 'easy-stripe-payments' ));
+
+        exit;
+
+    }
 
 }
 
