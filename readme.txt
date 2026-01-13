@@ -5,7 +5,7 @@ Tags: stripe, payments, subscription, donation, stripe checkout
 Requires at least: 5.5
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.0.7 
+Stable tag: 1.0.8 
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -54,9 +54,20 @@ You can easily enable or disable payment methods directly from your Stripe Dashb
 **EPS**
 **Giropay**
 **Przelewy24 (P24)**
+**BLIK**
 **Afterpay / Clearpay**
 **Alipay**
 **WeChat Pay**
+**Revolut Pay**
+**OXXO**
+**Pix**
+**Amazon Pay**
+**Affirm**
+**Zip**
+**Link by Stripe**
+**MobilePay**
+**Vipps Payments**
+**Satispay**
 
 **Common Currencies Supported**
 
@@ -74,6 +85,12 @@ Easy Stripe Payments & Donations accepts all currencies supported by Stripe, inc
 **DKK** – Danish Krone
 **NZD** – New Zealand Dollar
 **SGD** – Singapore Dollar
+**AED** - United Arab Emirates Dirham
+**BRL** - Brazilian Real
+**MXN** - Mexican Peso
+**RON** - Romanian Leu 
+**RUB** - Russian Ruble
+**TRY** - Turkish Lira
 
 Stripe automatically handles currency conversion and processing according to your account settings.
  
@@ -170,6 +187,11 @@ No. All payment information is securely handled by Stripe.
 
 == Changelog ==
 
+= 1.0.8 =
+* Updated readme.txt to include more supported payment methods and currencies.
+* Updated plugin assets by replacing images in the assets folder.
+* No changes to plugin functionality.
+
 = 1.0.7 =
 * Replaced session-based payment validation with secure Stripe Payment Intent verification.
 * Improved compatibility with caching plugins, CDNs, and Cloudflare setups.
@@ -204,6 +226,9 @@ No. All payment information is securely handled by Stripe.
 * Stripe Subscription Button for recurring payments
 
 == Upgrade Notice ==
+
+= 1.0.8 =
+* This update adds more supported payment methods and currencies to the documentation and refreshes plugin images. No functional changes.
 
 = 1.0.7 =
 * Improves payment security and reliability by replacing session-based validation with direct Stripe Payment Intent verification. 

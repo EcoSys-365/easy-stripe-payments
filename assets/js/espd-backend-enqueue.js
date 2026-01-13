@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
                       innerHTML: `
                         <div class="swal-title" style="font-size: 24px;padding-top: 0px;">Don\'t miss this opportunity - We\'re currently offering <b class='green'>a 20% discount!</b></div>
     
-                        <img src="${espadPluginUrl}assets/images/lost_men.jpg?v=2" alt="Lost Men" class="espad_lightbox" width="260">
+                        <img src="${espadPluginUrl}assets/images/powered_by_stripe_icon_xl.jpg?v=3" alt="Powered by Stripe" class="espad_lightbox" width="260">
 
                         As a Premium &#x1F48E; Member, you\'ll get <b>Priority Support</b> and access to <b class="blue">Multiple Stripe Checkouts</b>, <b>Multiple Subscription Payments</b> &amp; <b class="blue">Stripe Metadata</b>.<br /><br />Membership is quick &amp; easy — register your website for a full year in minutes.
                     `
@@ -319,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function () {
                       innerHTML: `
                         <div class="swal-title" style="font-size: 24px;padding-top: 0px;">Don\'t miss this opportunity - We\'re currently offering <b class='green'>a 20% discount!</b></div>
 
-                        <img src="${espadPluginUrl}assets/images/lost_men.jpg?v=2" alt="Lost Men" class="espad_lightbox" width="260">
+                        <img src="${espadPluginUrl}assets/images/powered_by_stripe_icon_xl.jpg?v=3" alt="Powered by Stripe" class="espad_lightbox" width="260">
 
                         As a Premium &#x1F48E; Member, you\'ll get <b>Priority Support</b> and access to <b class="blue">Multiple Stripe Checkouts</b>, <b>Multiple Subscription Payments</b> &amp; <b class="blue">Stripe Metadata</b>.<br /><br />Membership is quick &amp; easy — register your website for a full year in minutes.
                     `

@@ -29,11 +29,11 @@
             </a>
 
         </div>
-
+ 
         <div style="flex-shrink: 0;">
             <?php 
                 echo wp_kses(
-                    espad_plugin_image('assets/images/confused_men.png?v=6', 'No Connection', ['class' => 'no-connection', 'width' => 260]),
+                    espad_plugin_image('assets/images/powered_by_stripe.png?v=7', 'No Connection', ['class' => 'no-connection', 'width' => 260]),
                     ESPAD_ALLOWED_IMG_TAGS
                 );                
             ?>            
