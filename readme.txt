@@ -5,11 +5,11 @@ Tags: stripe, payments, subscription, donation, stripe checkout
 Requires at least: 5.5
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.0.8 
+Stable tag: 1.0.9 
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-A lightweight and flexible Stripe payment solution for WordPress. Accept one-time or recurring payments with a customizable Stripe Checkout interface.
+A light Stripe payment solution that automatically supports all current and future payment methods and currencies for one-time and recurring payments.
 
 == Description ==
 
@@ -117,6 +117,21 @@ Note: This plugin requires a free [Stripe account](https://stripe.com). No addit
 4. Enter your Stripe API keys (Live or Test).
 5. Create payment forms for one-time payments, campaigns, or subscriptions using the intuitive form builder.
 6. Use shortcodes to place payment buttons or forms wherever needed on your site.
+
+== Standalone Stripe Payment Solution — No WooCommerce Required ==
+
+Easy Stripe Payments & Donations works completely standalone and does not require WooCommerce or any other eCommerce framework.  
+The plugin is designed for simple, fast, and reliable Stripe payments in WordPress without the overhead of a full shop system.
+
+Benefits of a standalone payment plugin include:
+
+- Lightweight and fast performance without unnecessary dependencies  
+- Simple setup with no products, carts, or checkout pages required  
+- Lower maintenance and fewer compatibility issues  
+- Better performance for landing pages, donations, and service payments  
+- Full focus on Stripe payments without eCommerce complexity  
+
+This makes Easy Stripe Payments & Donations ideal for websites that need Stripe payments without running a full online store.
   
 == External services ==
    
@@ -185,7 +200,15 @@ No. All code in this plugin is fully usable. Premium features are provided via a
 = Does this plugin store credit card data? =  
 No. All payment information is securely handled by Stripe.
 
+= Which currencies are supported? =
+The plugin supports all currencies supported by your Stripe account. Please note that your connected bank account must also be compatible with the currency. These are the supported currencies: USD, EUR, GBP, CNY, HKD, JPY, CHF, CAD, AUD, SGD, AED, AFN, ALL, AMD, ANG, AOA, ARS, AWG, AZN, BAM, BBD, BDT, BGN, BHD, BIF, BMD, BND, BOB, BRL, BSD, BTN, BWP, BYN, BZD, CDF, CLP, COP, CRC, CUP, CVE, CZK, DJF, DKK, DOP, DZD, EGP, ERN, ETB, FJD, FKP, GEL, GHS, GIP, GMD, GNF, GTQ, GYD, HNL, HRK, HTG, HUF, IDR, ILS, INR, IQD, IRR, ISK, JMD, KES, KGS, KHR, KMF, KRW, KWD, KYD, KZT, LAK, LBP, LKR, LRD, LSL, LTL, LVL, LYD, MAD, MDL, MGA, MKD, MMK, MNT, MOP, MRU, MUR, MVR, MWK, MXN, MYR, MZN, NAD, NGN, NIO, NOK, NPR, NZD, OMR, PAB, PEN, PGK, PHP, PKR, PLN, PYG, QAR, RON, RSD, RUB, RWF, SAR, SBD, SCR, SDG, SEK, SHP, SLL, SOS, SRD, SSP, STN, SYP, SZL, THB, TJS, TMT, TND, TOP, TRY, TTD, TWD, TZS, UAH, UGX, UYU, UZS, VEF, VND, VUV, WST, XAF, XCD, XOF, YER, ZAR
+
 == Changelog ==
+
+= 1.0.9 =
+* Improved the admin preview page by allowing users to copy the shortcode of the selected payment form directly.
+* Updated and refined the readme.txt documentation.
+* No changes to payment processing or plugin core functionality.
 
 = 1.0.8 =
 * Updated readme.txt to include more supported payment methods and currencies.
@@ -226,6 +249,9 @@ No. All payment information is securely handled by Stripe.
 * Stripe Subscription Button for recurring payments
 
 == Upgrade Notice ==
+
+= 1.0.9 =
+* Improves usability in the admin preview page by adding a direct shortcode copy option and includes documentation updates. No changes to payment functionality.
 
 = 1.0.8 =
 * This update adds more supported payment methods and currencies to the documentation and refreshes plugin images. No functional changes.

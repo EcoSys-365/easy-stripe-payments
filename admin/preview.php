@@ -22,6 +22,16 @@
         <?php endif; ?>
     </select>
     
+    <?php if ( $selected_form_id != '' ) : ?>
+      
+        <code id="shortcode-payment-form">[espad_payment_form id="<?php echo $selected_form_id; ?>"]</code>
+    
+        <button class="button copy-button" data-target="shortcode-payment-form" style="all: unset; cursor: pointer;">
+            <?php echo esc_html(__( 'Copy Shortcode', 'easy-stripe-payments' )); ?>
+        </button>
+       
+    <?php endif; ?>
+     
     <h2 class="desktop"><?php echo esc_html(__( 'Preview Desktop', 'easy-stripe-payments' )); ?>   
         
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#333" viewBox="0 0 24 24">
