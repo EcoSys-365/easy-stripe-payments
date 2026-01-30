@@ -5,7 +5,7 @@ Tags: stripe, payments, subscription, donation, stripe checkout
 Requires at least: 5.5
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.0.9 
+Stable tag: 1.1.0 
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -203,7 +203,15 @@ No. All payment information is securely handled by Stripe.
 = Which currencies are supported? =
 The plugin supports all currencies supported by your Stripe account. Please note that your connected bank account must also be compatible with the currency. These are the supported currencies: USD, EUR, GBP, CNY, HKD, JPY, CHF, CAD, AUD, SGD, AED, AFN, ALL, AMD, ANG, AOA, ARS, AWG, AZN, BAM, BBD, BDT, BGN, BHD, BIF, BMD, BND, BOB, BRL, BSD, BTN, BWP, BYN, BZD, CDF, CLP, COP, CRC, CUP, CVE, CZK, DJF, DKK, DOP, DZD, EGP, ERN, ETB, FJD, FKP, GEL, GHS, GIP, GMD, GNF, GTQ, GYD, HNL, HRK, HTG, HUF, IDR, ILS, INR, IQD, IRR, ISK, JMD, KES, KGS, KHR, KMF, KRW, KWD, KYD, KZT, LAK, LBP, LKR, LRD, LSL, LTL, LVL, LYD, MAD, MDL, MGA, MKD, MMK, MNT, MOP, MRU, MUR, MVR, MWK, MXN, MYR, MZN, NAD, NGN, NIO, NOK, NPR, NZD, OMR, PAB, PEN, PGK, PHP, PKR, PLN, PYG, QAR, RON, RSD, RUB, RWF, SAR, SBD, SCR, SDG, SEK, SHP, SLL, SOS, SRD, SSP, STN, SYP, SZL, THB, TJS, TMT, TND, TOP, TRY, TTD, TWD, TZS, UAH, UGX, UYU, UZS, VEF, VND, VUV, WST, XAF, XCD, XOF, YER, ZAR
 
+= Which payment methods does this plugin support? =
+This plugin supports all payment methods that Stripe currently provides. The following payment methods are supported:
+ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, Amazon Pay, American Express, Apple Pay, Bacs Direct Debit, Bancontact, Bank Transfers, BECS Direct Debit, Billie, BLIK, Boleto, Canadian Pre-authorized Debits (PADs), Capchase Pay, Cartes Bancaires, Cash App Pay, Cash-based Vouchers, China UnionPay, Click to Pay, Diners Club, Discover, EPS, FPX, Giropay, Google Pay, GrabPay, iDEAL, Interac, Japan Bank Transfer (Furikomi), JCB, Kakao Pay, Klarna, Konbini, Kriya, Link, Maestro, Mastercard, MB WAY, Mexico Bank Transfer (SPEI), MobilePay, Mondu, Multibanco, Naver Pay, OXXO, P24 (Przelewy24), Pay by Bank, PayCo, PayNow, PayPal, PayTo, Pix, PromptPay, Revolut Pay, Samsung Pay, Satispay, Scalapay, SEPA Direct Debit, SEPA Bank Transfer, SeQura, Sofort, South Korean Cards, Stablecoins (USDC/USDT), Sunbit, Swish, TWINT, UK Bank Transfer, USD Bank Transfer, Visa, WeChat Pay, Zip.
+
 == Changelog ==
+
+= 1.1.0 =
+* Expanded the FAQ section to clearly document which Stripe payment methods are supported.
+* Improved readme.txt clarity and structure.
 
 = 1.0.9 =
 * Improved the admin preview page by allowing users to copy the shortcode of the selected payment form directly.
@@ -249,6 +257,9 @@ The plugin supports all currencies supported by your Stripe account. Please note
 * Stripe Subscription Button for recurring payments
 
 == Upgrade Notice ==
+ 
+= 1.1.0 =
+* Documentation update: Clarified supported Stripe payment methods.
 
 = 1.0.9 =
 * Improves usability in the admin preview page by adding a direct shortcode copy option and includes documentation updates. No changes to payment functionality.
