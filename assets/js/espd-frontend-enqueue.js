@@ -331,6 +331,86 @@ document.addEventListener('DOMContentLoaded', function () {
         }).then((value) => {
             // your further logic here
         });
-    }     
+    }
+    
+   /**
+     * Dynamically generates and applies custom CSS styles for the Frontend payment form.
+     *
+     * This script:
+     * 1. Finds the payment form element (#payment-form).
+     * 2. Retrieves dynamic values from hidden input fields:
+     *    - "color": defines the accent color used throughout the form.
+     *    - "espad_amount_type": determines how the amount input should be displayed.
+     * 3. Builds a CSS string that adapts the UI styling (buttons, inputs, progress bars, etc.)
+     *    based on the color and amount type.
+     * 4. Injects the generated CSS into the document.
+     *
+     */    
+    const paymentForm = document.getElementById('payment-form');
+
+    if ( paymentForm ) {
+
+        const colorInput = paymentForm.querySelector('input[name="color"]');
+        const amountTypeInput = paymentForm.querySelector('input[name="espad_amount_type"]');
+
+        const espadColor = colorInput ? colorInput.value : '#0D8889';
+        const amountType = amountTypeInput ? amountTypeInput.value : 'fix_amount';
+  
+        // Dynamic CSS creation
+        let customCSS = `
+            #espad_page .btn-check:checked + .btn,
+            #espad_page :not(.btn-check) + .btn:active,
+            #espad_page .btn:first-child:active,
+            #espad_page .btn.active,
+            #espad_page .btn.show,
+            #espad_page #prices_box label.btn:hover,
+            #espad_page .progress-bar-fill {
+                background-color: ${espadColor} !important;
+                color: #fff !important; 
+            }
+            #espad_page .btn-outline-primary,
+            #espad_page .progress-label strong {
+                color: ${espadColor} !important;
+            }
+            #espad_page input.form-control:focus {
+                border: 2px solid ${espadColor} !important;
+                outline: none !important;
+                box-shadow: none !important;
+            }
+            #espad_page #amountInput:focus {
+                outline: 2px solid ${espadColor} !important;
+                outline-offset: 0;
+                box-shadow: none !important;
+            }
+        `;
+
+        // Amount-type rules
+        if (amountType !== 'fix_amount') {
+            if (amountType === 'variable_amount') {
+                customCSS += `
+                    input.btn-check,
+                    label.btn-outline-primary {
+                        display: none !important;
+                    }
+
+                    #amountInput {
+                        padding: 13px;
+                        border-left: 1px solid #ccc;
+                    }
+                `;
+            } else if (amountType === 'select_amount') {
+                customCSS += `
+                    #amountInput {
+                        display: none;
+                    }
+                `;
+            }
+        }
+
+        // Create Style-Tag and attach
+        const style = document.createElement('style');
+        style.textContent = customCSS;
+        document.head.appendChild(style);
+    }    
     
 });

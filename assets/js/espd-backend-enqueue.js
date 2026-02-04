@@ -415,7 +415,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const colorInput = paymentForm.querySelector('input[name="color"]');
         const amountTypeInput = paymentForm.querySelector('input[name="espad_amount_type"]');
 
-        const color = colorInput ? colorInput.value : '#0D8889';
+        const espadColor = colorInput ? colorInput.value : '#0D8889';
         const amountType = amountTypeInput ? amountTypeInput.value : 'fix_amount';
  
         // Dynamic CSS creation
@@ -427,20 +427,20 @@ document.addEventListener('DOMContentLoaded', function () {
             #espad_page .btn.show,
             #espad_page #prices_box label.btn:hover,
             #espad_page .progress-bar-fill {
-                background-color: ${color} !important;
-                color: #fff !important;
+                background-color: ${espadColor} !important;
+                color: #fff !important; 
             }
             #espad_page .btn-outline-primary,
             #espad_page .progress-label strong {
-                color: ${color} !important;
+                color: ${espadColor} !important;
             }
             #espad_page input.form-control:focus {
-                border: 2px solid ${color} !important;
+                border: 2px solid ${espadColor} !important;
                 outline: none !important;
                 box-shadow: none !important;
             }
             #espad_page #amountInput:focus {
-                outline: 2px solid ${color} !important;
+                outline: 2px solid ${espadColor} !important;
                 outline-offset: 0;
                 box-shadow: none !important;
             }

@@ -13,30 +13,36 @@ jQuery(document).ready(function($) {
         responsive: true,
         order: [[9, 'desc']] // 0 = first column, 'desc' = sorted descending 
     }); 
+    
+    const exportCsvFile = document.getElementById('export-csv');
+      
+    if ( exportCsvFile ) {      
  
-    document.getElementById("export-csv").addEventListener("click", function () {
+        document.getElementById("export-csv").addEventListener("click", function () {
 
-        const table = document.getElementById("espad-table-stripe-payments");
-        let csv = [];
+            const table = document.getElementById("espad-table-stripe-payments");
+            let csv = [];
 
-        for (let row of table.rows) {
-        let rowData = [];
-        for (let cell of row.cells) {
-          let text = cell.innerText.replace(/"/g, '""');
-          rowData.push(`"${text}"`);
-        }
-        csv.push(rowData.join(","));
-        }
+            for (let row of table.rows) {
+            let rowData = [];
+            for (let cell of row.cells) {
+              let text = cell.innerText.replace(/"/g, '""');
+              rowData.push(`"${text}"`);
+            }
+            csv.push(rowData.join(","));
+            }
 
-        const csvString = csv.join("\n");
-        const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
-        const link = document.createElement("a");
-        link.setAttribute("href", URL.createObjectURL(blob));
-        link.setAttribute("download", "stripe_payments.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+            const csvString = csv.join("\n");
+            const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+            const link = document.createElement("a");
+            link.setAttribute("href", URL.createObjectURL(blob));
+            link.setAttribute("download", "stripe_payments.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
 
-    });
+        });
+        
+    }
        
 });

@@ -74,12 +74,16 @@ shortcode_payment_form .campaign-image-box img {
 #espad_page strong {
     font-weight: 800 !important;
 }
+#espad_page #prices_box input.btn-check {
+    box-shadow: none !important; 
+}
 #espad_page #prices_box label.btn {
-    padding: 13px;
+    padding: 13px !important;
     border: 1px solid #e1e1e1;
     border-radius: 7px;
     margin-right: 5px;
     margin-bottom: 10px;
+    box-shadow: none !important;
 }
 #amountInput {
     width: 140px;
@@ -98,6 +102,9 @@ shortcode_payment_form .campaign-image-box img {
     border-radius: 5px;
     height: 58px !important;
 }
+#espad_page input.form-control::placeholder {
+    color: #333 !important;
+} 
 #espad_page .f-14 {
     font-size: 14px;
 }
@@ -117,6 +124,7 @@ shortcode_payment_form .campaign-image-box img {
 #espad_page #amountInput:-ms-input-placeholder,
 #espad_page #amountInput::placeholder { 
     font-weight: 400 !important;
+    color: #333 !important;   
 }
 /* Powered by EcoSys365 */
 .powered_by_ecosys365 {
@@ -169,6 +177,9 @@ shortcode_payment_form .campaign-image-box img {
         font-size: 16px;
         padding: 13px;
     }
+    #espad_page #amountInput::placeholder {  
+        color: #333 !important;  
+    }     
     .prev-mode-Standard #amountInput {
         height: 52px;        
     }     
@@ -199,6 +210,9 @@ shortcode_payment_form .campaign-image-box img {
         font-size: 18px;
         padding: 13px;
     }
+    #espad_page #amountInput::placeholder {  
+        color: #333 !important;  
+    }     
     .prev-mode-Standard #amountInput {
         height: 52px;        
     }    
@@ -234,6 +248,9 @@ shortcode_payment_form .campaign-image-box img {
         font-size: 20px;
         padding: 13px;
     }
+    #espad_page #amountInput::placeholder {  
+        color: #333 !important;  
+    }    
     .prev-mode-Campaign #amountInput {
         margin-top: 4px;
     }   

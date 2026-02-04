@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Easy Stripe Payments
  * Description: A user-friendly WordPress plugin for accepting <strong>one-time and recurring Stripe payments</strong>. Perfect for businesses, freelancers and Non-Profit organizations. Secure, fast and fully PCI-compliant.
- * Version: 1.1.0 
+ * Version: 1.1.1 
  * Author: EcoSys365
  * Author URI: https://www.ecosys365.com
  * Plugin URI: https://www.payments-and-donations.com
@@ -163,9 +163,9 @@ function espd_add_payment_shortcode_scripts() {
         'espd-frontend-payment-style',
         ESPAD_PLUGIN_URL . 'assets/css/frontend-payment-form.css',
         array(),
-        '1.0.91'
+        '1.1.994'  
     );
-   
+     
     // Enqueue built-in jQuery
     wp_enqueue_script('jquery');
 
@@ -189,15 +189,6 @@ function espd_add_payment_shortcode_scripts() {
  * @return void
  */
 function espd_payments_add_scripts() {
-    
-    // Enqueue the DataTables JavaScript library, dependent on jQuery.
-    wp_enqueue_script(
-        'datatables-js',
-        ESPAD_PLUGIN_URL . 'assets/js/jquery.dataTables.min.js',
-        array('jquery'),
-        '1.13.11',
-        true
-    );    
       
     // Enqueue the DataTables CSS 
     wp_enqueue_style(
@@ -247,21 +238,6 @@ add_action('admin_init', function() {
     if ( isset($_GET['page'], $_GET['tab']) && $_GET['page'] === 'espd_main' && $_GET['tab'] === 'preview' ) { 
         add_action('admin_head', 'espd_preview_add_scripts', 99);
         add_action('admin_head', 'espd_add_payment_shortcode_scripts', 99);
-    }
-
-    // Load charting script for the "Welcome" tab.
-    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- GET parameters used for admin UI tabs only, no sensitive action performed.
-    if ( isset($_GET['page'], $_GET['tab']) && $_GET['page'] === 'espd_main' && $_GET['tab'] === 'welcome' ) { 
-        
-        // Register and load Chart.js
-        wp_enqueue_script(
-            'espd-chartjs',
-            ESPAD_PLUGIN_URL . 'assets/js/chart.js',
-            array(),
-            '1.0.0', // Version 
-            false
-        );
-        
     }
   
     // Load DataTables for the "Payments" tab.
@@ -656,7 +632,7 @@ function espd_register_scripts() {
         'espd-frontend-enqueue',
         ESPAD_PLUGIN_URL . 'assets/js/espd-frontend-enqueue.js',
         array('sweetalert'), // SweetAlert dependency
-        '1.0.21', 
+        '1.0.23',  
         true // Load script in footer
     );      
               
@@ -682,25 +658,45 @@ add_action('admin_enqueue_scripts', function($hook) {
             'espd-backend-enqueue',
             ESPAD_PLUGIN_URL . 'assets/js/espd-backend-enqueue.js',
             array('sweetalert'), // Dependencies
-            '1.0.60',               
+            '1.0.63',                
             true // Load script in footer
         );         
-   
+        
+        // DataTables register/enqueue first
+        wp_enqueue_script(
+            'datatables-js',
+            ESPAD_PLUGIN_URL . 'assets/js/jquery.dataTables.min.js',
+            array('jquery'),
+            '1.13.11',
+            true
+        );
+
+        // Script with Dependency
         wp_enqueue_script(
             'espd-backend-jquery-enqueue',
             ESPAD_PLUGIN_URL . 'assets/js/espd-backend-jquery-enqueue.js',
-            array('datatables-js'), // Dependencies 
-            '1.0.7',                 
+            array('datatables-js'),
+            '1.0.9',
             true // Load script in footer
-        );         
-      
+        );        
+         
+        // ChartJS BASIS-SCRIPT
+        wp_enqueue_script(
+            'espd-chartjs',
+            ESPAD_PLUGIN_URL . 'assets/js/chart.js',
+            array(),
+            '4.4.1',
+            true
+        );
+
+        // Backend Chart on Welcome page with Dependency
         wp_enqueue_script(
             'espd-backend-chart',
             ESPAD_PLUGIN_URL . 'assets/js/espd-backend-chart.js',
             array('espd-chartjs'), // Dependencies 
-            '1.0.5',                 
+            '1.0.6',
             true // Load script in footer
-        );       
+        );        
 
         // Enqueue ESPAD admin CSS
         wp_enqueue_style(
