@@ -24,7 +24,7 @@
     
     <?php if ( $selected_form_id != '' ) : ?>
       
-        <code id="shortcode-payment-form">[espad_payment_form id="<?php echo $selected_form_id; ?>"]</code>
+        <code id="shortcode-payment-form">[espad_payment_form id="<?php echo esc_html( $selected_form_id ); ?>"]</code>
     
         <button class="button copy-button" data-target="shortcode-payment-form" style="all: unset; cursor: pointer;">
             <?php echo esc_html(__( 'Copy Shortcode', 'easy-stripe-payments' )); ?>

@@ -5,7 +5,7 @@ Tags: stripe, payments, subscription, donation, stripe checkout
 Requires at least: 5.5
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.1.1 
+Stable tag: 1.2.0 
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -209,6 +209,9 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 
 == Changelog ==
 
+= 1.2.0 =
+* Secured output in the backend by escaping the selected form ID using `esc_html()` to prevent potential XSS vulnerabilities and satisfy WordPress coding standards.
+
 = 1.1.1 =
 * Fixed an issue where input field colors and the donation progress bar color were not displayed correctly in the checkout form.
 * Resolved a JavaScript error in the WordPress dashboard by safely checking for the export CSV button before accessing it.
@@ -263,6 +266,9 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 * Stripe Subscription Button for recurring payments
 
 == Upgrade Notice ==
+
+= 1.2.0 =
+* Security improvement: The backend now safely escapes the selected form ID using `esc_html()`. This fixes a warning from the WordPress Plugin Checker and prevents potential XSS issues.
 
 = 1.1.1 =
 * Bugfix release: Fixes admin JavaScript errors, resolves WordPress 6.9.1 script dependency notices, and corrects styling issues in the checkout form.
