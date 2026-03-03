@@ -13,6 +13,6 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.3",
-        "stripe/stripe-php": "^18.0"
+        "stripe/stripe-php": "^19.0"
     }
 }   

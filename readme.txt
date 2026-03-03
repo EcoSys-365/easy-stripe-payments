@@ -5,7 +5,7 @@ Tags: stripe, payments, subscription, donation, stripe checkout
 Requires at least: 5.5
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.2.0 
+Stable tag: 1.2.1 
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -209,6 +209,9 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 
 == Changelog ==
 
+= 1.2.1 =
+* Updated the Stripe PHP library to version 19.4 to ensure compatibility with the latest Stripe API features, improvements, and security updates.
+
 = 1.2.0 =
 * Secured output in the backend by escaping the selected form ID using `esc_html()` to prevent potential XSS vulnerabilities and satisfy WordPress coding standards.
 
@@ -266,6 +269,9 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 * Stripe Subscription Button for recurring payments
 
 == Upgrade Notice ==
+
+= 1.2.1 =
+* Stripe library update: The plugin now uses Stripe PHP 19.4. This update includes the latest improvements, bug fixes, and security enhancements from Stripe. We recommend updating to ensure continued compatibility and stability.
 
 = 1.2.0 =
 * Security improvement: The backend now safely escapes the selected form ID using `esc_html()`. This fixes a warning from the WordPress Plugin Checker and prevents potential XSS issues.

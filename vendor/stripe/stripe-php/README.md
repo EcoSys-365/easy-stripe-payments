@@ -15,7 +15,7 @@ API.
 
 PHP 5.6.0 and later.
 
-Note that per our [language version support policy](https://docs.stripe.com/sdks/versioning?server=php#stripe-sdk-language-version-support-policy), support for PHP 5.6, 7.0, and 7.1 will be removed in the March 2026 major version.
+Note that per our [language version support policy](https://docs.stripe.com/sdks/versioning?lang=php#stripe-sdk-language-version-support-policy), support for PHP 5.6, 7.0, and 7.1 will be removed in the March 2026 major version.
 
 Additional PHP versions will be dropped in future major versions, so upgrade to supported versions if possible.
 
@@ -203,6 +203,12 @@ You can disable this behavior if you prefer:
 \Stripe\Stripe::setEnableTelemetry(false);
 ```
 
+### How to use undocumented parameters and properties
+
+In some cases, you might encounter parameters on an API request or fields on an API response that aren’t available in the SDKs.
+This might happen when they’re undocumented or when they’re in preview and you aren’t using a preview SDK. 
+See [undocumented params and properties](https://docs.stripe.com/sdks/server-side?lang=php#undocumented-params-and-fields) to send those parameters or access those fields.
+
 ### Public Preview SDKs
 
 Stripe has features in the [public preview phase](https://docs.stripe.com/release-phases) that can be accessed via versions of this package that have the `-beta.X` suffix like `12.2.0-beta.2`.
@@ -228,6 +234,8 @@ Stripe::addBetaVersion("feature_beta", "v3");
 Stripe has features in the [private preview phase](https://docs.stripe.com/release-phases) that can be accessed via versions of this package that have the `-alpha.X` suffix like `12.2.0-alpha.2`. These are invite-only features. Once invited, you can install the private preview SDKs by following the same instructions as for the [public preview SDKs](https://github.com/stripe/stripe-php?tab=readme-ov-file#public-preview-sdks) above and replacing the term `beta` with `alpha`.
 
 ### Custom requests
+
+> This feature is only available from version 16 of this SDK.
 
 If you would like to send a request to an undocumented API (for example you are in a private beta), or if you prefer to bypass the method definitions in the library and specify your request details directly, you can use the `rawRequest` method on the StripeClient.
 
