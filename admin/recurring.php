@@ -16,9 +16,12 @@ if ( isset($_GET['membership_is_false']) && $_GET['membership_is_false'] === 'tr
 
 endif; 
 
-if ( defined('ESPAD_STRIPE_ACCESS') && ESPAD_STRIPE_ACCESS ) {
-
-    $active_payment_methods = active_stripe_payment_methods(true); 
+if (
+    ( defined('ESPAD_STRIPE_ACCESS') && true === ESPAD_STRIPE_ACCESS ) ||
+    ( defined('ESPAD_STRIPE_CONNECTED_ACCOUNT_ACCESS') && true === ESPAD_STRIPE_CONNECTED_ACCOUNT_ACCESS )
+) {
+     
+    $active_payment_methods = active_stripe_payment_methods(true);
 
 } else {
 
@@ -26,7 +29,7 @@ if ( defined('ESPAD_STRIPE_ACCESS') && ESPAD_STRIPE_ACCESS ) {
 
     <div class="notice notice-info is-dismissible">
         <p>
-            <?php echo esc_html(__( 'Please enter your Stripe Public Key and Stripe Secret Key', 'easy-stripe-payments' )); ?>
+            <?php echo esc_html(__( 'Please connect your Stripe account to start accepting payments.', 'easy-stripe-payments' )); ?>
             <a href="<?php echo esc_url( admin_url('admin.php?page=espd_main&tab=settings') ); ?>">
                 <?php echo esc_html(__( 'Settings', 'easy-stripe-payments' )); ?>
             </a> 
@@ -56,9 +59,12 @@ $prefix = 'espd_subscription_btn_id_';
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 $db_count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s", $prefix . '%' ) );
  
+if (
+    ( defined('ESPAD_STRIPE_ACCESS') && true === ESPAD_STRIPE_ACCESS ) ||
+    ( defined('ESPAD_STRIPE_CONNECTED_ACCOUNT_ACCESS') && true === ESPAD_STRIPE_CONNECTED_ACCOUNT_ACCESS )
+) :
+
 ?>
- 
-<?php if ( defined('ESPAD_STRIPE_ACCESS') && ESPAD_STRIPE_ACCESS ) : ?>
 
     <h2>
         <?php echo esc_html(__( 'Stripe Recurring Payments', 'easy-stripe-payments' )); ?> &#128260;
@@ -77,7 +83,20 @@ $db_count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->option
 
 <?php endif; ?>
 
-<?php if ( !( defined('ESPAD_STRIPE_ACCESS') && ESPAD_STRIPE_ACCESS ) ) espad_plugin_is_not_connected_to_stripe(); ?>
+<?php
+
+if (
+    !(
+        ( defined('ESPAD_STRIPE_ACCESS') && ESPAD_STRIPE_ACCESS ) ||
+        ( defined('ESPAD_STRIPE_CONNECTED_ACCOUNT_ACCESS') && ESPAD_STRIPE_CONNECTED_ACCOUNT_ACCESS )
+    )
+) {
+    
+    espad_plugin_is_not_connected_to_stripe();
+
+}
+
+?>
 
 <div id="espd-form-recurring-modal" class="recurring_form_modal_box" style="display:none;">
 
@@ -248,12 +267,13 @@ if (
     }
     
 }
-
+ 
+if (
+    ( defined('ESPAD_STRIPE_ACCESS') && true === ESPAD_STRIPE_ACCESS ) ||
+    ( defined('ESPAD_STRIPE_CONNECTED_ACCOUNT_ACCESS') && true === ESPAD_STRIPE_CONNECTED_ACCOUNT_ACCESS )
+) {
+    
 ?>
-
-<?php 
-
-if ( defined('ESPAD_STRIPE_ACCESS') && ESPAD_STRIPE_ACCESS ) { ?>
 
     <?php if ( $db_count >= 1 && $membership_status != "1" ) { ?>
 

@@ -5,7 +5,7 @@ Tags: stripe, payments, subscription, donation, stripe checkout
 Requires at least: 5.5
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.2.1 
+Stable tag: 1.3.0 
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,8 @@ You can easily enable or disable payment methods directly from your Stripe Dashb
 **Vipps Payments**
 **Satispay**
 
+**Crypto (Web3 & Stablecoin support)** – Includes USDC payouts and Stripe-powered crypto onramp integrations for supported platforms and regions.
+ 
 **Common Currencies Supported**
 
 Easy Stripe Payments & Donations accepts all currencies supported by Stripe, including major global currencies such as:
@@ -185,9 +187,6 @@ These requests are required to manage payments, subscriptions, and products in t
  
 == Frequently Asked Questions ==
 
-= Is this plugin free? =  
-Yes, core functionality is free. Premium upgrades are available separately via external service.
-
 = Can I track donations for campaigns? =  
 Yes, the Campaign Checkout mode shows the current collected total on the frontend using a shortcode. The payments are also displayed in the WordPress dashboard and stored in a separate WordPress database table.
 
@@ -208,6 +207,13 @@ This plugin supports all payment methods that Stripe currently provides. The fol
 ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, Amazon Pay, American Express, Apple Pay, Bacs Direct Debit, Bancontact, Bank Transfers, BECS Direct Debit, Billie, BLIK, Boleto, Canadian Pre-authorized Debits (PADs), Capchase Pay, Cartes Bancaires, Cash App Pay, Cash-based Vouchers, China UnionPay, Click to Pay, Diners Club, Discover, EPS, FPX, Giropay, Google Pay, GrabPay, iDEAL, Interac, Japan Bank Transfer (Furikomi), JCB, Kakao Pay, Klarna, Konbini, Kriya, Link, Maestro, Mastercard, MB WAY, Mexico Bank Transfer (SPEI), MobilePay, Mondu, Multibanco, Naver Pay, OXXO, P24 (Przelewy24), Pay by Bank, PayCo, PayNow, PayPal, PayTo, Pix, PromptPay, Revolut Pay, Samsung Pay, Satispay, Scalapay, SEPA Direct Debit, SEPA Bank Transfer, SeQura, Sofort, South Korean Cards, Stablecoins (USDC/USDT), Sunbit, Swish, TWINT, UK Bank Transfer, USD Bank Transfer, Visa, WeChat Pay, Zip.
 
 == Changelog ==
+
+= 1.3.0 =
+* Added Stripe Connect as a new connection option, enabling support for platform-based payments and additional checkout flows.
+* Improved security by preventing Stripe Checkout forms from being accessed via search results, excerpts, or direct unintended queries.
+* Updated assets and refined the FAQ section for improved clarity and usability.
+* Applied various design improvements across the plugin for a more polished user experience.
+* General updates and improvements to the readme.txt documentation.
 
 = 1.2.1 =
 * Updated the Stripe PHP library to version 19.4 to ensure compatibility with the latest Stripe API features, improvements, and security updates.
@@ -269,6 +275,9 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 * Stripe Subscription Button for recurring payments
 
 == Upgrade Notice ==
+ 
+= 1.3.0 =
+* Major update: Introduces Stripe Connect support along with security improvements for checkout forms and various UI enhancements. We recommend updating to benefit from new features, improved protection, and overall stability.
 
 = 1.2.1 =
 * Stripe library update: The plugin now uses Stripe PHP 19.4. This update includes the latest improvements, bug fixes, and security enhancements from Stripe. We recommend updating to ensure continued compatibility and stability.

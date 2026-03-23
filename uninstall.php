@@ -18,13 +18,16 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
  * 
  * Additionally, it drops all custom database tables created by the plugin, such as those
  * for forms and payments, ensuring a complete removal of plugin data from the database.
- * 
+ *  
  * This thorough cleanup helps to avoid orphaned data and keeps the WordPress database clean
  * after the plugin is uninstalled.
  */
 $option_keys = [
 	'espd_stripe_secret_key',
 	'espd_stripe_public_key',
+    'espad_stripe_account_id',
+    'espad_stripe_connect_access_token',
+    'espad_stripe_connect_publishable_key',
     'espd_membership_status',
     'espd_membership_last_check',
     'espd_welcome_page_visited',

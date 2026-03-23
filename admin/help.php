@@ -82,9 +82,9 @@ foreach ($info as $label => $value) {
 <div class="espd-faq-accordion">
     <div class="espd-faq-item open">
         <div class="espd-faq-question"><?php echo esc_html(__('How do I connect my Stripe account?', 'easy-stripe-payments')); ?></div>
-        <div class="espd-faq-answer">
-            <?php echo esc_html(__('Go to the plugin settings and enter your Stripe Public Key and Stripe Secret Key.', 'easy-stripe-payments')); ?>
-        </div>
+        <div class="espd-faq-answer"> 
+            <?php echo esc_html(__('To connect your Stripe account, navigate to the plugin settings and click the "Connect with Stripe" button. You will be securely redirected to Stripe, where you can log in and select the account you want to connect. Once you confirm the authorization, you\'ll be redirected back to your site. That\'s it — your Stripe account is now connected and ready to use.', 'easy-stripe-payments')); ?>
+        </div> 
     </div>
     <div class="espd-faq-item open">
         <div class="espd-faq-question"><?php echo esc_html(__('Test Payments ( Stripe Sandbox )', 'easy-stripe-payments')); ?></div>
@@ -115,8 +115,8 @@ foreach ($info as $label => $value) {
     <div class="espd-faq-item">
         <div class="espd-faq-question"><?php echo esc_html(__('Do you charge any Transaction Fees?', 'easy-stripe-payments')); ?></div>
         <div class="espd-faq-answer">
-            <?php echo esc_html(__('No. Our plugin does not charge any transaction fees or hidden costs. However, please note that Stripe & other Payment Gateways like PayPal apply their own processing fees.', 'easy-stripe-payments')); ?>
-        </div>
+            <?php echo esc_html(__('There are no additional transaction fees when using the Standard Checkout or Subscription Button with your own Stripe API keys — you only pay Stripe’s standard fees. For all other checkout forms powered via Stripe Connect, a small platform fee of 1.8% per transaction applies.', 'easy-stripe-payments')); ?>
+        </div> 
     </div>    
     <div class="espd-faq-item">
         <div class="espd-faq-question"><?php echo esc_html(__('Can I use test mode and live mode at the same time?', 'easy-stripe-payments')); ?></div>

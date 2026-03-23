@@ -38,33 +38,37 @@ class StripeESPADManager {
         return self::$instance;
 	
     }
-
+ 
 	// Initializes the Stripe API with the stored secret key
 	private function init_stripe(): void {
         
 		if ( $this->initialized ) return; // Prevent double initialization
-
-		$stripe_secret_key = \get_option( 'espd_stripe_secret_key', '' );
         
-		if ( ! empty( $stripe_secret_key ) ) {
-            
-			// Decrypt the key if a decryption function exists
-			$decrypted_key = function_exists( 'espd_decrypt' )
-				? \espd_decrypt( $stripe_secret_key )
-				: $stripe_secret_key; // Fallback to raw key if no decryption
-            
+        $stripe_access_token = \get_option( 'espad_stripe_connect_access_token', '' );
+        $stripe_secret_key   = \get_option( 'espd_stripe_secret_key', '' );
+
+        // Prefer Stripe Connect access token, fallback to stored secret key
+        $api_key = ! empty( $stripe_access_token ) ? $stripe_access_token : $stripe_secret_key;
+
+        if ( ! empty( $api_key ) ) {
+
+            // Decrypt the key if a decryption function exists
+            $decrypted_key = function_exists( 'espd_decrypt' )
+                ? \espd_decrypt( $api_key )
+                : $api_key; // Fallback to raw key if no decryption
+
             $this->stripeSecretKey = $decrypted_key;
 
             try {
                 // Set the API key for Stripe
                 \Stripe\Stripe::setApiKey( $decrypted_key );
                 $this->initialized = true; // Mark as initialized
-            } catch (\Exception $e) {
+            } catch ( \Exception $e ) {
                 // Log Stripe initialization failure
                 //error_log('Stripe init failed: ' . $e->getMessage());
-            }            
-		
-        }
+            }
+
+        }        
         
     }
 

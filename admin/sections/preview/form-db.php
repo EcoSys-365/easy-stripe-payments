@@ -33,15 +33,31 @@ if ( isset($_REQUEST['form_id']) || isset($shortcode_form_id) ) {
 $all_form_titles = $wpdb->get_results("SELECT id, form_name FROM {$table}");
 
 // Retrieve and decrypt the stored Stripe public key
-$stored_public_key = get_option( 'espd_stripe_public_key', '' );
-$stripe_public_key = $stored_public_key ? espd_decrypt( $stored_public_key ) : '';
+// Prefer Stripe Connect publishable key
+$connect_public_key = get_option( 'espad_stripe_connect_publishable_key', '' );
+
+if ( ! empty( $connect_public_key ) ) {
+    
+    $stripe_public_key = function_exists( 'espd_decrypt' )
+        ? espd_decrypt( $connect_public_key )
+        : $connect_public_key;
+
+} else {
+ 
+    // Fallback to stored Stripe public key
+    $stored_public_key = get_option( 'espd_stripe_public_key', '' );
+    $stripe_public_key = $stored_public_key
+        ? ( function_exists( 'espd_decrypt' ) ? espd_decrypt( $stored_public_key ) : $stored_public_key )
+        : '';
+
+}
 
 // Show a notice if the Stripe public key is not configured
 if ( $stripe_public_key == "" ) {
     
     echo '<div class="notice notice-info is-dismissible"><p>' . wp_kses_post( sprintf(
         // translators: %s is a link to the plugin settings page.
-        __('Please enter your <b>Stripe Public Key</b> &amp; <b>Stripe Secret Key</b> in the <a href="%s">Settings</a> section.', 'easy-stripe-payments'),
+        __('Please connect your Stripe account to start accepting payments. <a href="%s">Settings</a>', 'easy-stripe-payments'),
         esc_url( admin_url('admin.php?page=espd_main&tab=settings') )
     ) ) . '</p></div>';
     

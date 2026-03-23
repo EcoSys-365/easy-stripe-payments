@@ -18,7 +18,17 @@ document.addEventListener('DOMContentLoaded', function () {
         
         swal( "Email notifications are enabled" ,  "Email notifications are triggered after every payment." ,  "success" );
         
-    }     
+    }    
+	
+    // Check if the "espad-stripe-connect-is-successful" element exists and display a success alert
+    // to inform the admin that Stripe Connect is successful    
+    const stripeConnectIsEnabled = document.getElementById('espad-stripe-connect-is-successful');
+    
+    if ( stripeConnectIsEnabled ) {
+          
+        swal( "Stripe Connected" ,  "We wish you great success!" ,  "success" );
+        
+    }   	  
  
     // This script displays a SweetAlert (swal) welcome message when the element
     // with the ID 'espad-welcome-message' exists on the page. 

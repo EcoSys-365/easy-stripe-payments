@@ -12,6 +12,10 @@ defined( 'ESPAD_STRIPE_SECRET_KEY' ) || ($val = get_option('espd_stripe_secret_k
 (!defined('ESPAD_STRIPE_ACCESS') && defined('ESPAD_STRIPE_PUBLIC_KEY') && defined('ESPAD_STRIPE_SECRET_KEY')) && define('ESPAD_STRIPE_ACCESS', true);
 // Define the Stripe Access 'false'
 (!defined('ESPAD_STRIPE_ACCESS') && (!defined('ESPAD_STRIPE_PUBLIC_KEY') || !defined('ESPAD_STRIPE_SECRET_KEY'))) && define('ESPAD_STRIPE_ACCESS', false);
+// Define Stripe Connected Account Access 'true'
+(!defined('ESPAD_STRIPE_CONNECTED_ACCOUNT_ACCESS') && get_option('espad_stripe_account_id')) && define('ESPAD_STRIPE_CONNECTED_ACCOUNT_ACCESS', true);
+// Define Stripe Connected Account Access 'false'
+(!defined('ESPAD_STRIPE_CONNECTED_ACCOUNT_ACCESS') && !get_option('espad_stripe_account_id')) && define('ESPAD_STRIPE_CONNECTED_ACCOUNT_ACCESS', false);
 // Allowed Image Tags
 if ( ! defined( 'ESPAD_ALLOWED_IMG_TAGS' ) ) {
     define( 'ESPAD_ALLOWED_IMG_TAGS', [
@@ -380,6 +384,61 @@ function is_premium_domain() {
 
     return (bool) $data['premium'];
     
+} 
+
+/**
+ * Retrieves Stripe Connect account data from the Ecosys365 API.
+ *
+ * This function sends a POST request to the Ecosys365 API endpoint using the
+ * provided `espad_db_code`. The API returns the stored Stripe Connect account
+ * information associated with that code.
+ *
+ * The request is authenticated via a Bearer token and expects a JSON response.
+ * If the request fails, the response code is not 200, or the response cannot
+ * be decoded into a valid array, the function returns false.
+ *
+ * @param string $espad_db_code Unique database code used to identify the
+ *                              Stripe Connect account in the Ecosys365 API.
+ *
+ * @return array|false Returns the Stripe Connect data as an associative array
+ *                     on success, or false on failure.
+ */ 
+function get_stripe_connect_data($espad_db_code) {
+
+    $url = 'https://api.ecosys365.com/StripeConnectDataController';
+
+    $response = wp_remote_post($url, [
+        'timeout' => 15,
+        'headers' => [
+            'Accept'        => 'application/json',
+            'Authorization' => 'Bearer wefiejf37432WIEFJEF33730193fefalkd',
+            'Content-Type'  => 'application/json',
+        ],
+        'body' => wp_json_encode([
+            'espad_db_code' => $espad_db_code,
+        ]),
+    ]);
+
+    if (is_wp_error($response)) {
+        echo '<pre>WP ERROR: ' . esc_html($response->get_error_message()) . '</pre>';
+        return false;
+    }
+
+    $status_code = wp_remote_retrieve_response_code($response);
+    $body        = wp_remote_retrieve_body($response);
+
+    if ($status_code !== 200) {
+        return false;
+    }
+
+    $data = json_decode($body, true);
+
+    if (!is_array($data)) {
+        return false;
+    }
+
+    return $data;
+    
 }
 
 // Returns a comprehensive list of potential Stripe payment method types.
@@ -455,83 +514,106 @@ function espd_setup_steps_infobox() {
     <?php
     
 }
-
+ 
 /**
- * Creates a Stripe Checkout Session for a subscription button using the provided price ID, product details and payment methods.
+ * Create a Stripe Checkout Session for a subscription-based product.
  *
- * Inputs are sanitized to ensure safe fallback values and to avoid deprecation warnings.
- * If session creation fails due to locale issues, a fallback attempt without locale is made.
+ * This function initializes a Stripe Checkout Session using the provided
+ * price ID and configuration. It supports recurring payments (subscriptions)
+ * and conditionally applies a platform fee when Stripe Connect is enabled.
+ *
+ * A unique payment token is generated and stored in the session to track
+ * the payment flow. If session creation fails due to an invalid locale,
+ * a fallback attempt using 'en' is performed.
+ *
+ * When Stripe Connect is active, a platform fee of 1.8% is applied to
+ * each recurring payment using `application_fee_percent`.
+ *
+ * @param string       $price_id               Stripe Price ID for the subscription.
+ * @param string       $product_id             Stripe Product ID (used for retrieving product name).
+ * @param string       $product_currency       Currency code (e.g. 'USD', 'EUR').
+ * @param string       $product_language       Locale for Stripe Checkout (e.g. 'en', 'de').
+ * @param array        $active_payment_methods List of allowed Stripe payment methods.
+ *
+ * @return array {
+ *     Array containing checkout session data.
+ *
+ *     @type string|null $checkout_url URL to redirect the customer to Stripe Checkout.
+ *     @type string|null $product_name Name of the Stripe product (if retrievable).
+ *     @type string|null $error        Error message if session creation failed.
+ * }
  */
 function create_stripe_product_and_session($price_id, $product_id, $product_currency, $product_language, $active_payment_methods) {
 
     $session = null;
     $error_message = null;
-    
-    // Sanitize inputs to avoid deprecated ltrim() calls
+
     $price_id         = (string) ($price_id ?? 'dummy_price');
     $product_id       = (string) ($product_id ?? 'dummy_product');
     $product_currency = (string) ($product_currency ?? 'USD');
-    $product_language = (string) ($product_language ?? 'en'); 
-     
-    // Generate Token if not already exists
+    $product_language = (string) ($product_language ?? 'en');
+
+    // Generate Token
     if ( ! isset($_SESSION['espad_payment_token']) ) {
-
-        $espad_token = bin2hex(random_bytes(16)); // 32-character hex string
-
-        $_SESSION['espad_payment_token'] = $espad_token; 
-        
+        $espad_token = bin2hex(random_bytes(16));
+        $_SESSION['espad_payment_token'] = $espad_token;
     } else {
-         
-        $espad_token = sanitize_text_field( $_SESSION['espad_payment_token']);
-        
-    }      
-     
-    try {
-        
-        $session = \Stripe\Checkout\Session::create([
-            'payment_method_types' => $active_payment_methods,
-            'line_items'           => [[
-                'price'    => $price_id,
-                'quantity' => 1,
-            ]],
-            'mode'                       => 'subscription',
-            'success_url'                => ESPAD_SITE_URL . '/wp-json/easy-stripe-payments/v1/success?espad_payment_token=' . urlencode($espad_token) . '&session_id={CHECKOUT_SESSION_ID}',
-            'cancel_url'                 => ESPAD_SITE_URL . '?espad_stripe_status=failed',
-            'billing_address_collection' => 'required',
-            'locale'                     => $product_language,
-        ]);
-         
-    } catch (\Throwable $e) {
-        
-        $message = 'Stripe error: ' . $e->getMessage();
-        //error_log($message);
+        $espad_token = sanitize_text_field($_SESSION['espad_payment_token']);
+    }
 
-        if (str_contains($e->getMessage(), 'locale')) {
-            try {
-                $session = \Stripe\Checkout\Session::create([
-                    'payment_method_types' => $active_payment_methods,
-                    'line_items'           => [[
-                        'price'    => $price_id,
-                        'quantity' => 1,
-                    ]],
-                    'mode'                       => 'subscription',
-                    'success_url'                => ESPAD_SITE_URL . '/wp-json/easy-stripe-payments/v1/success?espad_payment_token=' . urlencode($espad_token) . '&session_id={CHECKOUT_SESSION_ID}',
-                    'cancel_url'                 => ESPAD_SITE_URL . '?espad_stripe_status=failed',
-                    'billing_address_collection' => 'required',
-                    'locale'                     => 'en',
-                ]);
-            } catch (\Throwable $e2) {
+    // Stripe Connect Check
+    $stripe_access_token = get_option('espad_stripe_connect_access_token', '');
+
+    // Base Params
+    $params = [
+        'payment_method_types' => $active_payment_methods,
+        'line_items' => [[
+            'price'    => $price_id,
+            'quantity' => 1,
+        ]],
+        'mode' => 'subscription',
+        'success_url' => ESPAD_SITE_URL . '/wp-json/easy-stripe-payments/v1/success?espad_payment_token=' . urlencode($espad_token) . '&session_id={CHECKOUT_SESSION_ID}',
+        'cancel_url' => ESPAD_SITE_URL . '?espad_stripe_status=failed',
+        'billing_address_collection' => 'required',
+        'locale' => $product_language,
+    ];
+
+    // ADD PLATFORM FEE ( only Stripe Connect )
+    if ( ! empty($stripe_access_token) ) {
         
-                $error_message = 'Stripe Error: ' . $e2->getMessage();
-                
-            }
-        } else {
-            $error_message = 'Stripe Error: ' . $e->getMessage();
-        }
+        $params['subscription_data'] = [
+            'application_fee_percent' => 1.8,
+        ];
         
     }
 
-    // If the Stripe session is NULL, do not abort – instead, use a dummy value or display a notice.
+    try {
+
+        $session = \Stripe\Checkout\Session::create($params);
+
+    } catch (\Throwable $e) {
+
+        if ( str_contains($e->getMessage(), 'locale') ) {
+
+            try {
+
+                $params['locale'] = 'en';
+
+                $session = \Stripe\Checkout\Session::create($params);
+
+            } catch (\Throwable $e2) {
+
+                $error_message = 'Stripe Error: ' . $e2->getMessage();
+
+            }
+
+        } else {
+
+            $error_message = 'Stripe Error: ' . $e->getMessage();
+
+        }
+    }
+
     if ( !$session ) {
         return [
             'checkout_url' => null,
@@ -541,14 +623,14 @@ function create_stripe_product_and_session($price_id, $product_id, $product_curr
     }
 
     try {
-        
+
         $product = \Stripe\Product::retrieve($product_id);
         $product_name = $product->name;
-        
+
     } catch (\Throwable $e) {
-        
+
         $product_name = null;
-        
+
     }
 
     return [
@@ -705,4 +787,31 @@ function espd_premium_lightbox() {
         data-espad-plugin-url="' . esc_url( $espad_plugin_url ) . '">
     </div>';    
        
+}
+
+/**
+ * Safely executes a Stripe API call and catches possible exceptions.
+ *
+ * This helper wraps Stripe API requests in a try/catch block to prevent
+ * fatal errors and log meaningful error messages. If an error occurs,
+ * the function logs the message and returns false instead of interrupting
+ * execution.
+ *
+ * @param callable $callback      The Stripe API call wrapped in a callable function.
+ * @param string   $error_message Optional error message prefix for logging.
+ *
+ * @return mixed|false Returns the Stripe API response on success or false on failure.
+ */ 
+function espad_safe_stripe_connect_call(callable $callback, string $error_message = 'Stripe error') {
+     
+    try {
+        return $callback();
+    } catch (\Stripe\Exception\ApiErrorException $e) {
+        //error_log($error_message . ': ' . $e->getMessage());
+        return false;
+    } catch (\Throwable $e) {
+        //error_log($error_message . ': ' . $e->getMessage());
+        return false;
+    }
+    
 }

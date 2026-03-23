@@ -24,8 +24,8 @@ $forms = $wpdb->get_results( $sql );
   
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Intentionally used for a custom table
 $entry_count = (int) $wpdb->get_var( $sql_count ); 
- 
-if ( defined('ESPAD_STRIPE_ACCESS') && ESPAD_STRIPE_ACCESS && $entry_count > 0 ) { 
+   
+if ( $entry_count > 0 ) {    
     
 
 } else { 

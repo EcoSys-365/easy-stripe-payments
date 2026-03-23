@@ -1,9 +1,9 @@
-/* Easy Stripe Payments and Donations Plugin v1.2.1 */
+/* Easy Stripe Payments and Donations Plugin v1.3.0 */
 body, p {
     font-size: 15px !important;
 }
 h1.espad_headline .dashicons-money-alt {
-    font-size: 34px;
+    font-size: 34px; 
 }
 .error {
     color: red;
@@ -570,4 +570,31 @@ table#espad-table .subscription_btn_preview {
     display: flex; 
     gap: 8px;
 }
+/* Settings */
+.custom-stripe-btn {
+    background-color: #635bff; /* Das typische Stripe-Violett */
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
 
+.custom-stripe-btn:hover {
+    background-color: #7a73ff;
+    transform: translateY(-1px);
+    color: #fff;
+}	
+
+.custom-stripe-btn-test {
+    background-color: #313538 !important;
+    margin-left: 10px;
+}
+
+.custom-stripe-btn-test:hover {
+    background-color: #53595e !important;
+}

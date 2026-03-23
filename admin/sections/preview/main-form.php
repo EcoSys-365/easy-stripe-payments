@@ -200,6 +200,26 @@ if ( isset($_GET['espad_payment_token']) ) {
                 </div>
 
                 <div class="espad-payment-box">
+                    
+                <?php
+                  
+                // Check if Stripe Connect is active
+                $espad_stripe_access_token = \get_option( 'espad_stripe_connect_access_token', '' );
+                    
+                if ( empty( $espad_stripe_access_token ) ) {
+
+                    echo '<div style="padding:12px; border:1px solid #f5c2c7; background:#f8d7da; color:#842029; border-radius:4px; margin-bottom: 15px;">';
+
+                    echo esc_html__( 
+                        'Please go to Settings and click "Connect with Stripe". Alternatively, you can continue using the "Standard Stripe Checkout" with your API keys.', 
+                        'easy-stripe-payments' 
+                    );
+
+                    echo '</div>';
+
+                }                    
+                    
+                ?>
 
         <?php else: ?>        
 

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Easy Stripe Payments
  * Description: A user-friendly WordPress plugin for accepting <strong>one-time and recurring Stripe payments</strong>. Perfect for businesses, freelancers and Non-Profit organizations. Secure, fast and fully PCI-compliant.
- * Version: 1.2.1 
+ * Version: 1.3.0 
  * Author: EcoSys365
  * Author URI: https://www.ecosys365.com
  * Plugin URI: https://www.payments-and-donations.com
@@ -347,6 +347,11 @@ add_shortcode('espad_payment_form', 'espad_render_payment_form');
  * @return string The rendered HTML output of the payment form.
  */
 function espad_render_payment_form($atts) {
+       
+    // Do not render the payment form inside excerpts, archive, search & singular.
+    if ( doing_filter('get_the_excerpt') || doing_filter('the_excerpt') || is_archive() || is_search() || ! is_singular() ) {
+        return '';
+    }    
     
     // Define default shortcode attributes and merge with provided ones.
     $atts = shortcode_atts([
@@ -658,7 +663,7 @@ add_action('admin_enqueue_scripts', function($hook) {
             'espd-backend-enqueue',
             ESPAD_PLUGIN_URL . 'assets/js/espd-backend-enqueue.js',
             array('sweetalert'), // Dependencies
-            '1.0.63',                
+            '1.0.66',                
             true // Load script in footer
         );         
         
@@ -703,7 +708,7 @@ add_action('admin_enqueue_scripts', function($hook) {
             'espad-admin-style',
             ESPAD_PLUGIN_URL . 'assets/css/espad.css',
             array(),
-            '1.0.200'
+            '1.0.203'
         );        
 
         // Enqueue WordPress built-in jQuery script
@@ -1383,6 +1388,41 @@ add_action('rest_api_init', function() {
     ]);
     
 });
+
+/**
+ * Sum all item amounts.
+ */
+function calculateEspadAmount(array $items): int {
+    
+    $total = 0;
+
+    foreach ( $items as $item ) {
+        $total += isset($item->amount) ? (int) $item->amount : 0;
+    }
+
+    return $total;
+
+}
+
+/** 
+ * Calculate platform fee in smallest currency unit.
+ * Default: 1.8%
+ */
+function espad_calculate_platform_fee(int $amount, float $percent = 1.8): int {
+    
+    if ( $amount <= 0 ) {
+        return 0;
+    }
+
+    $fee = (int) round($amount * ($percent / 100));
+
+    if ( $fee >= $amount ) {
+        $fee = max(0, $amount - 1);
+    }
+
+    return $fee;
+    
+}
   
 function espad_create_checkout(WP_REST_Request $request) {
      
@@ -1407,22 +1447,8 @@ function espad_create_checkout(WP_REST_Request $request) {
     if ( empty($currency) || $currency === '0' ) {
         $currency = 'USD';
     }  
-      
-    function calculateEspadAmount(array $items): int {
-
-        $total = 0;
-
-        foreach($items as $item) {
-
-          $total += $item->amount;
-
-        }
-
-        return $total;
-
-    }       
          
-    try { 
+    try {  
           
         // 1. Retrieve JSON from POST body
         $jsonStr = file_get_contents( 'php://input' );
@@ -1474,15 +1500,31 @@ function espad_create_checkout(WP_REST_Request $request) {
         } else {
             wp_die( 'Error: Missing currency field.' );
         }
-
+        
         // 8. Prepare parameters for the payment gateway
+        $amount = absint( calculateEspadAmount( $jsonObj->items ) );
+
         $params = [
-            'amount' => absint( calculateEspadAmount( $jsonObj->items ) ),
+            'amount' => $amount,
             'currency' => $currency,
             'automatic_payment_methods' => [
                 'enabled' => true,
             ],
-        ];        
+        ];
+
+        // Check if Stripe Connect is active
+        $stripe_access_token = \get_option( 'espad_stripe_connect_access_token', '' );
+
+        if ( ! empty( $stripe_access_token ) ) {
+
+            // Default 1.8% platform fee
+            $application_fee_amount = espad_calculate_platform_fee( $amount );
+
+            if ( $application_fee_amount > 0 ) {
+                $params['application_fee_amount'] = $application_fee_amount;
+            }
+             
+        }        
                
         // 9. Add metadata only if it contains something.
         if ( !empty($metadata) ) {
@@ -1508,4 +1550,4 @@ function espad_create_checkout(WP_REST_Request $request) {
 
     } 
      
-}
+} 
