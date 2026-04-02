@@ -5,7 +5,7 @@ Tags: stripe, payments, subscription, donation, stripe checkout
 Requires at least: 5.5
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.3.0 
+Stable tag: 1.3.1 
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -208,6 +208,10 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 
 == Changelog ==
 
+= 1.3.1 =
+* Improved frontend styling of the checkout form for a cleaner and more consistent user experience.
+* Enhanced the Setup tab to provide clearer guidance and structure for Stripe connection options.
+
 = 1.3.0 =
 * Added Stripe Connect as a new connection option, enabling support for platform-based payments and additional checkout flows.
 * Improved security by preventing Stripe Checkout forms from being accessed via search results, excerpts, or direct unintended queries.
@@ -273,8 +277,11 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 * Standard Checkout for one-time payments
 * Campaign Checkout with frontend donation total
 * Stripe Subscription Button for recurring payments
-
+ 
 == Upgrade Notice ==
+
+= 1.3.1 =
+* Includes UI improvements for the checkout form and clearer Stripe connection setup. Recommended for a smoother user experience.
  
 = 1.3.0 =
 * Major update: Introduces Stripe Connect support along with security improvements for checkout forms and various UI enhancements. We recommend updating to benefit from new features, improved protection, and overall stability.

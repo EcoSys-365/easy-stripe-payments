@@ -3013,8 +3013,9 @@
   border: var(--bs-border-width) solid transparent;
   transform-origin: 0 0;
   transition: opacity 0.1s ease-in-out, transform 0.1s ease-in-out;
+  color: #000 !important;    
 }
-
+ 
 @media (prefers-reduced-motion: reduce) {
   #espad_page .form-floating > label {
     transition: none;

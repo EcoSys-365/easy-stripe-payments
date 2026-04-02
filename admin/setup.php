@@ -6,7 +6,7 @@
 
 <h2><?php echo esc_html(__( 'Setup', 'easy-stripe-payments' )); ?> &#9881;</h2>
 <p>
-        <?php echo esc_html(__( '1. Provide Stripe Public Key &amp; Stripe Private Key', 'easy-stripe-payments' )); ?>
+        <?php echo esc_html(__( '1. Go to Settings, click “Connect with Stripe,” choose Live or Test mode', 'easy-stripe-payments' )); ?>
         <a href="<?php echo esc_url( admin_url( 'admin.php?page=espd_main&tab=settings' ) ); ?>" target="_blank">
             <?php echo esc_html(__( 'Settings', 'easy-stripe-payments' )); ?>
         </a>
