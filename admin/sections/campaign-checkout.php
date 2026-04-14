@@ -113,19 +113,17 @@
                         <option value="tabs"><?php echo esc_html(__( 'Tabs – Payment methods as tabs', 'easy-stripe-payments' )); ?></option>
                         <option value="accordion"><?php echo esc_html(__( 'Accordion – Collapsible sections', 'easy-stripe-payments' )); ?></option>
                     </select>                
-                </div>
+                </div> 
                 <div class="form-group">
-                    <label for="espad_payment_button"><?php echo esc_html(__( 'Button', 'easy-stripe-payments' )); ?></label>
-                    <select 
-                            name="espad_payment_button" 
-                            id="espad_payment_button" 
-                            class="form-control has-tooltip"
-                            data-tooltip="<?php echo esc_html(__( 'Customize your button text', 'easy-stripe-payments' )); ?>"
-                            required>
-                        <option value="<?php echo esc_html(__( 'Pay', 'easy-stripe-payments' )); ?>"><?php echo esc_html(__( 'Pay', 'easy-stripe-payments' )); ?></option>
-                        <option value="<?php echo esc_html(__( 'Donate', 'easy-stripe-payments' )); ?>"><?php echo esc_html(__( 'Donate', 'easy-stripe-payments' )); ?></option>
-                        <option value="<?php echo esc_html(__( 'Book', 'easy-stripe-payments' )); ?>"><?php echo esc_html(__( 'Book', 'easy-stripe-payments' )); ?></option>
-                    </select>
+                    <label for="espad_payment_button"><?php echo esc_html(__( 'Payment Button', 'easy-stripe-payments' )); ?></label>
+                    <input 
+                           type="text" 
+                           id="espad_payment_button"
+                           placeholder="<?php echo esc_html(__( 'e.g., Donate, Pay, Book', 'easy-stripe-payments' )); ?>"
+                           data-tooltip="<?php echo esc_html(__( 'Customize your button text', 'easy-stripe-payments' )); ?>"
+                           name="espad_payment_button" 
+                           class="form-control has-tooltip" 
+                           required>                    
                 </div>                       
             </div> 
         

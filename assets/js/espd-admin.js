@@ -34,7 +34,21 @@ jQuery(document).ready(function($) {
         modal: true,
         width: 1100,
         title: espd_ajax.campaignCheckoutModalTitle
-    });  
+    });   
+    
+    /*
+     * Initializes a jQuery UI dialog on the element with ID "espd-form-subscription-modal":
+     * - The dialog does not open automatically (autoOpen: false)
+     * - Enables modal behavior to block interaction with the rest of the page while open
+     * - Sets the dialog width to 1100 pixels
+     * - Uses the localized title from "espd_ajax.subscriptionCheckoutModalTitle"
+    */     
+    $("#espd-form-subscription-modal").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 1100,
+        title: espd_ajax.subscriptionCheckoutModalTitle
+    });     
     
     /*
      * Initializes a jQuery UI dialog on the element with ID "espd-form-recurring-modal":
@@ -89,6 +103,25 @@ jQuery(document).ready(function($) {
     });    
     
     /*
+     * Handles the click event on the element with ID "espd-create-subscription-form":
+     * - Resets the form with ID "espd-new-subscription-form"
+     * - Clears the hidden input field named 'form_id' inside the campaign form
+     * - Hides the element with ID "select-amount-wrapper"
+     * - Opens the modal dialog with ID "espd-form-subscription-modal"
+    */    
+    $("#espd-create-subscription-form").on("click", function() {
+        
+        $("#espd-new-subscription-form")[0].reset();
+
+        $("#espd-new-subscription-form input[name='form_id']").val('');
+
+        $("#select-amount-wrapper").hide();
+
+        $("#espd-form-subscription-modal").dialog("open");
+        
+    });      
+    
+    /*
      * This script handles the submission of the form with ID "espd-new-form":
      * - Prevents the default form submission behavior (no page reload)
      * - Serializes the form data into a URL-encoded string
@@ -108,7 +141,11 @@ jQuery(document).ready(function($) {
             data: formData
         }, function(response) {
             if (response.success) {
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
                 showEspdAdminNotice("Form saved successfully", 'success');
+                
                 setTimeout(() => {
                     location.reload();
                 }, 1500);
@@ -156,7 +193,46 @@ jQuery(document).ready(function($) {
             }
         });   
         
-    });
+    }); 
+     
+    /*
+     * This script handles the submission of the form with ID "espd-new-subscription-form":
+     * - Prevents the default form submission to avoid page reload
+     * - Serializes the form data into a URL-encoded string
+     * - Sends an AJAX POST request to the server with a specific action and security nonce
+     * - On success:
+     *   - Smoothly scrolls to the top of the page
+     *   - Displays a success message using showEspdAdminSubscriptionNotice
+     *   - Reloads the page after 1.5 seconds
+     * - On failure:
+     *   - Displays an error message with details using showEspdAdminSubscriptionNotice
+    */     
+    $("#espd-new-subscription-form").on("submit", function(e) {
+        
+        e.preventDefault();
+        
+        var formData = $(this).serialize();
+ 
+        $.post(espd_ajax.ajax_url, {
+            action: 'espd_save_new_subscription_form',
+            nonce: espd_ajax.nonce,
+            data: formData
+        }, function(response) {
+            if (response.success) {
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                showEspdAdminSubscriptionNotice("Form saved successfully", 'success');
+                
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            } else {
+                showEspdAdminSubscriptionNotice("Error: " + response.data, 'error');
+            }
+        });   
+        
+    });     
     
     /*
      * This script handles the submission of the form with ID "espd-update-recurring-product":
@@ -227,6 +303,29 @@ jQuery(document).ready(function($) {
     function showEspdAdminCampaignNotice(message, type = 'success') {
         
         const wrapper = document.getElementById('espd-admin-campaign-notice-wrapper');
+        
+        wrapper.innerHTML = `
+            <div class="notice notice-${type} is-dismissible">
+                <p>${message}</p>
+            </div>
+        `;
+
+        setTimeout(() => {
+            const notice = wrapper.querySelector('.notice');
+            if (notice) notice.style.display = 'none';
+        }, 3000);
+        
+    }    
+    
+    /*
+     * This function displays a subscription-specific admin notice message in the element with ID "espd-admin-subscription-notice-wrapper":
+     * - Takes a message and an optional type (default is 'success')
+     * - Inserts a dismissible WordPress-style notice with the given message and type ('success', 'error', etc.)
+     * - Automatically hides the notice after 3 seconds by setting its display to 'none'
+    */    
+    function showEspdAdminSubscriptionNotice(message, type = 'success') {
+        
+        const wrapper = document.getElementById('espd-admin-subscription-notice-wrapper');
         
         wrapper.innerHTML = `
             <div class="notice notice-${type} is-dismissible">
@@ -478,7 +577,7 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 
                 if (response.success) {
-                    
+                     
                     $('.' + formMode + '-mode #form_name').val(response.data.form_name);
                     $('.' + formMode + '-mode #fix_amount').val(response.data.fix_amount);
                     $('.' + formMode + '-mode #currency').val(response.data.currency);
@@ -499,6 +598,10 @@ jQuery(document).ready(function($) {
                     $('.' + formMode + '-mode #show_fields').val(response.data.choosed_fields);
                     $('.' + formMode + '-mode #form_language').val(response.data.lang);
                     $('.' + formMode + '-mode #payment_layout').val(response.data.payment_layout);
+                     
+                    // Subscription Checkout
+                    // Set the subscription price ID from the response JSON object, otherwise fall back to an empty value 
+                    $('.' + formMode + '-mode #subscription_price_id').val(response.data.checkout_metadata_1?.subscription_checkout_price_id || '');
                     
                     if ( response.data.price_list != null && response.data.price_list.trim() !== '' ) {
                         
@@ -522,7 +625,7 @@ jQuery(document).ready(function($) {
                             
                         }
                         
-                    } else {
+                    } else if ( formMode == 'campaign' ) {
                         
                         $("#espd-form-campaign-modal").dialog("open");
                         
@@ -537,6 +640,10 @@ jQuery(document).ready(function($) {
                             $('#espd-form-campaign-modal #select-amount-wrapper').css('display','block');
                             
                         }                        
+                        
+                    } else if ( formMode == 'subscription' ) {
+                        
+                        $("#espd-form-subscription-modal").dialog("open");
                         
                     }
                     
@@ -848,6 +955,46 @@ jQuery(document).ready(function($) {
 
         $btn.css('color', fontColor);
         
-    });   
+    });    
+ 
+    /*  
+     * Click on shortcode: select and copy entire text on Preview Tab
+    */    
+    $(document).on('click', '#shortcode-payment-form', function() {
+        
+        var $this = $(this);
+        var text = $this.text().trim();
+
+        navigator.clipboard.writeText(text);
+
+        var range = document.createRange();
+        range.selectNodeContents(this);
+
+        var selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        var $feedback = $this.next('.espad-copy-feedback');
+
+        $feedback.addClass('is-visible');
+
+        clearTimeout($feedback.data('timeout'));
+
+        var timeout = setTimeout(function() {
+            $feedback.removeClass('is-visible');
+        }, 1500);
+
+        $feedback.data('timeout', timeout);
+         
+    });
+    
+    /*
+     * Toggle collapse state of the nearest overlay when clicking ".espad-toggle"
+    */ 
+    $(document).on('click', '.espad-toggle', function() {
+        
+        $(this).closest('.espad-preview-overlay').toggleClass('is-collapsed');
+        
+    });     
     
 });

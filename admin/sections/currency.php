@@ -1,10 +1,17 @@
-<?php defined( 'ABSPATH' ) || exit; ?>
+<?php 
+
+defined( 'ABSPATH' ) || exit; 
+
+$tooltip_currencies = __( "These currencies are supported by Stripe.\nPlease ensure that the selected currency is available and properly configured in your Stripe account, depending on your region and payout settings.", "easy-stripe-payments" );
+
+?>
 
 <select  
         id="currency" 
         name="currency" 
         class="form-control has-tooltip"
-        data-tooltip="<?php echo esc_html(__( 'These currencies are accepted by Stripe', 'easy-stripe-payments' )); ?>"
+        data-tooltip="<?php echo esc_html( $tooltip_currencies ); ?>"
+        data-offset-top="-55"
         required> 
     <option value="USD">USD - United States Dollar</option>
     <option value="EUR">EUR - Euro</option>

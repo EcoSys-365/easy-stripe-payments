@@ -494,18 +494,10 @@ function espd_setup_steps_infobox() {
     <div class="notice notice-info is-dismissible">
         <p style="line-height: 30px;">
  
-            <strong><?php echo esc_html(__( 'Easily accept payments with three flexible Stripe options', 'easy-stripe-payments' )); ?></strong>:<br />
-            <?php echo esc_html(__( '1. Stripe Checkout integration', 'easy-stripe-payments' )); ?>   
+            <strong><?php echo esc_html(__( 'Easily accept payments with flexible Stripe Checkout options', 'easy-stripe-payments' )); ?></strong>:<br />
+            <?php echo esc_html(__( 'Stripe Checkout integrations', 'easy-stripe-payments' )); ?>   
             <a href="<?php echo esc_url( admin_url('admin.php?page=espd_main&tab=forms') ); ?>" target="_blank">
                 <?php echo esc_html(__( 'Payment Forms', 'easy-stripe-payments' )); ?>
-            </a><br />
-            <?php echo esc_html(__( '2. Campaign-based payments with built-in Stripe Checkout', 'easy-stripe-payments' )); ?> 
-            <a href="<?php echo esc_url( admin_url('admin.php?page=espd_main&tab=forms') ); ?>" target="_blank">
-                <?php echo esc_html(__( 'Payment Forms', 'easy-stripe-payments' )); ?>
-            </a><br />
-            <?php echo esc_html(__( '3. Recurring payments via button and redirect to Stripe’s secure hosted Checkout page', 'easy-stripe-payments' )); ?>
-            <a href="<?php echo esc_url( admin_url('admin.php?page=espd_main&tab=recurring') ); ?>" target="_blank">
-                <?php echo esc_html(__( 'Recurring Payments', 'easy-stripe-payments' )); ?>
             </a>
 
         </p>

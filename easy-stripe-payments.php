@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Easy Stripe Payments
  * Description: A user-friendly WordPress plugin for accepting <strong>one-time and recurring Stripe payments</strong>. Perfect for businesses, freelancers and Non-Profit organizations. Secure, fast and fully PCI-compliant.
- * Version: 1.3.1 
+ * Version: 1.3.2 
  * Author: EcoSys365
  * Author URI: https://www.ecosys365.com
  * Plugin URI: https://www.payments-and-donations.com
@@ -36,7 +36,9 @@ defined( 'ESPAD_CURRENT_URL' ) || define( 'ESPAD_CURRENT_URL', ( function() {
     $scheme = is_ssl() ? 'https' : 'http';
     $uri    = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '/';
     return $scheme . '://' . ESPAD_DOMAIN . $uri;
-} )() );
+} )() ); 
+// Define DB version
+define( 'ESPAD_DB_VERSION', '1.3.3' );
  
 // Include the plugin's helper functions.
 require_once ESPAD_PLUGIN_PATH . 'inc/functions.php';
@@ -120,7 +122,7 @@ function espad_membership_check() {
 /**
  * Enqueues necessary styles and scripts for the Stripe Checkout page.
  * This includes scoped Bootstrap styles, custom checkout styles, and Stripe JS.
- */
+ */ 
 function espd_preview_add_scripts() {
     
     // Enqueue CSS styles
@@ -141,12 +143,12 @@ function espd_preview_add_scripts() {
         'espd-checkout-js',
         ESPAD_PLUGIN_URL . 'inc/stripeCheckout/checkout.js',
         ['stripe-js'],
-        '1.0.144',
+        '1.0.197',
         true // Load in footer
     );
-      
-}
-
+        
+}    
+   
 /**
  * Enqueues styles and scripts required for rendering the frontend payment form.
  *
@@ -155,7 +157,7 @@ function espd_preview_add_scripts() {
  * custom JS, and styles.
  *
  * @return void
- */
+ */ 
 function espd_add_payment_shortcode_scripts() {
     
     // Enqueue frontend payment form CSS with versioning
@@ -163,9 +165,9 @@ function espd_add_payment_shortcode_scripts() {
         'espd-frontend-payment-style',
         ESPAD_PLUGIN_URL . 'assets/css/frontend-payment-form.css',
         array(),
-        '1.1.994'  
+        '1.1.999'  
     );
-     
+       
     // Enqueue built-in jQuery
     wp_enqueue_script('jquery');
 
@@ -174,8 +176,8 @@ function espd_add_payment_shortcode_scripts() {
         'espd-frontend-script',
         ESPAD_PLUGIN_URL . 'assets/js/frontend-payment-form.js',
         array('jquery'),
-        '1.0.12',
-        true
+        '1.0.15',
+        true 
     );
     
 }
@@ -440,23 +442,74 @@ register_activation_hook( __FILE__, 'espd_plugin_activate' );
 /**
  * Plugin activation callback.
  *
- * Creates necessary custom database tables using dbDelta and initializes default options.
+ * Creates or updates the required database tables using dbDelta,
+ * inserts demo content, and initializes default plugin options.
+ * Also stores the current database version for future upgrades.
  *
  * @return void
  */
 function espd_plugin_activate() {
     
+    espd_plugin_create_db_tables();
+    
     global $wpdb;
 
-    // Get charset and collation for database tables, ensuring compatibility.
-    $charset_collate = $wpdb->get_charset_collate();
-
     // Define table names with WordPress prefix.
-    $table_forms = $wpdb->prefix . 'espad_forms';
+    $table_forms    = $wpdb->prefix . 'espad_forms';
     $table_payments = $wpdb->prefix . 'espad_payments';
 
-    // SQL statement to create the required tables.
-    // Note: Multiple CREATE TABLE statements separated by semicolon.
+    // File: includes/setup/demo-content.php
+    require_once ESPAD_PLUGIN_PATH . 'inc/setup/demo-content.php';    
+
+    // Store the current date in a custom encrypted option.
+    $current_date = gmdate('jmY');
+    
+    update_option( 'espd_membership_last_check', espd_encrypt( $current_date ) );
+
+    // Initialize email-related options if they don't exist.
+    if ( get_option('espd_membership_status') === false ) {
+        update_option( 'espd_membership_status', espd_encrypt('0') );
+    }
+    
+    if ( get_option('espd_email_notification') === false ) {
+        add_option('espd_email_notification', 0);
+    }
+
+    if ( get_option('espd_email_subject') === false ) {
+        add_option('espd_email_subject', '');
+    }
+
+    if ( get_option('espd_email_sender_mail') === false ) {
+        add_option('espd_email_sender_mail', '');
+    }
+
+    if ( get_option('espd_email_mail_content') === false ) {
+        add_option('espd_email_mail_content', '');
+    }
+    
+    update_option( 'espd_plugin_db_version', ESPAD_DB_VERSION );
+    
+}
+
+/**
+ * Creates or updates the plugin's custom database tables.
+ *
+ * Uses WordPress dbDelta to create the required tables or modify them
+ * if the structure has changed (e.g. new database columns added).
+ *
+ * @return void
+ */
+function espd_plugin_create_db_tables() {
+
+    global $wpdb;
+
+    $charset_collate = $wpdb->get_charset_collate();
+
+    // Tabellen-Namen
+    $table_forms    = $wpdb->prefix . 'espad_forms';
+    $table_payments = $wpdb->prefix . 'espad_payments';
+
+    // SQL
     $sql = "
     CREATE TABLE $table_forms (
         id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -480,6 +533,9 @@ function espd_plugin_activate() {
         choosed_fields VARCHAR(100) NOT NULL, 
         lang VARCHAR(2) NOT NULL,
         payment_layout VARCHAR(10) NOT NULL,
+        checkout_metadata_1 TEXT,
+        checkout_metadata_2 TEXT,
+        checkout_metadata_3 TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (id)
     ) $charset_collate;
@@ -510,42 +566,37 @@ function espd_plugin_activate() {
     ) $charset_collate;
     ";
 
-    // Load upgrade functions for dbDelta.
     require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-
-    // Execute SQL queries to create or update tables.
+    
     dbDelta( $sql );
     
-    // File: includes/setup/demo-content.php
-    require_once ESPAD_PLUGIN_PATH . 'inc/setup/demo-content.php';    
-
-    // Store the current date in a custom encrypted option.
-    $current_date = gmdate('jmY');
-    
-    update_option( 'espd_membership_last_check', espd_encrypt( $current_date ) );
-
-    // Initialize email-related options if they don't exist.
-    if ( get_option('espd_membership_status') === false ) {
-        update_option( 'espd_membership_status', espd_encrypt('0') );
-    }
-    
-    if ( get_option('espd_email_notification') === false ) {
-        add_option('espd_email_notification', 0);
-    }
-
-    if ( get_option('espd_email_subject') === false ) {
-        add_option('espd_email_subject', '');
-    }
-
-    if ( get_option('espd_email_sender_mail') === false ) {
-        add_option('espd_email_sender_mail', '');
-    }
-
-    if ( get_option('espd_email_mail_content') === false ) {
-        add_option('espd_email_mail_content', '');
-    }
-    
 }
+ 
+/**
+ * Checks whether the database schema needs to be updated.
+ *
+ * Compares the stored database version with the current plugin DB version.
+ * If the stored version is older, the database tables are updated using dbDelta
+ * and the version is updated accordingly.
+ *
+ * @return void
+ */
+function espd_plugin_maybe_update_db() {
+
+    // Get the stored DB version or fallback to default (1.0.0)
+    $installed_version = get_option( 'espd_plugin_db_version', '1.0.0' );
+ 
+    if ( version_compare( $installed_version, ESPAD_DB_VERSION, '<' ) ) {
+        
+        espd_plugin_create_db_tables(); // execute dbDelta
+        
+        update_option( 'espd_plugin_db_version', ESPAD_DB_VERSION );
+    
+    }
+
+}
+
+add_action( 'plugins_loaded', 'espd_plugin_maybe_update_db' );
 
 /**
  * Register the plugin's admin menu and submenu pages.
@@ -655,7 +706,7 @@ add_action('wp_enqueue_scripts', 'espd_register_scripts');
  * @return void
  */
 add_action('admin_enqueue_scripts', function($hook) {
-           
+            
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Safe to read GET for admin page detection only, no sensitive action performed.
     if ( isset($_GET['page']) && $_GET['page'] === 'espd_main' ) { 
  
@@ -663,7 +714,7 @@ add_action('admin_enqueue_scripts', function($hook) {
             'espd-backend-enqueue',
             ESPAD_PLUGIN_URL . 'assets/js/espd-backend-enqueue.js',
             array('sweetalert'), // Dependencies
-            '1.0.66',                
+            '1.0.68',                
             true // Load script in footer
         );         
         
@@ -708,7 +759,7 @@ add_action('admin_enqueue_scripts', function($hook) {
             'espad-admin-style',
             ESPAD_PLUGIN_URL . 'assets/css/espad.css',
             array(),
-            '1.0.203'
+            '1.0.250'
         );        
 
         // Enqueue WordPress built-in jQuery script
@@ -728,10 +779,10 @@ add_action('admin_enqueue_scripts', function($hook) {
             'espd-admin', 
             ESPAD_PLUGIN_URL . 'assets/js/espd-admin.js',  
             ['jquery'], 
-            '1.0.199',  
+            '1.0.221',  
             true
-        );         
-
+        );           
+ 
         // SweetAlert JS
         wp_enqueue_script(
             'sweetalert',
@@ -743,13 +794,14 @@ add_action('admin_enqueue_scripts', function($hook) {
 
         // Pass dynamic data from PHP to JavaScript using wp_localize_script
         wp_localize_script('espd-admin', 'espd_ajax', [
-            'ajax_url'                   => admin_url('admin-ajax.php'),
-            'nonce'                      => wp_create_nonce('espd_form_nonce'),
-            'recurringModalTitle'        => __('Stripe Subscription Product &amp; Button', 'easy-stripe-payments'),
-            'standardCheckoutModalTitle' => __('Stripe Standard Checkout', 'easy-stripe-payments'),
-            'campaignCheckoutModalTitle' => __('Stripe Campaign Checkout', 'easy-stripe-payments')
+            'ajax_url'                       => admin_url('admin-ajax.php'),
+            'nonce'                          => wp_create_nonce('espd_form_nonce'),
+            'recurringModalTitle'            => __('Stripe Subscription Product &amp; Button', 'easy-stripe-payments'),
+            'standardCheckoutModalTitle'     => __('Stripe Standard Checkout', 'easy-stripe-payments'),
+            'campaignCheckoutModalTitle'     => __('Stripe Campaign Checkout', 'easy-stripe-payments'),
+            'subscriptionCheckoutModalTitle' => __('Stripe Subscription Checkout', 'easy-stripe-payments')
         ]);
-
+ 
         // Enqueue jQuery UI dialog styles and scripts for modal/dialog UI components
         wp_enqueue_style('wp-jquery-ui-dialog');
         wp_enqueue_script('jquery-ui-dialog');
@@ -859,6 +911,138 @@ add_action('wp_ajax_espd_save_form', function() {
             'campaign_image'           => $campaign_image,
             'campaign_current_amount'  => $campaign_current_amount,
             'campaign_goal_amount'     => $campaign_goal_amount,  
+            'color'                    => sanitize_text_field($form['color']),
+            'choosed_fields'           => sanitize_text_field($form['show_fields']),
+            'lang'                     => sanitize_text_field($form['form_language']),
+            'payment_layout'           => sanitize_text_field($form['payment_layout']),
+        ]);
+
+        // Return success or error JSON response based on insert result
+        if ($result) {
+            wp_send_json_success();
+        } else {
+            wp_send_json_error('Could not save form.');
+        }
+        
+    }
+    
+}); 
+ 
+// Handles the AJAX request to save form data for Subscription Checkout
+add_action('wp_ajax_espd_save_new_subscription_form', function() {
+  
+    // Verify the AJAX nonce for security
+    check_ajax_referer('espd_form_nonce', 'nonce'); 
+
+    // Parse the serialized form data from the POST request
+    $form = []; 
+       
+    // Check if data exists in POST
+    if ( isset( $_POST['data'] ) ) {
+ 
+        // Unslash and parse the serialized string safely
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Raw data required for parse_str(); sanitization applied after parsing.
+        $raw_data = wp_unslash( $_POST['data'] );
+ 
+        // Ensure the data is a string before parsing
+        if ( is_string( $raw_data ) ) {
+            parse_str( $raw_data, $form );
+ 
+            // Recursively sanitize all fields
+            $form = array_map( 'sanitize_text_field', $form );
+        }
+    }    
+ 
+    global $wpdb;
+    
+    $table = $wpdb->prefix . 'espad_forms';
+
+    $subscription_price_id = sanitize_text_field($form['subscription_price_id']);
+
+    // Check if Stripe Connect is active
+    $stripe_access_token = \get_option( 'espad_stripe_connect_access_token', '' );
+
+    // Stripe Connect with Fee
+    if ( ! empty( $stripe_access_token ) ) {
+        
+        if ( !class_exists('\ESPAD\Stripe\StripeESPADManager') ) {
+            require_once ESPAD_PLUGIN_PATH . 'inc/StripeESPADManager.php';
+        }
+         
+        $stripe = \ESPAD\Stripe\StripeESPADManager::get_instance()->get_stripe_client();    
+         
+        // Retrieve price from Stripe
+        $price = $stripe->prices->retrieve($subscription_price_id);
+
+        // Amount (Cent)
+        $amount = $price->unit_amount;
+        
+        $amount_formatted = $amount / 100;        
+  
+        // Currency
+        $subscription_currency = $price->currency;    
+
+        $checkout_metadata_1 = json_encode([
+            'subscription_checkout_price_id' => $subscription_price_id,
+            'subscription_checkout_amount'   => $amount_formatted,
+            'subscription_checkout_currency' => $subscription_currency,
+        ]);           
+         
+    } else {
+        
+        wp_send_json_error('Please use Stripe Connect when using Subscription Checkout.');    
+         
+    }
+    
+    // Check if form ID is set => update existing form
+    if ( isset($form['form_id']) && !empty($form['form_id']) ) {
+
+        $form_id = intval($form['form_id']);  
+         
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Intentionally used for a custom table update with sanitized data.
+        $result = $wpdb->update($table, [
+            'form_name'                => sanitize_text_field($form['form_name']),
+            'checkout_metadata_1'      => $checkout_metadata_1,
+            'currency'                 => sanitize_text_field($form['currency']),
+            'description'              => sanitize_textarea_field($form['description']),
+            'success_url'              => esc_url_raw($form['success_url']),
+            'cancel_url'               => esc_url_raw($form['cancel_url']),
+            'stripe_metadata_campaign' => sanitize_text_field($form['stripe_metadata_campaign']),
+            'stripe_metadata_project'  => sanitize_text_field($form['stripe_metadata_project']),
+            'stripe_metadata_product'  => sanitize_text_field($form['stripe_metadata_product']),
+            'created_at'               => current_time('mysql'),  
+            'payment_button'           => sanitize_text_field($form['espad_payment_button']),
+            'mode'                     => sanitize_text_field($form['mode']),
+            'color'                    => sanitize_text_field($form['color']),
+            'choosed_fields'           => sanitize_text_field($form['show_fields']),
+            'lang'                     => sanitize_text_field($form['form_language']),
+            'payment_layout'           => sanitize_text_field($form['payment_layout']),
+        ], ['id' => $form_id]);
+        
+        // Return success or error JSON response based on update result
+        if ( $result !== false ) {
+            wp_send_json_success();
+        } else {
+            wp_send_json_error('Could not update form.');
+        }
+         
+    } else {
+        
+        // Insert new form if no ID is provided
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Intentionally used for a custom table update with sanitized data.
+        $result = $wpdb->insert($table, [
+            'form_name'                => sanitize_text_field($form['form_name']),
+            'checkout_metadata_1'      => $checkout_metadata_1,
+            'currency'                 => sanitize_text_field($form['currency']),
+            'description'              => sanitize_textarea_field($form['description']),
+            'success_url'              => esc_url_raw($form['success_url']),
+            'cancel_url'               => esc_url_raw($form['cancel_url']),
+            'stripe_metadata_campaign' => sanitize_text_field($form['stripe_metadata_campaign']),
+            'stripe_metadata_project'  => sanitize_text_field($form['stripe_metadata_project']),
+            'stripe_metadata_product'  => sanitize_text_field($form['stripe_metadata_product']),
+            'created_at'               => current_time('mysql'),
+            'payment_button'           => sanitize_text_field($form['espad_payment_button']),
+            'mode'                     => sanitize_text_field($form['mode']), 
             'color'                    => sanitize_text_field($form['color']),
             'choosed_fields'           => sanitize_text_field($form['show_fields']),
             'lang'                     => sanitize_text_field($form['form_language']),
@@ -996,6 +1180,9 @@ function espd_get_form_data() {
 
     // If form found, send data as JSON
     if ( $form ) {
+        
+        $checkout_metadata_1 = json_decode( $form->checkout_metadata_1, true );
+        
         wp_send_json_success([
             'id'                       => $form->id,
             'form_name'                => $form->form_name,
@@ -1017,7 +1204,8 @@ function espd_get_form_data() {
             'choosed_fields'           => $form->choosed_fields,
             'lang'                     => $form->lang,
             'payment_layout'           => $form->payment_layout,
-        ]);
+            'checkout_metadata_1'      => $checkout_metadata_1,
+        ]); 
     } else {
         wp_send_json_error('Error: Form not found');
     }
@@ -1551,3 +1739,161 @@ function espad_create_checkout(WP_REST_Request $request) {
     } 
      
 } 
+ 
+/**
+ * Create a Stripe subscription via REST API.
+ *
+ * Registers a custom REST route that allows creating a Stripe subscription
+ * based on a stored form configuration. The endpoint retrieves metadata from
+ * the database, extracts the Stripe price ID, and creates a subscription
+ * using the Stripe API.
+ *
+ * If Stripe Connect is enabled, an application fee is applied. 
+ *
+ * The response includes the subscription ID and a client secret for either
+ * a PaymentIntent or SetupIntent, depending on the subscription state.
+ *
+ * @since 1.0.0
+ *
+ * @param WP_REST_Request $request The REST API request object.
+ *
+ * @return WP_REST_Response|void Returns a JSON response with subscription data
+ *                               or an error message.
+ *
+ * @throws Exception If no client secret can be generated.
+ */
+add_action('rest_api_init', function () {
+    register_rest_route('espad-stripe/v1', '/create-subscription/(?P<form_id>\d+)', [
+        'methods'             => 'POST',
+        'callback'            => 'espad_create_subscription',
+        'permission_callback' => '__return_true',
+    ]);
+});
+
+function espad_create_subscription(WP_REST_Request $request) {
+    
+    global $wpdb;
+    
+    $form_id = absint( $request->get_url_params()['form_id'] ?? 0 );
+
+    if ( ! $form_id ) {
+        return new WP_REST_Response([ 'error' => 'Missing form_id.' ], 400);
+    } 
+    
+    $table_name = $wpdb->prefix . 'espad_forms';
+
+    // Retrieve checkout_metadata_1 based on the form ID
+    $checkout_metadata = $wpdb->get_var(
+        $wpdb->prepare(
+            "SELECT checkout_metadata_1 FROM $table_name WHERE id = %d",
+            $form_id
+        )
+    ); 
+    
+    if ( empty( $checkout_metadata ) ) {
+        return new WP_REST_Response([
+            'error' => 'No checkout metadata found for this form.',
+        ], 400);
+    }
+      
+    $data = json_decode($checkout_metadata, true);
+
+    if ( empty($data['subscription_checkout_price_id']) ) {
+        return new WP_REST_Response([
+            'error' => 'No price ID found in metadata.',
+        ], 400);
+    } 
+
+    $price_id = $data['subscription_checkout_price_id'];
+     
+    if ( !class_exists('\ESPAD\Stripe\StripeESPADManager') ) {
+        require_once ESPAD_PLUGIN_PATH . 'inc/StripeESPADManager.php';
+    }
+
+    $stripe = \ESPAD\Stripe\StripeESPADManager::get_instance()->get_stripe_client();
+ 
+    try {
+
+        // Create a new customer
+        $customer = $stripe->customers->create([]);
+        
+        // Check if Stripe Connect is active
+        $stripe_access_token = \get_option( 'espad_stripe_connect_access_token', '' );
+        
+        // Stripe Connect with Fee
+        if ( ! empty( $stripe_access_token ) ) {
+
+            $stripe_connected_account_encrypted = \get_option( 'espad_stripe_account_id', '' );
+            
+            $stripe_access_token_decrypted = espd_decrypt($stripe_access_token);
+              
+            // Default 1.8% platform fee
+            $subscription = $stripe->subscriptions->create([
+                'customer' => $customer->id,
+                'items' => [[
+                    'price' => $price_id,
+                ]],
+                'application_fee_percent' => 1.8,
+                'payment_behavior' => 'default_incomplete',
+                'payment_settings' => [
+                    'save_default_payment_method' => 'on_subscription',
+                ],
+                'expand' => [
+                    'latest_invoice.confirmation_secret',
+                    'pending_setup_intent',
+                ],
+            ]);            
+              
+        } else {
+
+            $subscription = $stripe->subscriptions->create([
+                'customer' => $customer->id,
+                'items' => [[
+                    'price' => $price_id,
+                ]],
+                'payment_behavior' => 'default_incomplete',
+                'payment_settings' => [
+                    'save_default_payment_method' => 'on_subscription',
+                ],
+                'expand' => [
+                    'latest_invoice.confirmation_secret',
+                    'pending_setup_intent',
+                ],
+            ]);            
+            
+        }          
+
+        $clientSecret = $subscription->latest_invoice->confirmation_secret->client_secret ?? null;
+
+        if ( !$clientSecret ) {
+            
+            $pendingSetupIntent = $subscription->pending_setup_intent ?? null;
+
+            if ($pendingSetupIntent && is_object($pendingSetupIntent) && !empty($pendingSetupIntent->client_secret)) {
+                wp_send_json([
+                    'subscriptionId' => $subscription->id,
+                    'clientSecret'   => $pendingSetupIntent->client_secret,
+                    'intentType'     => 'setup_intent',
+                ]);
+            }
+
+            throw new Exception('Kein client_secret gefunden.');
+            
+        }
+
+        wp_send_json([
+            'subscriptionId' => $subscription->id,
+            'clientSecret'   => $clientSecret,
+            'intentType'     => 'payment_intent',
+        ]);
+
+    } catch (\Throwable $e) {
+        wp_send_json([
+            'error' => $e->getMessage(),
+        ], 400);
+    }
+    
+}
+
+
+

@@ -19,7 +19,10 @@ jQuery(document).ready(function($) {
         
         const selectedValue = $('input[name="amount"]:checked').data('value');
         
-        let currency = $('#currency').val();
+        let currency          = $('#currency').val();
+        let espadCheckoutMode = $("#espad_checkout_mode").val();
+        
+        if ( espadCheckoutMode === 'Subscription' ) return; 
 
         // Fallback auf USD, wenn kein Wert vorhanden ist
         if ( !currency || currency.trim() === '' ) {
@@ -39,7 +42,7 @@ jQuery(document).ready(function($) {
             
             // Check for empty, "-" or null/undefined, and set fallback to 10
             if ( !fix_amount || fix_amount.trim() === '-' || isNaN(parseFloat(fix_amount)) ) {
-                
+                 
                 fix_amount = 100;
             
             }            

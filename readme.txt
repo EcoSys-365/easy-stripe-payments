@@ -4,8 +4,8 @@ Donate link: https://buymeacoffee.com/ecosys365
 Tags: stripe, payments, subscription, donation, stripe checkout
 Requires at least: 5.5
 Tested up to: 6.9
-Requires PHP: 7.4
-Stable tag: 1.3.1 
+Requires PHP: 7.4 
+Stable tag: 1.3.2 
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,12 +29,13 @@ https://www.youtube.com/watch?v=iPNCHNTb_CI
 8. Edit an existing Stripe subscription product and link it with a checkout button
 9. Example of a Stripe-hosted checkout page for subscription payments
 
-== Three checkout modes included: ==
+== Four checkout modes included: ==
 
 1. **Standard Checkout** Accept one-time payments with customizable product name, amount, and currency.  
-2. **Campaign Checkout** Track fundraising campaigns with a frontend progress display showing how much has already been collected.  
-3. **Stripe Subscription Button** Let users subscribe to recurring payments (monthly/yearly) using Stripe's subscription system.
-
+2. **Campaign Checkout** Track fundraising campaigns with a frontend progress display showing how much has already been collected. 
+3. **Subscription Checkout** A dedicated checkout form for recurring subscription payments with a modern user experience.
+4. **Stripe Subscription Button** Let users subscribe to recurring payments (monthly/yearly) using Stripe's subscription system.
+ 
 == Supported Payment Methods & Currencies ==
 
 Easy Stripe Payments & Donations supports all payment methods offered by Stripe, as well as all currencies available through Stripe.
@@ -208,6 +209,14 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 
 == Changelog ==
 
+= 1.3.2 =
+* Added a brand new checkout form for subscription payments (Subscription Checkout).
+* Automatically adds three new fields to the espad_forms database table.
+* Added a database version constant and upgrade check to the main plugin file.
+* Redesigned admin navigation tabs for a cleaner and more modern look.
+* Implemented a new shortcode helper box in the Preview tab for easier integration.
+* Payment button labels can now be customized individually across all checkout modes.
+
 = 1.3.1 =
 * Improved frontend styling of the checkout form for a cleaner and more consistent user experience.
 * Enhanced the Setup tab to provide clearer guidance and structure for Stripe connection options.
@@ -279,6 +288,9 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 * Stripe Subscription Button for recurring payments
  
 == Upgrade Notice ==
+
+= 1.3.2 =
+* Introduces a brand new Subscription Checkout, UI improvements, and enhanced payment button label customization.
 
 = 1.3.1 =
 * Includes UI improvements for the checkout form and clearer Stripe connection setup. Recommended for a smoother user experience.

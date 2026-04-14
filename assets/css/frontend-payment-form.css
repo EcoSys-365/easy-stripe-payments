@@ -274,3 +274,43 @@ shortcode_payment_form .campaign-image-box img {
     }    
     
 }
+
+/* Loading Animation - Subscription Checkout */
+#payment-element-loading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 0;
+    font-size: 16px;    
+}
+ 
+#payment-element-loading::before {
+    content: "";
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ccc;
+    border-top-color: #333;
+    border-radius: 50%;
+    animation: espad-spin 0.8s linear infinite;
+}
+
+.hidden {
+  display: none;
+}
+
+@keyframes espad-spin {
+    
+  to {
+    transform: rotate(360deg);
+  }
+    
+} 
+ 
+.espad_warning_box {
+    padding: 12px; 
+    border:1px solid #f5c2c7; 
+    background: #f8d7da; 
+    color: #842029; 
+    border-radius: 4px; 
+    margin-bottom: 15px;
+}

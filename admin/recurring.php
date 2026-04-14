@@ -372,8 +372,8 @@ try {
         <thead>
             <tr>
                 <th><?php echo esc_html(__( 'Product Name', 'easy-stripe-payments' )); ?></th>
-                <th><?php echo esc_html(__( 'Product ID', 'easy-stripe-payments' )); ?></th>
                 <th><?php echo esc_html(__( 'Price', 'easy-stripe-payments' )); ?></th>
+                <th><?php echo esc_html(__( 'Price ID', 'easy-stripe-payments' )); ?></th>
                 <th><?php echo esc_html(__( 'Image', 'easy-stripe-payments' )); ?></th>
                 <th><?php echo esc_html(__( 'Shortcode', 'easy-stripe-payments' )); ?></th>
                 <th><?php echo esc_html(__( 'Subscription Button', 'easy-stripe-payments' )); ?></th>
@@ -386,10 +386,17 @@ try {
             <?php if ( !empty($products->data) ): ?>
                 <?php foreach ($products as $produkt): ?>
             
-                    <?php $prices = \Stripe\Price::all(['product' => $produkt->id]); ?>
-            
                     <?php 
+             
+                        $prices = \Stripe\Price::all(['product' => $produkt->id]); 
+             
+                        $first_price_id = '';
+            
                         foreach ($prices->data as $preis) {
+                            
+                            if (empty($first_price_id)) {
+                                $first_price_id = $preis->id;
+                            }                            
 
                             $unit_amount = number_format($preis->unit_amount / 100, 0); // Stripe speichert Cent
                             $unit_currency = strtoupper($preis->currency);  
@@ -422,8 +429,13 @@ try {
                         data-button-font-color="<?php echo esc_html( $button_font_color ); ?>">
                         
                         <td><?php echo esc_html($produkt->name); ?></td>
-                        <td><?php echo esc_html($produkt->id); ?></td>
                         <td><?php echo esc_html( $unit_amount . " " . $unit_currency ); ?></td>
+                        <td> 
+                            <code id="shortcode-<?php echo esc_html($first_price_id); ?>"><?php echo esc_html($first_price_id); ?></code>
+                            <button class="button copy-button" data-target="shortcode-<?php echo esc_html($first_price_id); ?>">
+                                <?php echo esc_html(__( 'Copy', 'easy-stripe-payments' )); ?>
+                            </button>
+                        </td>
                         <td>
                             <?php
  
@@ -442,10 +454,12 @@ try {
                                 }     
 
                             ?>                        
-                        </td>
+                        </td>  
                         <td>
                             <code id="shortcode-<?php echo esc_html($produkt->id); ?>">[espad_product_btn id="<?php echo esc_html($produkt->id); ?>"]</code>
-                            <button class="button copy-button" data-target="shortcode-<?php echo esc_html($produkt->id); ?>"><?php echo esc_html(__( 'Copy', 'easy-stripe-payments' )); ?></button>
+                            <button class="button copy-button" data-target="shortcode-<?php echo esc_html($produkt->id); ?>">
+                                <?php echo esc_html(__( 'Copy', 'easy-stripe-payments' )); ?>
+                            </button>
                         </td> 
                         <td>
                             <?php

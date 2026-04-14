@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
         
         let registerLink = espadWelcomeMessage.dataset.espadRegisterLink;
         let espadPluginUrl = espadWelcomeMessage.dataset.espadPluginUrl;
-         
+          
         swal({
           //title: "",
           content: {
@@ -53,8 +53,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 <img src="${espadPluginUrl}assets/images/wordpress_rocket.jpg?v=2" alt="Rocket Image" class="espad_lightbox" width="260">
  
-                <p style="font-size:16px; line-height:24px; margin-top: 0px;"><b>Thank you for installing Easy Stripe Payments.</b></p>
-                &#128161; Tip: The Setup tab includes a step-by-step walkthrough to help you get started in just a few minutes. <br /><br /><b>Wishing you great success and secure payments with Easy Stripe Payments!</b><br /><br />Premium Members receive additional features and access to priority support, while <b class="blue">all core functionality remains freely available.</b><br /><br />&#128274; <b>Want to get even more out of it?</b><br />Become a Premium &#x1F48E; Member for Multiple Stripe Checkouts, Multiple Subscription Payments &amp; Stripe Metadata.
+                <p style="font-size:16px; line-height:24px; margin-top: 0px;"><b>Thank you for installing Easy Stripe Payments &amp; Donations.</b></p>
+                <b>Wishing you great success and secure payments with Easy Stripe Payments!</b><br /><br />&#128274; Premium Members receive additional features and access to priority support, while <b class="blue">all core functionality remains freely available.</b>
                 `
             } 
           },        

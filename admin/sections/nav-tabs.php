@@ -1,6 +1,6 @@
 <?php defined( 'ABSPATH' ) || exit; ?>
 
-<div class="wrap">
+<div class="espad-admin-tabs wrap">
 
     <h1 class="espad_headline"><span class="dashicons dashicons-money-alt"></span> &nbsp;&nbsp;<?php echo esc_html(__( 'Easy Stripe Payments &amp; Donations', 'easy-stripe-payments' )); ?></h1>
 

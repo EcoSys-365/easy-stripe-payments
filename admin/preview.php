@@ -23,14 +23,35 @@
     </select>
     
     <?php if ( $selected_form_id != '' ) : ?>
-      
-        <code id="shortcode-payment-form">[espad_payment_form id="<?php echo esc_html( $selected_form_id ); ?>"]</code>
-    
-        <button class="button copy-button" data-target="shortcode-payment-form" style="all: unset; cursor: pointer;">
-            <?php echo esc_html(__( 'Copy Shortcode', 'easy-stripe-payments' )); ?>
-        </button>
-       
-    <?php endif; ?>
+
+        <div class="espad-preview-overlay">
+
+            <div class="espad-preview-overlay__title">
+                
+                <?php echo esc_html__( 'Use this Shortcode', 'easy-stripe-payments' ); ?>
+                
+                <button type="button" class="espad-toggle">
+                    <span class="dashicons dashicons-arrow-down-alt2"></span>
+                </button>                
+                
+            </div>
+
+            <div class="espad-preview-overlay__content">
+                <p>
+                    <?php echo esc_html__( 'Copy and paste this into a page or post.', 'easy-stripe-payments' ); ?>
+                </p>
+
+                <code id="shortcode-payment-form">[espad_payment_form id="<?php echo esc_html( $selected_form_id ); ?>"]</code>
+                 
+                <span class="espad-copy-feedback">
+                    <?php echo esc_html__( 'Shortcode copied!', 'easy-stripe-payments' ); ?>
+                </span>                
+                
+            </div>
+
+        </div>
+
+    <?php endif; ?>    
      
     <h2 class="desktop"><?php echo esc_html(__( 'Preview Desktop', 'easy-stripe-payments' )); ?>   
         

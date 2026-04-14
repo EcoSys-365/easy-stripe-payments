@@ -40,7 +40,8 @@ $option_keys = [
     'espad_stripe_metadata_product',
     'espad_currency',
     'espad_checkout_form_id',
-];
+    'espd_plugin_db_version',
+]; 
   
 $table_names = [
     'espad_forms',
