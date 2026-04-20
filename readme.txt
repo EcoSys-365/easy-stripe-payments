@@ -5,7 +5,7 @@ Tags: stripe, payments, subscription, donation, stripe checkout
 Requires at least: 5.5
 Tested up to: 6.9
 Requires PHP: 7.4 
-Stable tag: 1.3.2 
+Stable tag: 1.3.3 
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,8 +34,8 @@ https://www.youtube.com/watch?v=iPNCHNTb_CI
 1. **Standard Checkout** Accept one-time payments with customizable product name, amount, and currency.  
 2. **Campaign Checkout** Track fundraising campaigns with a frontend progress display showing how much has already been collected. 
 3. **Subscription Checkout** A dedicated checkout form for recurring subscription payments with a modern user experience.
-4. **Stripe Subscription Button** Let users subscribe to recurring payments (monthly/yearly) using Stripe's subscription system.
- 
+4. **Subscription Button** Let users subscribe to recurring payments (monthly/yearly) using Stripe's subscription system.
+  
 == Supported Payment Methods & Currencies ==
 
 Easy Stripe Payments & Donations supports all payment methods offered by Stripe, as well as all currencies available through Stripe.
@@ -209,6 +209,12 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 
 == Changelog ==
 
+= 1.3.3 =
+* Fixed a PHP deprecated warning when decoding JSON metadata by ensuring a valid string is passed to json_decode().
+* Fixed an issue where empty metadata fields were being sent to Stripe; now only non-empty values are included.
+* Added the Checkout Form ID as metadata to both Stripe Customer and Subscription for improved tracking.
+* Updated and improved the plugin documentation in the readme file.  
+
 = 1.3.2 =
 * Added a brand new checkout form for subscription payments (Subscription Checkout).
 * Automatically adds three new fields to the espad_forms database table.
@@ -288,6 +294,9 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 * Stripe Subscription Button for recurring payments
  
 == Upgrade Notice ==
+
+= 1.3.3 = 
+This update improves Stripe metadata handling and fixes a PHP deprecation warning. Updating is recommended to maintain clean metadata and improve tracking of Checkout Form IDs, which are already recorded in Stripe metadata.
 
 = 1.3.2 =
 * Introduces a brand new Subscription Checkout, UI improvements, and enhanced payment button label customization.

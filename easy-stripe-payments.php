@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Easy Stripe Payments
  * Description: A user-friendly WordPress plugin for accepting <strong>one-time and recurring Stripe payments</strong>. Perfect for businesses, freelancers and Non-Profit organizations. Secure, fast and fully PCI-compliant.
- * Version: 1.3.2 
+ * Version: 1.3.3
  * Author: EcoSys365
  * Author URI: https://www.ecosys365.com
  * Plugin URI: https://www.payments-and-donations.com
@@ -759,7 +759,7 @@ add_action('admin_enqueue_scripts', function($hook) {
             'espad-admin-style',
             ESPAD_PLUGIN_URL . 'assets/css/espad.css',
             array(),
-            '1.0.250'
+            '1.0.251'
         );        
 
         // Enqueue WordPress built-in jQuery script
@@ -1181,7 +1181,7 @@ function espd_get_form_data() {
     // If form found, send data as JSON
     if ( $form ) {
         
-        $checkout_metadata_1 = json_decode( $form->checkout_metadata_1, true );
+        $checkout_metadata_1 = json_decode( $form->checkout_metadata_1 ?? '', true );
         
         wp_send_json_success([
             'id'                       => $form->id,
@@ -1621,13 +1621,13 @@ function espad_create_checkout(WP_REST_Request $request) {
    
     // Get singleton instance and retrieve Stripe client
     $stripe = \ESPAD\Stripe\StripeESPADManager::get_instance()->get_stripe_client();    
-    
-    $metadata = [];
-    
-    $metadata['campaign']         = get_option('espad_stripe_metadata_campaign') ?? null;
-    $metadata['project']          = get_option('espad_stripe_metadata_project') ?? null;
-    $metadata['product']          = get_option('espad_stripe_metadata_product') ?? null;
-    $metadata['checkout_form_id'] = get_option('espad_checkout_form_id') ?? null;
+   
+    $metadata = array_map('strval', array_filter([
+        'campaign'         => get_option('espad_stripe_metadata_campaign'),
+        'project'          => get_option('espad_stripe_metadata_project'),
+        'product'          => get_option('espad_stripe_metadata_product'),
+        'checkout_form_id' => get_option('espad_checkout_form_id'),
+    ], fn($value) => !in_array($value, [null, '', false], true)));    
      
     $currency = get_option('espad_currency');
 
@@ -1813,9 +1813,13 @@ function espad_create_subscription(WP_REST_Request $request) {
     $stripe = \ESPAD\Stripe\StripeESPADManager::get_instance()->get_stripe_client();
  
     try {
-
-        // Create a new customer
-        $customer = $stripe->customers->create([]);
+ 
+        // Create a new customer and save the checkout_form_id as metadata in Stripe
+        $customer = $stripe->customers->create([
+            'metadata' => [
+                'checkout_form_id' => (string) $form_id,
+            ],
+        ]);        
         
         // Check if Stripe Connect is active
         $stripe_access_token = \get_option( 'espad_stripe_connect_access_token', '' );
@@ -1838,12 +1842,15 @@ function espad_create_subscription(WP_REST_Request $request) {
                 'payment_settings' => [
                     'save_default_payment_method' => 'on_subscription',
                 ],
+                'metadata' => [
+                    'checkout_form_id' => (string) $form_id,
+                ],                
                 'expand' => [
                     'latest_invoice.confirmation_secret',
                     'pending_setup_intent',
                 ],
             ]);            
-              
+               
         } else {
 
             $subscription = $stripe->subscriptions->create([
@@ -1855,6 +1862,9 @@ function espad_create_subscription(WP_REST_Request $request) {
                 'payment_settings' => [
                     'save_default_payment_method' => 'on_subscription',
                 ],
+                'metadata' => [
+                    'checkout_form_id' => (string) $form_id,
+                ],                 
                 'expand' => [
                     'latest_invoice.confirmation_secret',
                     'pending_setup_intent',
