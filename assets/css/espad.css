@@ -1,4 +1,4 @@
-/* Easy Stripe Payments and Donations Plugin v1.3.3 */
+/* Easy Stripe Payments and Donations Plugin v1.3.4 */
 body, p {
     font-size: 15px !important;
 }
@@ -41,6 +41,9 @@ h1.espad_headline .dashicons-money-alt {
 }
 #payoutChart {
     margin-top: -85px;
+} 
+#wpfooter {
+    position: relative !important;
 }
 /* Loading Animation */
 #espad-loading-overlay {
@@ -55,7 +58,7 @@ h1.espad_headline .dashicons-money-alt {
   align-items: center;
   z-index: 9999;
 }
-/* Loader-Stil */
+/* Loader-Style */
 .loader {
   width: 50px;
   aspect-ratio: 1;
@@ -65,7 +68,7 @@ h1.espad_headline .dashicons-money-alt {
   border-right-color: #25b09b;
   animation: l15 1s infinite linear;
 }
-/* Zusätzliche Ringe */
+/* Additional rings */
 .loader::before,
 .loader::after {    
   content: "";
@@ -80,11 +83,11 @@ h1.espad_headline .dashicons-money-alt {
   margin: 8px;
   animation-duration: 3s;
 }
-/* Dreh-Animation */
+/* Turn-Animation */
 @keyframes l15 { 
   100% { transform: rotate(1turn); }
 }
-/* Der Hauptinhalt, welcome page */
+/* Main content, welcome page */
 #content {
     display: none; 
 }
@@ -94,81 +97,73 @@ h1.espad_headline .dashicons-money-alt {
     position: relative;
     z-index: 999;
 }
+/* START: Welcome Page - Clean Stats Layout */
 .espad-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  margin: 0 -10px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  overflow: hidden;
+  margin: 30px 0;
+  background: #ffffff;
 }
 .espad-column {
-  flex: 1 1 40%;
-  padding: 0 10px;
-  box-sizing: border-box;
+  display: contents; /* wichtig für gleichmaessige Linien */
 }
 .balance-box {
-  background-color: #f9f9f9;
-  padding: 15px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  padding: 26px 28px;
+  background: #ffffff;
+  position: relative;
+  transition: background 0.2s ease;
 }
-.balance-title {
-  font-weight: bold;
-  margin-bottom: 5px;
-  font-size: 15px;
-  color: #333;
-}
-.balance-amount {
-  font-size: 18px;
-  color: #222;
+/* Linien zwischen den Feldern */
+.balance-box:nth-child(odd) {
+  border-right: 1px solid #e5e7eb;
 }
 .balance-box {
-  background: #fff8e1;
-  border-left: 6px solid #ffb300;
-  padding: 16px 20px;
-  margin: 20px 0;
-  border-radius: 8px;
-  font-family: Arial, sans-serif;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  width: 90%;
-  transition: background-color 0.3s ease, width 0.3s ease;
+  border-bottom: 1px solid #e5e7eb;
 }
+/* Hover sehr subtil */
 .balance-box:hover {
-   background: #ffb300; 
+  background: #f6f6f6;
 }
 .balance-title {
-  font-size: 16px;
-  /*font-weight: bold;*/
-  color: #ff8f00;
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: color 0.3s ease;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 10px;
+  letter-spacing: 0.04em;
 }
 .balance-amount {
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
-  transition: color 0.3s ease;
+  font-size: 34px;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.02em;
 }
-.balance-box:hover .balance-title,
-.balance-box:hover .balance-amount {
-  color: #fff; 
+/* Connect Button */
+.espd-connect-button { 
+    display: inline-block; 
+    margin-top: 15px; 
+    padding: 10px 16px; 
+    background-color: #28a745; /* Bootstrap Green */ 
+    color: #fff; 
+    text-decoration: none; 
+    border-radius: 4px; 
+    transition: background-color 0.3s ease; 
+} 
+.espd-connect-button:hover { 
+    background-color: #218838; 
+    color: #fff; 
 }
-.espd-connect-button {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 10px 16px;
-    background-color: #28a745; /* Bootstrap Green */
-    color: #fff;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-}
-.espd-connect-button:hover {
-    background-color: #218838;
-    color: #fff;
+/* Mobile */
+@media (max-width: 782px) {
+  .espad-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .balance-box:nth-child(odd) {
+    border-right: none;
+  }
 }
 /* END: Welcome Page */
 .espad_powered_by_box {
@@ -196,7 +191,7 @@ h1.espad_headline .dashicons-money-alt {
     position: relative;
     padding-right: 40px;
 }
-/* Symbol: + oder - */
+/* Symbol: + or - */
 .espd-faq-question::after {
     content: '+';
     position: absolute;
@@ -207,7 +202,7 @@ h1.espad_headline .dashicons-money-alt {
     color: #666;
     transition: transform 0.2s, content 0.2s;
 }
-/* Wenn offen → Symbol aendern zu Minus */
+/* If open - Change icon to minus */
 .espd-faq-item.open .espd-faq-question::after {
     content: '–';
 }
@@ -218,10 +213,10 @@ h1.espad_headline .dashicons-money-alt {
     background-color: #fff;
     transition: max-height 0.3s ease, padding 0.3s ease;
 }
-/* Offen-Zustand animieren */
+/* Animate the open state */
 .espd-faq-item.open .espd-faq-answer {
-    max-height: 500px; /* muss groß genug sein für längste Antwort */
-    padding: 16px;
+    max-height: 500px; /* Must be large enough for the longest answer */
+    padding: 16px; 
 }
 /* END: Help Page */
 #toplevel_page_espd_main .wp-submenu li a[href="admin.php?page=espd_main&tab=premium"] {
@@ -324,7 +319,8 @@ img.espad_lightbox {
 #espd-form-modal .form-container,
 #espd-form-campaign-modal .form-container,
 #espd-form-recurring-modal .form-container,
-#espd-form-subscription-modal .form-container {
+#espd-form-subscription-modal .form-container,
+#espd-form-advanced-modal .form-container {
     width: 100%;
     max-width: 1000px; /* Width max. 1000px */
     padding: 20px;
@@ -335,20 +331,23 @@ img.espad_lightbox {
 #espd-form-modal form,
 #espd-form-campaign-modal form,
 #espd-form-recurring-modal form,
-#espd-form-subscription-modal form {
+#espd-form-subscription-modal form,
+#espd-form-advanced-modal form {
     display: block;
 }
 #espd-form-modal #espd-admin-notice-wrapper,
 #espd-form-campaign-modal #espd-admin-campaign-notice-wrapper,
 #espd-form-recurring-modal #espd-admin-notice-wrapper,
-#espd-form-subscription-modal #espd-admin-subscription-notice-wrapper {
+#espd-form-subscription-modal #espd-admin-subscription-notice-wrapper,
+#espd-form-advanced-modal #espd-admin-advanced-notice-wrapper {
     margin-bottom: 15px;
     width: 98%;
 }
 #espd-form-modal .form-row,
 #espd-form-campaign-modal .form-row,
 #espd-form-recurring-modal .form-row,
-#espd-form-subscription-modal .form-row {
+#espd-form-subscription-modal .form-row,
+#espd-form-advanced-modal .form-row {
     display: flex;
     gap: 20px;
     margin-bottom: 20px;
@@ -356,21 +355,24 @@ img.espad_lightbox {
 #espd-form-modal .form-group,
 #espd-form-campaign-modal .form-group,
 #espd-form-recurring-modal .form-group,
-#espd-form-subscription-modal .form-group {
-    flex: 1;  /* Weist jedem Inputfeld die gleiche Breite zu */
+#espd-form-subscription-modal .form-group,
+#espd-form-advanced-modal .form-group {
+    flex: 1;  /* Assigns the same width to each input field. */
     display: flex;
     flex-direction: column;
 }
 #espd-form-modal .form-group.full-width,
 #espd-form-campaign-modal .form-group.full-width,
 #espd-form-recurring-modal .form-group.full-width,
-#espd-form-subscription-modal .form-group.full-width {
-    flex: 1 0 100%;  /* Macht das Feld über die gesamte Breite */
+#espd-form-subscription-modal .form-group.full-width,
+#espd-form-advanced-modal .form-group.full-width {
+    flex: 1 0 100%;  /* Makes the field span the full width. */
 }
 #espd-form-modal label,
 #espd-form-campaign-modal label,
 #espd-form-recurring-modal label,
-#espd-form-subscription-modal label {
+#espd-form-subscription-modal label,
+#espd-form-advanced-modal label {
     margin-bottom: 8px;
     font-weight: bold;
     font-size: 14px;
@@ -378,11 +380,12 @@ img.espad_lightbox {
 #espd-form-modal .input,
 #espd-form-campaign-modal .input,
 #espd-form-recurring-modal .input,
-#espd-form-subscription-modal .input {
+#espd-form-subscription-modal .input,
+#espd-form-advanced-modal .input {
     padding: 8px;
     font-size: 14px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 4px; 
 }
 #espd-form-modal input[type="number"],
 #espd-form-modal input[type="text"],
@@ -397,7 +400,11 @@ img.espad_lightbox {
 #espd-form-subscription-modal textarea,
 #espd-form-subscription-modal input[type="number"],
 #espd-form-subscription-modal input[type="text"],
-#espd-form-subscription-modal input[type="url"] {
+#espd-form-subscription-modal input[type="url"],
+#espd-form-advanced-modal textarea,
+#espd-form-advanced-modal input[type="number"],
+#espd-form-advanced-modal input[type="text"],
+#espd-form-advanced-modal input[type="url"] {
     width: 100%;
     padding: 8px;
     font-size: 14px;
@@ -415,7 +422,10 @@ img.espad_lightbox {
 #espd-form-recurring-modal input[type="url"]:focus,
 #espd-form-subscription-modal input[type="number"]:focus,
 #espd-form-subscription-modal input[type="text"]:focus,
-#espd-form-subscription-modal input[type="url"]:focus {
+#espd-form-subscription-modal input[type="url"]:focus,
+#espd-form-advanced-modal input[type="number"]:focus,
+#espd-form-advanced-modal input[type="text"]:focus,
+#espd-form-advanced-modal input[type="url"]:focus {
     outline: none;
     border-color: #007bff;
     box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
@@ -429,7 +439,8 @@ img.espad_lightbox {
 #espd-form-modal select.form-control,
 #espd-form-campaign-modal select.form-control,
 #espd-form-recurring-modal select.form-control,
-#espd-form-subscription-modal select.form-control {
+#espd-form-subscription-modal select.form-control,
+#espd-form-advanced-modal select.form-control {
     width: 100%;
     max-width: 100%;
     padding: 8px;
@@ -441,10 +452,35 @@ img.espad_lightbox {
 #espd-form-modal select.form-control:focus,
 #espd-form-campaign-modal select.form-control:focus,
 #espd-form-recurring-modal select.form-control:focus,
-#espd-form-subscription-modal select.form-control:focus {
+#espd-form-subscription-modal select.form-control:focus,
+#espd-form-advanced-modal select.form-control:focus {
     outline: none;
     border-color: #007bff;
     box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
+}
+/* Advanced Checkout Form Modal */
+#espd-new-advanced-form .headline {
+    font-size: 18px;
+    margin-top: 0px;
+    margin-bottom: 5px;
+}
+#espd-new-advanced-form .advanced-section {
+  background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+#espd-new-advanced-form .advanced-section:hover {
+  border-color: #d1d5db;
+}
+#espd-new-advanced-form .advanced-section .headline {
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 4px;
+  letter-spacing: 0.02em;
 }
 /* espad-table */
 table#espad-table tbody tr:hover,
@@ -454,7 +490,7 @@ table#espad-table-stripe-payments tbody tr:hover {
 }
 table#espad-table tbody tr:hover td,
 table#espad-table-stripe-payments tbody tr:hover td {
-    color: #fff !important
+    color: #fff !important; 
 } 
 #espad-table-stripe-payments_wrapper {
     overflow-x: auto;
@@ -572,7 +608,7 @@ table#espad-table .subscription_btn_preview {
   border-radius: 50%;
 }
 .email_configure_box input:checked + .slider {
-  background-color: #2271b1; /* WP-blau */
+  background-color: #2271b1; /* WP-blue */
 }
 .email_configure_box input:checked + .slider:before {
   transform: translateX(22px);
@@ -590,7 +626,7 @@ table#espad-table .subscription_btn_preview {
 }
 /* Settings */
 .custom-stripe-btn {
-    background-color: #635bff; /* Das typische Stripe-Violett */
+    background-color: #635bff; /* The typical Stripe purple */
     color: #ffffff;
     padding: 10px 20px;
     border-radius: 4px;
@@ -636,7 +672,7 @@ table#espad-table .subscription_btn_preview {
     padding: 10px 16px;
     border: 1px solid #dcdcde;
     border-bottom: none;
-    border-radius: 10px 10px 0 0; /* nur oben rund */
+    border-radius: 10px 10px 0 0; /* Rounded only at the top */
     background: #f1f1f1;
     color: #50575e;
     font-size: 14px;
@@ -808,4 +844,37 @@ table#espad-table .subscription_btn_preview {
 
 .espad-copy-feedback.is-visible {
     display: block;
+}
+
+/* Advanced Checkout Button */
+#espd-create-advanced-form,
+.espd-create-advanced-form {
+    background-color: #494949 !important;
+    border: 1px solid #494949 !important;
+}
+#espd-create-advanced-form:hover,
+.espd-create-advanced-form:hover {
+    background-color: #000 !important;
+}
+.espad-recommended {
+    position: relative;
+} 
+ 
+.espad-badge {
+    position: absolute;
+    top: -8px;
+    right: -5px;
+    background: #46b450;
+    color: #fff;
+    font-size: 9px;
+    padding: 1px 5px;
+    border-radius: 10px; /* pill shape */
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+#espd-new-advanced-form #stripe_product_price_id_sup {
+    font-style: normal;
+    font-size: 12px;
+    color: grey;
 }

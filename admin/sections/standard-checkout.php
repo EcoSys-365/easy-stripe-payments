@@ -58,9 +58,10 @@
                         <label for="price_list"><?php echo esc_html(__( 'Please select a price list', 'easy-stripe-payments' )); ?></label>
                         <select name="price_list" id="price_list" class="form-control">
                             <option value="5,10,15,20,25">5, 10, 15, 20, 25</option>
-                            <option value="5,10,20,30,50">5, 10, 20, 30, 50</option>
+                            <option value="5,10,20,30,50">5, 10, 20, 30, 50</option>  
                             <option value="10,20,30,40,50">10, 20, 30, 40, 50</option>
                             <option value="10,20,50,80,100">10, 20, 50, 80, 100</option>
+                            <option value="15,25,50,100,200">15, 25, 50, 100, 200</option>
                             <option value="20,40,60,80,100">20, 40, 60, 80, 100</option>
                             <option value="30,60,90,120,150">30, 60, 90, 120, 150</option>
                             <option value="50,100,150,200,250">50, 100, 150, 200, 250</option>

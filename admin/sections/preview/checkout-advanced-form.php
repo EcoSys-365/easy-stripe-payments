@@ -1,10 +1,10 @@
 <?php defined( 'ABSPATH' ) || exit; ?>
 
 <!-- Display a payment form -->
-<form id="payment-form" class="desktop" method="POST">
+<form id="payment-form" class="desktop advanced-checkout-form" method="POST">
     
     <?php 
-   
+    
     /*
      * Build the REST API endpoint URL with the selected form ID,
      * ensuring the ID is safely cast to an integer
@@ -12,7 +12,7 @@
     $create_one_time_checkout_url = rest_url(
         'espad-stripe/v1/create/' . absint($selected_form_id)
     );     
-      
+     
     // Generate Token if not already exists
     if ( ! isset($_SESSION['espad_payment_token']) ) {
 
@@ -24,11 +24,21 @@
          
         $espad_token = sanitize_text_field( $_SESSION['espad_payment_token']);
         
-    }    
+    }
+    
+    $checkout_metadata_1_data = json_decode( $checkout_metadata_1, true );
+
+    $subscription_button_label = $checkout_metadata_1_data['advanced_subscription_payment_button'] ?? __( 'Subscribe Now', 'easy-stripe-payments' );
+    $subscription_amount       = $checkout_metadata_1_data['subscription_checkout_amount'] ?? '';
+    $subscription_currency     = $checkout_metadata_1_data['subscription_checkout_currency'] ?? $currency;
+
+    $one_time_button_label_switch     = $checkout_metadata_1_data['advanced_checkout_one_time_button_label'] ?? __( 'One-Time', 'easy-stripe-payments' );  
+    $subscription_button_label_switch = $checkout_metadata_1_data['subscription_button_label'] ?? __( 'Subscription', 'easy-stripe-payments' );
      
-    ?>
+    ?> 
     
     <input type="hidden" id="create-checkout-url-one-time" name="create-checkout-url-one-time" value="<?php echo esc_url( $create_one_time_checkout_url ); ?>" />
+    <input type="hidden" id="create-checkout-url-subscription" value="<?php echo esc_url( rest_url( 'espad-stripe/v1/create-subscription/' . absint($selected_form_id) ) ); ?>" /> 
     <input type="hidden" id="home-url" name="home-url" value="<?php echo esc_html( ESPAD_SITE_URL ); ?>" />
     <input type="hidden" id="current-url" name="current-url" value="<?php echo esc_html( ESPAD_CURRENT_URL ); ?>" />
     <input type="hidden" id="stripe-public-key" name="stripe-public-key" value="<?php echo esc_html( $stripe_public_key ); ?>" />
@@ -47,56 +57,23 @@
     <input type="hidden" id="espad_payment_token" name="espad_payment_token" value="<?php echo esc_html( $espad_token ); ?>" />
     <input type="hidden" id="espad_amount_type" name="espad_amount_type" value="<?php echo esc_html( $amount_type ); ?>" />
     <input type="hidden" id="espad_checkout_mode" name="espad_checkout_mode" value="<?php echo esc_html( $mode ); ?>" />
-  
-        <?php if ( $mode == 'Campaign' ): ?>
+    <input type="hidden" id="advanced-one-time-button-label" value="<?php echo esc_attr( $payment_button ); ?>" />
+    <input type="hidden" id="advanced-subscription-button-label" value="<?php echo esc_attr( $subscription_button_label ); ?>" />
+    <input type="hidden" id="advanced-subscription-amount" value="<?php echo esc_attr( $subscription_amount ); ?>" />
+    <input type="hidden" id="advanced-subscription-currency" value="<?php echo esc_attr( $subscription_currency ); ?>" />    
+     
+            <div class="espad-advanced-checkout-switch">
+                
+                <input type="radio" name="advanced_checkout_mode" id="radio-one-time" class="espad-advanced-checkout-switch__radio" value="one-time" checked>
+                <label class="btn btn-outline-primary" for="radio-one-time"><?php echo esc_html($one_time_button_label_switch); ?></label>
 
-            <div class="espad-payment-wrapper">
-
-                <div class="campaign-image-box">
-                    
-                    <?php
-                        echo wp_kses(
-                            espad_plugin_image($campaign_image, 'Campaign Image', ['class' => 'campaign-image']),
-                            ESPAD_ALLOWED_IMG_TAGS
-                        );
-                    ?>                    
-
-                    <?php if ( isset($campaign_goal_amount) && $campaign_goal_amount !== '' && is_numeric($campaign_goal_amount) ): ?>
-
-                        <div class="progress-container">
-
-                            <div class="progress-label">
-                                <?php echo esc_html(__( 'Our Goal', 'easy-stripe-payments' )); ?>: <strong><?php echo esc_html( format_campaign_amount($campaign_goal_amount, $currency) ); ?> <?php echo esc_html( $currency ); ?></strong>
-                            </div>
-
-                            <div class="progress-bar-bg">
-                                <div class="progress-bar-fill" 
-                                     data-progress="<?php echo esc_html( calculate_progress_bar($campaign_current_amount, $campaign_goal_amount) ); ?>">
-                                </div>
-                            </div>
-
-                            <p><?php echo esc_html(__( 'Amount Raised', 'easy-stripe-payments' )); ?>: <strong><?php echo esc_html( format_campaign_amount($campaign_current_amount, $currency) ); ?> <?php echo esc_html( $currency ); ?></strong></p>
-
-                        </div>
-
-                    <?php endif; ?>
-                    
-                    <p><?php echo esc_html( $description ); ?></p>
-
-                </div>
-
-                <div class="espad-payment-box">
-                    
-                <?php require_once ESPAD_PLUGIN_PATH . 'admin/sections/preview/stripe-connect-warning.php'; ?>    
-
-        <?php else: ?>        
-
-            <div>
-
-                <div>
-
-        <?php endif; ?> 
-
+                <input type="radio" name="advanced_checkout_mode" id="radio-subscription" class="espad-advanced-checkout-switch__radio" value="subscription">
+                <label class="btn btn-outline-primary" for="radio-subscription"><?php echo esc_html($subscription_button_label_switch); ?></label>
+                
+            </div> 
+    
+            <?php require_once ESPAD_PLUGIN_PATH . 'admin/sections/preview/stripe-connect-warning.php'; ?>
+        
             <?php if ( $amount_type != 'fix_amount' ) : ?>
  
                 <div id="prices_box" class="mb-3">
@@ -151,9 +128,9 @@
 
                 </div>
 
-            <?php endif; ?> 
-                    
-            <?php require_once ESPAD_PLUGIN_PATH . 'admin/sections/preview/payment-element-loading.php'; ?>        
+            <?php endif; ?>
+    
+            <?php require_once ESPAD_PLUGIN_PATH . 'admin/sections/preview/payment-element-loading.php'; ?>
 
             <?php require_once ESPAD_PLUGIN_PATH . 'admin/sections/preview/element.php'; ?>
 
@@ -211,7 +188,8 @@
                             ESPAD_ALLOWED_IMG_TAGS
                         );                      
                     ?>
-                    <?php echo esc_html( $payment_button ); ?> <sup></sup>
+                    <span id="submit-button-label"><?php echo esc_html( $payment_button ); ?></span>
+                    <sup id="submit-button-amount"></sup>                    
                 </span>
             </button>
 

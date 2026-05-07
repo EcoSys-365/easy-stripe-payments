@@ -1,112 +1,420 @@
-const checkoutMode    = document.querySelector("#espad_checkout_mode").value;
+let baseCheckoutMode  = document.querySelector("#espad_checkout_mode").value;
 const stripePublicKey = document.querySelector("#stripe-public-key").value;
-   
-/* ********************* */
-/* SUBSCRIPTION CHECKOUT */
-/* ********************* */
-if ( checkoutMode === "Subscription" ) {
-     
-    const currentUrl    = document.querySelector("#current-url")?.value || window.location.href;
-    const choosedFields = document.querySelector("#choosed_fields")?.value || "";
+const stripe          = Stripe(stripePublicKey);
+ 
+let elements = null;
+let paymentElement = null;
+let currentMode = null;
+let currentItems = null;
+let paymentFormHandlerBound = false;
+let checkoutRenderId = 0;
 
-    let choosedCurrency      = document.querySelector("#currency").value;
-    let choosedColor         = document.querySelector("#color").value;
-    let choosedPaymentLayout = document.querySelector("#espad-payment-layout").value;
+const oneTimeModes = ["Standard", "Campaign"];
+
+if ( oneTimeModes.includes(baseCheckoutMode) ) {
+    baseCheckoutMode = "OneTime";
+}
+  
+/* ---------------------------------- */
+/* Common helpers */
+/* ---------------------------------- */
+function getCreateCheckoutUrl(mode) {
+    if (mode === "Subscription") {
+        return document.querySelector("#create-checkout-url-subscription")?.value || "";
+    }
+
+    return document.querySelector("#create-checkout-url-one-time")?.value || "";
+}
+        
+function updatePricesBoxVisibility(mode) {
+    if (baseCheckoutMode !== "Advanced") return;
+
+    const pricesBox = document.querySelector("#prices_box");
+    if (!pricesBox) return;
+
+    pricesBox.style.display = mode === "Subscription" ? "none" : "block";
+}          
+         
+function getEffectiveCheckoutMode() {
+    if (baseCheckoutMode === "Advanced") {
+        const selectedMode = document.querySelector('input[name="advanced_checkout_mode"]:checked')?.value;
+
+        if (selectedMode === "subscription") {
+            updatePricesBoxVisibility("Subscription");
+            return "Subscription";
+        }
+
+        updatePricesBoxVisibility("OneTime");
+        return "OneTime";
+    }
+
+    return baseCheckoutMode;
+}              
+        
+function destroyCheckout() {
+    if (paymentElement) {
+        paymentElement.destroy();
+        paymentElement = null;
+    }
+
+    elements = null;
+
+    const paymentElementContainer = document.querySelector("#payment-element");
+    if (paymentElementContainer) {
+        paymentElementContainer.innerHTML = "";
+        paymentElementContainer.classList.remove("hidden");
+    }
+}        
+
+function showMessage(messageText) {
+    const messageContainer = document.querySelector("#payment-message");
+    if (!messageContainer) return;
+
+    messageContainer.classList.remove("hidden");
+    messageContainer.textContent = messageText;
+
+    setTimeout(() => {
+        messageContainer.classList.add("hidden");
+        messageContainer.textContent = "";
+    }, 4000);
+} 
+        
+function setLoading(isLoading) {
+    const submitButton = document.querySelector("#submit");
+    const spinner = document.querySelector("#spinner");
+    const buttonText = document.querySelector("#button-text");
+
+    if (!submitButton || !spinner || !buttonText) return;
+
+    submitButton.disabled = isLoading;
+
+    if (isLoading) {
+        spinner.classList.remove("hidden");
+        buttonText.classList.add("hidden");
+
+        submitButton.style.opacity = "0.4";
+        submitButton.style.cursor = "not-allowed";
+        submitButton.style.pointerEvents = "none";
+    } else {
+        spinner.classList.add("hidden");
+        buttonText.classList.remove("hidden");
+ 
+        submitButton.style.opacity = "1";
+        submitButton.style.cursor = "pointer";
+        submitButton.style.pointerEvents = "auto";
+    }
+} 
+        
+function setSubmitButtonState(isDisabled) {
+    const submitButton = document.querySelector("#submit");
+    if (!submitButton) return;
+
+    submitButton.disabled = isDisabled;
+
+    if (isDisabled) {
+        submitButton.style.opacity = "0.4";
+        submitButton.style.cursor = "not-allowed";
+        submitButton.style.filter = "grayscale(35%)";
+    } else {
+        submitButton.style.opacity = "1";
+        submitButton.style.cursor = "pointer";
+        submitButton.style.filter = "none";
+    }
+}          
+        
+function setElementLoading(isLoading) {
+    const loadingEl = document.querySelector("#payment-element-loading");
+    const paymentElementContainer = document.querySelector("#payment-element");
+
+    setSubmitButtonState(isLoading);
+
+    if (!loadingEl || !paymentElementContainer) return;
+
+    if (isLoading) {
+        loadingEl.classList.remove("hidden");
+        paymentElementContainer.classList.add("hidden");
+    } else {
+        loadingEl.classList.add("hidden");
+        paymentElementContainer.classList.remove("hidden");
+    }
+}        
+
+function getCommonAppearance(choosedColor) {
+    return {
+        theme: "stripe",
+        variables: {
+            colorPrimary: choosedColor,
+            colorBackground: "#ffffff",
+            colorText: "#30313d",
+            colorDanger: "#df1b41",
+        }
+    };
+}
+
+function getCommonCheckoutConfig() {
+    let choosedCurrency      = document.querySelector("#currency")?.value || "";
+    let choosedColor         = document.querySelector("#color")?.value || "";
+    let choosedPaymentLayout = document.querySelector("#espad-payment-layout")?.value || "";
     let formLang             = document.querySelector("#espad-form-lang")?.value || "en";
 
-    if ( !choosedCurrency.trim() ) {
+    if (!choosedCurrency.trim()) {
         choosedCurrency = "USD";
     }
 
-    if ( !choosedPaymentLayout.trim() ) {
+    if (!choosedPaymentLayout.trim()) {
         choosedPaymentLayout = "auto";
     }
 
-    if ( !choosedColor.trim() ) {
+    if (!choosedColor.trim()) {
         choosedColor = "#0d8889";
     }
 
-    const stripe = Stripe(stripePublicKey);
-    let elements;
-    let paymentElement;
+    return {
+        choosedCurrency,
+        choosedColor,
+        choosedPaymentLayout,
+        formLang
+    };
+}
 
-    initialize();
+function getOneTimeItems() {
+    const fixAmount = document.querySelector("#fix_amount")?.value || "";
+    const amountRadios = document.querySelectorAll('#prices_box input[name="amount"]');
 
-    document
-        .querySelector("#payment-form")
-        .addEventListener("submit", handleSubmit);
+    let fixAmountNew;
+    let firstValue = null;
 
-    async function initialize() {
-        const createCheckoutUrl = document.querySelector("#create-checkout-url").value;
-
-        setElementLoading(true);
-
-        try {
-            const response = await fetch(createCheckoutUrl, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" }
-            });
-
-            const data = await response.json();
-
-            if (!response.ok || !data.clientSecret) {
-                showMessage(data.error || "Could not load client secret.");
-                setElementLoading(false);
-                return;
-            }
-
-            const { clientSecret } = data;
-
-            const appearance = {
-                theme: "stripe",
-                variables: {
-                    colorPrimary: choosedColor,
-                    colorBackground: "#ffffff",
-                    colorText: "#30313d",
-                    colorDanger: "#df1b41",
-                }
-            };
-
-            elements = stripe.elements({
-                clientSecret,
-                appearance,
-                locale: formLang,
-            });
-
-            const paymentElementOptions = {
-                layout: choosedPaymentLayout,
-            };
-
-            paymentElement = elements.create("payment", paymentElementOptions);
-
-            paymentElement.on("ready", () => {
-                setElementLoading(false);
-            });
-
-            paymentElement.on("loaderror", (event) => {
-                console.error("Stripe Payment Element load error:", event);
-                showMessage("Could not load payment methods.");
-                setElementLoading(false);
-            });
-
-            paymentElement.mount("#payment-element");
-
-        } catch (error) {
-            console.error(error);
-            showMessage("An error occurred while loading the payment methods.");
-            setElementLoading(false);
-        }
+    if (fixAmount) {
+        fixAmountNew = fixAmount * 100;
     }
 
-    async function handleSubmit(e) {
-        e.preventDefault();
+    if (amountRadios.length > 0) {
+        const checkedRadio = document.querySelector('#prices_box input[name="amount"]:checked');
+        firstValue = checkedRadio ? checkedRadio.value : amountRadios[0].value;
+    }
 
-        if (!elements) { 
-            showMessage("The payment form is not ready yet.");
+    if (firstValue) {
+        return [{ amount: parseInt(firstValue, 10) }];
+    }
+
+    if (typeof fixAmountNew !== "undefined" && fixAmountNew) {
+        return [{ amount: fixAmountNew }];
+    }
+
+    return [{ amount: 10000 }];
+}
+    
+function updateSubmitButtonContent(mode) {
+    const labelElement = document.querySelector("#submit-button-label");
+    const amountElement = document.querySelector("#submit-button-amount");
+
+    if (!labelElement || !amountElement) return;
+
+    if (mode === "Subscription") {
+        const label = document.querySelector("#advanced-subscription-button-label")?.value || "Subscribe Now";
+        const amount = document.querySelector("#advanced-subscription-amount")?.value || "";
+        const currency = document.querySelector("#advanced-subscription-currency")?.value || "";
+
+        labelElement.textContent = label;
+
+        if (amount && currency) {
+            amountElement.textContent = amount + " " + currency.toUpperCase();
+        } else {
+            amountElement.textContent = "";
+        }
+ 
+        return;
+    }
+
+    const label = document.querySelector("#advanced-one-time-button-label")?.value || "Pay";
+    const currency = document.querySelector("#currency")?.value || "USD";
+    const amount = currentItems?.[0]?.amount || "";
+
+    labelElement.textContent = label;
+
+    if (amount) {
+        amountElement.textContent = (parseInt(amount, 10) / 100) + " " + currency.toUpperCase();
+    } else {
+        amountElement.textContent = "";
+    }
+}    
+
+/* ---------------------------------- */
+/* Mount functions */
+/* ---------------------------------- */
+async function initSubscriptionCheckout(renderId) {
+    
+    const { choosedColor, choosedPaymentLayout, formLang } = getCommonCheckoutConfig();
+    const createCheckoutUrl = getCreateCheckoutUrl("Subscription");
+    
+    if (!createCheckoutUrl) {
+        showMessage("Subscription checkout URL is missing.");
+        if (renderId === checkoutRenderId) {
+            setElementLoading(false);
+        }
+        return;
+    }
+
+    if (renderId === checkoutRenderId) {
+        setElementLoading(true);
+    }
+
+    try {
+        const response = await fetch(createCheckoutUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" }
+        });
+
+        const data = await response.json();
+
+        // Falls inzwischen schon ein neuer Render gestartet wurde: abbrechen
+        if (renderId !== checkoutRenderId) {
             return;
         }
 
-        setLoading(true);
+        if (!response.ok || !data.clientSecret) {
+            showMessage(data.error || "Could not load client secret.");
+            setElementLoading(false);
+            return;
+        }
+
+        elements = stripe.elements({
+            clientSecret: data.clientSecret,
+            appearance: getCommonAppearance(choosedColor),
+            locale: formLang,
+        });
+
+        paymentElement = elements.create("payment", {
+            layout: choosedPaymentLayout,
+        });
+
+        paymentElement.on("ready", () => {
+            if (renderId !== checkoutRenderId) return;
+            setElementLoading(false);
+        });
+
+        paymentElement.on("loaderror", (event) => {
+            if (renderId !== checkoutRenderId) return;
+            console.error("Stripe Payment Element load error:", event);
+            showMessage("Could not load payment methods.");
+            setElementLoading(false);
+        });
+
+        paymentElement.mount("#payment-element");
+
+    } catch (error) {
+        if (renderId !== checkoutRenderId) return;
+        console.error(error);
+        showMessage("An error occurred while loading the payment methods.");
+        setElementLoading(false);
+    }
+    
+}
+
+async function initOneTimeCheckout(renderId) {
+    
+    const { choosedColor, choosedPaymentLayout, formLang } = getCommonCheckoutConfig();
+    const createCheckoutUrl = getCreateCheckoutUrl("OneTime");
+
+    if (!currentItems) {
+        currentItems = getOneTimeItems();
+    }
+
+    if (!createCheckoutUrl) {
+        showMessage("One-time checkout URL is missing.");
+        if (renderId === checkoutRenderId) {
+            setElementLoading(false);
+        }
+        return;
+    }
+
+    if (renderId === checkoutRenderId) {
+        setElementLoading(true);
+    }
+
+    try {
+        const response = await fetch(createCheckoutUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ items: currentItems }),
+        });
+
+        const data = await response.json();
+
+        if (renderId !== checkoutRenderId) {
+            return;
+        }
+
+        if (!response.ok || !data.clientSecret) {
+            showMessage(data.error || "Could not load client secret.");
+            setElementLoading(false);
+            return;
+        }
+
+        elements = stripe.elements({
+            clientSecret: data.clientSecret,
+            appearance: getCommonAppearance(choosedColor),
+            locale: formLang,
+        });
+
+        paymentElement = elements.create("payment", {
+            layout: choosedPaymentLayout,
+        });
+
+        paymentElement.on("ready", () => {
+            if (renderId !== checkoutRenderId) return;
+            setElementLoading(false);
+        });
+
+        paymentElement.on("loaderror", (event) => {
+            if (renderId !== checkoutRenderId) return;
+            console.error("Stripe Payment Element load error:", event);
+            showMessage("Could not load payment methods.");
+            setElementLoading(false);
+        });
+
+        paymentElement.mount("#payment-element");
+
+    } catch (error) {
+        if (renderId !== checkoutRenderId) return;
+        console.error(error);
+        showMessage("An error occurred while loading the payment methods.");
+        setElementLoading(false);
+    }
+    
+} 
+ 
+async function renderCheckout(mode) {
+    const renderId = ++checkoutRenderId;
+
+    destroyCheckout();
+    currentMode = mode;
+    setElementLoading(true);
+
+    if (mode === "Subscription") {
+        await initSubscriptionCheckout(renderId);
+    } else {
+        await initOneTimeCheckout(renderId);
+    }
+}
+
+/* ---------------------------------- */
+/* Submit */
+/* ---------------------------------- */
+
+async function handleSubmit(e) {
+    e.preventDefault();
+
+    if (!elements) {
+        showMessage("The payment form is not ready yet.");
+        return;
+    }
+
+    setLoading(true);
+
+    try {
+        const currentUrl     = document.querySelector("#current-url")?.value || window.location.href;
+        const choosedFields  = document.querySelector("#choosed_fields")?.value || "";
 
         const name  = document.querySelector("#name")?.value || "";
         const email = document.querySelector("#email")?.value || "";
@@ -166,18 +474,23 @@ if ( checkoutMode === "Subscription" ) {
 
         const separator = url.search ? "&" : "?";
 
-        const successUrlWithFlag = successUrl + (successUrl.includes('?') ? '&' : '?') + 'subscription_payment=1';
-  
+        let finalSuccessUrl = successUrl;
+
+        if (currentMode === "Subscription") {
+            finalSuccessUrl =
+                successUrl + (successUrl.includes("?") ? "&" : "?") + "subscription_payment=1";
+        }
+
         let espadReturnUrl =
             url.toString() + separator +
             "espad_form_id=" + encodeURIComponent(espadFormId) + "&" +
-            "success_url=" + encodeURIComponent(successUrlWithFlag) + "&" +
+            "success_url=" + encodeURIComponent(finalSuccessUrl) + "&" +
             "cancel_url=" + encodeURIComponent(cancelUrl) + "&" +
             "stripe_metadata_campaign=" + encodeURIComponent(stripeMetadataCampaign) + "&" +
             "stripe_metadata_project=" + encodeURIComponent(stripeMetadataProject) + "&" +
             "stripe_metadata_product=" + encodeURIComponent(stripeMetadataProduct) + "&" +
             "espad_payment_token=" + encodeURIComponent(espadPaymentToken);
- 
+
         espadReturnUrl += "#payment-form";
 
         const { error } = await stripe.confirmPayment({
@@ -207,401 +520,144 @@ if ( checkoutMode === "Subscription" ) {
             }
         }
 
-        setLoading(false);
-    }
-    
-    function showMessage(messageText) {
-        
-        const messageContainer = document.querySelector("#payment-message");
-        if (!messageContainer) return;
-
-        messageContainer.classList.remove("hidden");
-        messageContainer.textContent = messageText;
-        
+    } catch (error) {
+        console.error(error);
+        showMessage("An unexpected error has occurred.");
     }
 
-    function setLoading(isLoading) {
-        
-        const submitButton = document.querySelector("#submit");
-        if (!submitButton) return;
+    setLoading(false);
+}
 
-        submitButton.disabled = isLoading;
-        
-        // Show a spinner on payment submission
-        if (isLoading) {
-            // Disable the button and show a spinner
-            document.querySelector("#submit").disabled = true;
-            document.querySelector("#spinner").classList.remove("hidden");
-            document.querySelector("#button-text").classList.add("hidden");
-        } else {
-            document.querySelector("#submit").disabled = false;
-            document.querySelector("#spinner").classList.add("hidden");
-            document.querySelector("#button-text").classList.remove("hidden");
-        }
-        
-    }
+/* ---------------------------------- */
+/* Event binding */
+/* ---------------------------------- */
 
-    function setElementLoading(isLoading) {
-        
-        const loadingEl = document.querySelector("#payment-element-loading");
-        const paymentElementContainer = document.querySelector("#payment-element");
+function bindPaymentFormSubmitOnce() {
+    if (paymentFormHandlerBound) return;
 
-        if (!loadingEl || !paymentElementContainer) return;
+    const paymentForm = document.querySelector("#payment-form");
+    if (!paymentForm) return;
 
-        if (isLoading) {
-            loadingEl.classList.remove("hidden");
-            paymentElementContainer.classList.add("hidden");
-        } else {
-            loadingEl.classList.add("hidden");
-            paymentElementContainer.classList.remove("hidden");
-        }
-        
-    }
-   
-/* ***************************************** */
-/* STANDARD CHECKOUT, CAMPAIGN CHECKOUT ETC. */
-/* ***************************************** */    
-} else {
-    
-    const homeUrl            = document.querySelector("#home-url").value;
-    const currentUrl         = document.querySelector("#current-url").value;
-    const choosedFields      = document.querySelector("#choosed_fields").value;
-    const formLang           = document.querySelector("#espad-form-lang").value;
-    const fixAmount          = document.querySelector("#fix_amount").value;  
+    paymentForm.addEventListener("submit", handleSubmit);
+    paymentFormHandlerBound = true;
+}
 
-    let choosedCurrency      = document.querySelector("#currency").value;
-    let choosedColor         = document.querySelector("#color").value;
-    let choosedPaymentLayout = document.querySelector("#espad-payment-layout").value;
-
-    let fixAmountNew;    
-
-    // Fallback to USD
-    if ( !choosedCurrency.trim() ) {
-      choosedCurrency = 'USD';
-    }
-
-    if ( !choosedPaymentLayout.trim() ) {
-        choosedPaymentLayout = 'auto';
-    }
-
-    // Fallback to default color if empty or only whitespace.
-    if ( !choosedColor.trim() ) {
-      choosedColor = '#0d8889';
-    }
-
-    if ( fixAmount ) {
-        fixAmountNew = fixAmount * 100;    
-    }
-
-    const stripe = Stripe(stripePublicKey);
-
-    // Select all radio buttons
+function bindOneTimeAmountEvents() {
     const amountRadios = document.querySelectorAll('#prices_box input[name="amount"]');
 
-    let firstValue = null;
-    let items;
-
-    // Ensure that a radio button exists
-    if ( amountRadios.length > 0 ) {
-
-        // Falls ein Radio ausgewählt ist, nehme dessen Wert, sonst erstes Radio
-        const checkedRadio = document.querySelector('#prices_box input[name="amount"]:checked');
-        firstValue = checkedRadio ? checkedRadio.value : amountRadios[0].value;
-
-    }
-
-    // Set items based on firstValue, fixAmountNew, or default to 10000
-    if ( firstValue ) {
-
-        items = [{ amount: parseInt(firstValue, 10) }];
-
-    } else if (typeof fixAmountNew !== 'undefined' && fixAmountNew) {
-
-        items = [{ amount: fixAmountNew }];
-
-    } else {
-
-        items = [{ amount: 10000 }];
-
-    }
-
-    // Call initialize with the correct value (items[0].amount is guaranteed to be set)
-    initialize(items[0].amount);
-
-    // Loop through all radio buttons and attach listeners
     amountRadios.forEach((radio) => {
-      radio.addEventListener('change', async function(event) {
+        if (radio.dataset.espadBound === "1") return;
 
-        const selectedAmount = event.target.value;
-        console.log('Neuer Betrag ausgewaehlt:', selectedAmount);
+        radio.addEventListener("change", async function(event) {
+            const selectedAmount = event.target.value;
 
-        // Replace the amount on Change  
-        items[0].amount = selectedAmount;  
+            currentItems = [{ amount: parseInt(selectedAmount, 10) }];
 
-        // Hier musst du Stripe neu initialisieren oder Checkout neu laden
-        await initialize(selectedAmount);
+            if (currentMode === "OneTime") {
+                await renderCheckout("OneTime");
+            }
+        });
 
-      });
+        radio.dataset.espadBound = "1";
     });
 
-    const amountInput = document.getElementById('amountInput');
-    let debounceTimeout;
+    const amountInput = document.getElementById("amountInput");
 
-    if ( amountInput ) {
+    if (amountInput && amountInput.dataset.espadBound !== "1") {
+        let debounceTimeout;
 
-        amountInput.addEventListener('input', function (event) {
-
+        amountInput.addEventListener("input", function(event) {
             const valueString = event.target.value;
 
-            // Block commas and periods
             if (/[,.]/.test(valueString)) {
-                event.target.value = '';
-                alert('Please enter a valid number without commas or other characters');
+                event.target.value = "";
+                alert("Please enter a valid number without commas or other characters");
                 return;
             }
 
-            // Limit input to a maximum of 5 digits
             if (valueString.length > 5) {
-                event.target.value = valueString.slice(0, 5); 
+                event.target.value = valueString.slice(0, 5);
                 return;
-            }        
-
-          clearTimeout(debounceTimeout);
-
-          debounceTimeout = setTimeout(async () => {
-
-            const value = valueString.trim();
-            const parsed = parseFloat(value);
-
-            if ( !isNaN(parsed) && parsed > 0 ) {
-
-              // Disable other radio buttons    
-              const checkedInput = document.querySelector('#espad_page .btn-check:checked');
-
-              if ( checkedInput ) {
-
-                checkedInput.checked = false;
-
-              }
-
-              // Round to two decimal places and convert to cents
-              const enteredAmount = Math.round(parsed * 100);
-              console.log('New amount (in cent) for Stripe:', enteredAmount);
-
-              const supElement = document.querySelector('#submit #button-text sup');
-              // Divide enteredAmount by 100 and round to two decimal places
-              let formattedAmount = enteredAmount / 100;    
-              supElement.innerHTML = formattedAmount + ' ' + choosedCurrency;        
-
-              // Replace the amount on Change  
-              items[0].amount = enteredAmount;
-
-              // Reinitialize Stripe Checkout
-              await initialize(enteredAmount);   
-
-            } else {
-
-              alert('Please enter a valid number');
-
             }
-          }, 500);
 
-        });
+            clearTimeout(debounceTimeout);
 
-    }
+            debounceTimeout = setTimeout(async () => {
+                const value = valueString.trim();
+                const parsed = parseFloat(value);
 
-    document
-      .querySelector("#payment-form")
-      .addEventListener("submit", handleSubmit);
+                if (!isNaN(parsed) && parsed > 0) {
+                    const checkedInput = document.querySelector('#espad_page .btn-check:checked');
 
-    // Fetches a payment intent and captures the client secret
-    async function initialize(amount) {
+                    if (checkedInput) {
+                        checkedInput.checked = false;
+                    }
 
-      const createCheckoutUrl = document.querySelector("#create-checkout-url").value; 
+                    const enteredAmount = Math.round(parsed * 100);
 
-      const { clientSecret, dpmCheckerLink } = await fetch(createCheckoutUrl, {    
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items }),
-      }).then((r) => r.json());
+                    const choosedCurrency = document.querySelector("#currency")?.value?.trim() || "USD";
+                    const supElement = document.querySelector('#submit #button-text sup');
 
-      const appearance = {
-          theme: 'stripe',
-          variables: {
-            colorPrimary: choosedColor,
-            colorBackground: '#ffffff',
-            colorText: '#30313d',
-            colorDanger: '#df1b41',
-          }
-      };
+                    if (supElement) {
+                        supElement.innerHTML = (enteredAmount / 100) + " " + choosedCurrency;
+                    }
 
-      // Pass the appearance object to the Elements instance
-      elements = stripe.elements({
-          clientSecret, 
-          appearance,
-          locale: formLang,
-      });      
+                    currentItems = [{ amount: enteredAmount }];
 
-      const paymentElementOptions = {
-          layout: choosedPaymentLayout,
-      };
+                    if (currentMode === "OneTime") {
+                        await renderCheckout("OneTime");
+                    }
 
-      const paymentElement = elements.create("payment", paymentElementOptions);
-      paymentElement.mount("#payment-element");
-
-    }
-
-    async function handleSubmit(e) {
-
-      e.preventDefault();
-      setLoading(true);
-
-        // Get the address information
-        const name         = document.querySelector("#name").value;
-        const email        = document.querySelector("#email").value; 
-
-        let street, postalCode, city, phoneNumber;
-
-        switch ( choosedFields ) {
-
-            case 'name_email_address':
-            case 'name_email_address_required_fields':
-            street     = document.querySelector("#street").value;
-            postalCode = document.querySelector("#postal_code").value;
-            city       = document.querySelector("#city").value;
-            break;
-
-            case 'name_email_address_telephone':
-            case 'name_email_address_telephone_required_fields':
-            street      = document.querySelector("#street").value;
-            postalCode  = document.querySelector("#postal_code").value;
-            city        = document.querySelector("#city").value;            
-            phoneNumber = document.querySelector("#phone_number").value;
-            break;
-
-            default:
-            street      = '';
-            postalCode  = '';
-            city        = '';
-            phoneNumber = '';    
-            break;
-
-        }
-
-        const espadFormId = document.querySelector("#espad-form-id").value;
-        const successUrl  = document.querySelector("#success-url").value;
-        const cancelUrl   = document.querySelector("#cancel-url").value;
-
-        const stripeMetadataCampaign = document.querySelector("#stripe-metadata-campaign").value;
-        const stripeMetadataProject  = document.querySelector("#stripe-metadata-project").value;
-        const stripeMetadataProduct  = document.querySelector("#stripe-metadata-product").value;
-        const espadPaymentToken      = document.querySelector("#espad_payment_token").value;
-
-        // Cleanup: remove previous Stripe/form-related params from currentUrl
-        const url = new URL(currentUrl);
-        const params = url.searchParams;
-
-        // List of params you always want to remove
-        const keysToRemove = [
-          'espad_form_id',
-          'success_url',
-          'cancel_url',
-          'stripe_metadata_campaign',
-          'stripe_metadata_project',
-          'stripe_metadata_product',
-          'espad_payment_token',    
-          'payment_intent',
-          'payment_intent_client_secret',
-          'redirect_status'
-        ];
-
-        // Remove them from the search params
-        keysToRemove.forEach(key => params.delete(key));
-
-        // Rebuild the clean URL
-        url.search = params.toString();  
-
-        // Decide on separator based on remaining query string
-        const separator = url.search ? '&' : '?';
-
-        // Rebuild return_url with cleaned base + fresh params
-        let espadReturnUrl =
-          url.toString() + separator +
-          "espad_form_id=" + encodeURIComponent(espadFormId) + "&" +
-          "success_url=" + encodeURIComponent(successUrl) + "&" +
-          "cancel_url=" + encodeURIComponent(cancelUrl) + "&" +
-          "stripe_metadata_campaign=" + encodeURIComponent(stripeMetadataCampaign) + "&" +
-          "stripe_metadata_project=" + encodeURIComponent(stripeMetadataProject) + "&" +
-          "stripe_metadata_product=" + encodeURIComponent(stripeMetadataProduct) + "&" +
-          "espad_payment_token=" + encodeURIComponent(espadPaymentToken);
-
-        espadReturnUrl += '#payment-form';    
-
-        const { error } = await stripe.confirmPayment({
-          elements,
-          confirmParams: {
-            payment_method_data: {
-              billing_details: {
-                name: name,
-                email: email,
-                phone: phoneNumber,
-                address: {
-                  line1: street,
-                  postal_code: postalCode,
-                  city: city
+                } else if (value !== "") {
+                    alert("Please enter a valid number");
                 }
-              }
-            },
-            return_url: espadReturnUrl
-          }
+            }, 500);
         });
 
-      // This point will only be reached if there is an immediate error when
-      // confirming the payment. Otherwise, your customer will be redirected to
-      // your `return_url`. For some payment methods like iDEAL, your customer will
-      // be redirected to an intermediate site first to authorize the payment, then
-      // redirected to the `return_url`.
-      if (error.type === "card_error" || error.type === "validation_error") {
-        showMessage(error.message);
-      } else {
-        showMessage("An unexpected error occurred.");
-      }
-
-      setLoading(false);
-
+        amountInput.dataset.espadBound = "1";
     }
-
-    // ------- UI helpers -------
-
-    function showMessage(messageText) {
-
-      const messageContainer = document.querySelector("#payment-message");
-
-      messageContainer.classList.remove("hidden");
-      messageContainer.textContent = messageText;
-
-      setTimeout(function () {
-        messageContainer.classList.add("hidden");
-        messageContainer.textContent = "";
-      }, 4000);
-
-    }
-
-    // Show a spinner on payment submission
-    function setLoading(isLoading) {
-
-      if (isLoading) {
-        // Disable the button and show a spinner
-        document.querySelector("#submit").disabled = true;
-        document.querySelector("#spinner").classList.remove("hidden");
-        document.querySelector("#button-text").classList.add("hidden");
-      } else {
-        document.querySelector("#submit").disabled = false;
-        document.querySelector("#spinner").classList.add("hidden");
-        document.querySelector("#button-text").classList.remove("hidden");
-      }
-
-    }    
-    
 }
- 
+
+function bindAdvancedModeEvents() { 
+    if (baseCheckoutMode !== "Advanced") return;
+
+    const modeRadios = document.querySelectorAll('input[name="advanced_checkout_mode"]');
+
+    modeRadios.forEach((radio) => {
+        if (radio.dataset.espadBound === "1") return;
+
+        radio.addEventListener("change", async (event) => {
+            const selectedValue = event.target.value;
+            const newMode = selectedValue === "subscription" ? "Subscription" : "OneTime";
+            
+            updatePricesBoxVisibility(newMode);
+
+            if (newMode === currentMode) {
+                return;
+            }
+            
+            updateSubmitButtonContent(newMode);
+
+            await renderCheckout(newMode);
+            
+        });
+
+        radio.dataset.espadBound = "1";
+    });
+}
+  
+/* ---------------------------------- */
+/* Initialize Checkout */
+/* ---------------------------------- */
+document.addEventListener("DOMContentLoaded", async () => {
+    bindPaymentFormSubmitOnce();
+    bindOneTimeAmountEvents();
+    bindAdvancedModeEvents();
+
+    currentItems = getOneTimeItems();
+
+    const initialMode = getEffectiveCheckoutMode();
+    updateSubmitButtonContent(initialMode);
+    await renderCheckout(initialMode);
+});
+

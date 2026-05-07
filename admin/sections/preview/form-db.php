@@ -96,19 +96,15 @@ if ( $forms ) {
         $campaign_goal_amount     = esc_html($form->campaign_goal_amount);
         $lang                     = esc_html($form->lang);
         $payment_layout           = esc_html($form->payment_layout);
-
-        // Store metadata and form ID in Options Table for later access
-        update_option( 'espad_stripe_metadata_campaign', $stripe_metadata_campaign );
-        update_option( 'espad_stripe_metadata_project', $stripe_metadata_project );
-        update_option( 'espad_stripe_metadata_product', $stripe_metadata_product );
         
-        update_option( 'espad_currency', $currency );
-        update_option( 'espad_checkout_form_id', $selected_form_id );
+        $checkout_metadata_1      = $form->checkout_metadata_1 ?? '';
+        $checkout_metadata_2      = $form->checkout_metadata_2 ?? '';
+        $checkout_metadata_3      = $form->checkout_metadata_3 ?? '';        
 
         // Fallback color if none is defined
         $color = $color ?: '#0d8889';
         
-    }
+    } 
 
 } else {
 
@@ -121,15 +117,8 @@ if ( $forms ) {
     $payment_layout = 'auto';
 
     // Empty defaults for optional fields
-    $success_url = $cancel_url = $currency = $choosed_fields = $fix_amount = $campaign_image = $description = $campaign_current_amount = $campaign_goal_amount = "";
+    $success_url = $cancel_url = $currency = $choosed_fields = $fix_amount = $campaign_image = $description = $campaign_current_amount = $campaign_goal_amount = $checkout_metadata_1 = $checkout_metadata_2 = $checkout_metadata_3 = "";
 
     $stripe_metadata_campaign = $stripe_metadata_project = $stripe_metadata_product = "";
-
-    // Clear related Options variables    
-    delete_option( 'espad_stripe_metadata_campaign' );
-    delete_option( 'espad_stripe_metadata_project' );
-    delete_option( 'espad_stripe_metadata_product' );
-    delete_option( 'espad_currency' );
-    delete_option( 'espad_checkout_form_id' );
     
 }

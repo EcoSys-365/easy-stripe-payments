@@ -4,15 +4,15 @@ defined( 'ABSPATH' ) || exit;
  
 $enqueue_inline_css = function() use ( $color, $amount_type ) { 
        
-    // Load CSS
-    if ( ! is_admin() ) wp_enqueue_style( 'espd-checkout-css' );    
- 
     // Dynamic colour with fallback
     $color        = esc_html( $color ?? '#0D8889' );
     $amount_type  = $amount_type ?? 'fix_amount';
-    
-    // Dein dynamisches CSS
+      
+    // Dynamic CSS
     $custom_css = "
+    #espad_page .espad-advanced-checkout-switch__radio:checked + .btn,
+    #espad_page :not(.espad-advanced-checkout-switch__radio) + .btn:active,
+    #espad_page #payment-form .espad-advanced-checkout-switch label.btn:hover,
     #espad_page .btn-check:checked + .btn,
     #espad_page :not(.btn-check) + .btn:active,
     #espad_page .btn:first-child:active,
@@ -63,14 +63,24 @@ $enqueue_inline_css = function() use ( $color, $amount_type ) {
         }
 
     }
-  
-    // Attach inline CSS to the stylesheet       
-    if ( ! is_admin() ) if ( ! empty( $custom_css ) ) wp_add_inline_style( 'espd-checkout-css', $custom_css );
+    
+    if ( ! empty( $custom_css ) ) {
+        if ( is_admin() ) {
+            echo '<style id="espd-dynamic-checkout-css">' . wp_strip_all_tags( $custom_css ) . '</style>';
+        } else {
+            wp_add_inline_style( 'espd-checkout-css', $custom_css );
+        }
+    }    
  
 }; 
       
-// Frontend
-add_action( 'wp_enqueue_scripts', $enqueue_inline_css );
+if ( is_admin() ) {
+    // Admin Dashboard
+    $enqueue_inline_css();
+} else {
+    // Frontend
+    add_action( 'wp_enqueue_scripts', $enqueue_inline_css );
+}
      
 // Check if the form has been submitted
 // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Instead of nonce verification, we are checking the status of each payment because this is a redirect from Stripe 
@@ -93,7 +103,7 @@ if ( isset($_GET['espad_payment_token']) ) {
 
             } else {
 
-                wp_die('Payment verification failed.');
+                wp_die('Your payment could not be completed. Please try again.');
 
             }
 
@@ -122,6 +132,10 @@ if ( isset($_GET['espad_payment_token']) ) {
 if ( $mode === "Subscription" ) {
     
     require_once ESPAD_PLUGIN_PATH . 'admin/sections/preview/checkout-subscription-form.php';
+    
+} else if ( $mode === "Advanced" ) {
+
+    require_once ESPAD_PLUGIN_PATH . 'admin/sections/preview/checkout-advanced-form.php';
     
 } else {
 

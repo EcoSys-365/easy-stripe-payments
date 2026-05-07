@@ -33,33 +33,80 @@ $db_count = $wpdb->get_var( "SELECT COUNT(*) FROM $table" );
 
 $premium_tooltip = __( "Premium members gain access to advanced features such as priority support and enhanced Stripe payment workflows, while all core functionality remains freely available.", "easy-stripe-payments" );
 
+$tooltips = [
+    'standard'     => __('Create a checkout with fixed prices or let customers enter their own amount.', 'easy-stripe-payments'),
+    'subscription' => __('Create a subscription checkout using a Stripe Product (Price ID). You can set up subscriptions in your Stripe Dashboard or under Recurring Payments in this plugin.', 'easy-stripe-payments'),
+    'advanced'     => __('Offer both one-time payments & subscriptions in a single checkout for maximum flexibility and conversions.', 'easy-stripe-payments'),
+    'campaign'     => __('Show supporters how much has been raised and how much is left to reach your campaign goal.', 'easy-stripe-payments'),
+];
+
 ?>
 
 <div class="wrap">
     
     <h3><?php echo esc_html(__( 'Payment Forms', 'easy-stripe-payments' )); ?> &#128221;</h3>
-    
+     
     <?php if ( $db_count >= 2 && $membership_status != "1" ) { ?>
     
-        <a href="<?php echo esc_url( add_query_arg( 'membership_is_false', 'true', ESPAD_CURRENT_URL ) ); ?>" class="button button-primary">
+        <a 
+           href="<?php echo esc_url( add_query_arg( 'membership_is_false', 'true', ESPAD_CURRENT_URL ) ); ?>" 
+           class="button button-primary has-tooltip"
+           data-tooltip="<?php echo esc_html($tooltips['standard']); ?>">
             <?php echo esc_html(__( 'Add Standard Checkout', 'easy-stripe-payments' )); ?>
         </a>    
+
+        <a 
+           href="<?php echo esc_url( add_query_arg( 'membership_is_false', 'true', ESPAD_CURRENT_URL ) ); ?>" 
+           class="button button-primary has-tooltip"
+           data-tooltip="<?php echo esc_html($tooltips['subscription']); ?>">
+            <?php echo esc_html(__( 'Add Subscription Checkout', 'easy-stripe-payments' )); ?>
+        </a> 
     
-        <a href="<?php echo esc_url( add_query_arg( 'membership_is_false', 'true', ESPAD_CURRENT_URL ) ); ?>" class="button button-primary">
+        <a 
+           href="<?php echo esc_url( add_query_arg( 'membership_is_false', 'true', ESPAD_CURRENT_URL ) ); ?>" 
+           class="button button-primary has-tooltip espad-recommended espd-create-advanced-form"
+           data-tooltip="<?php echo esc_html($tooltips['advanced']); ?>">
+            <?php echo esc_html(__( 'Add Advanced Checkout', 'easy-stripe-payments' )); ?>
+            <span class="espad-badge"><?php echo esc_html(__( 'Recommended', 'easy-stripe-payments' )); ?></span>
+        </a>     
+    
+        <a 
+           href="<?php echo esc_url( add_query_arg( 'membership_is_false', 'true', ESPAD_CURRENT_URL ) ); ?>" 
+           class="button button-primary has-tooltip"
+           data-tooltip="<?php echo esc_html($tooltips['campaign']); ?>">
             <?php echo esc_html(__( 'Add Campaign Checkout', 'easy-stripe-payments' )); ?>
         </a>
     
-        <a href="<?php echo esc_url( add_query_arg( 'membership_is_false', 'true', ESPAD_CURRENT_URL ) ); ?>" class="button button-primary">
-            <?php echo esc_html(__( 'Add Subscription Checkout', 'easy-stripe-payments' )); ?>
-        </a>    
-    
     <?php } else { ?>
-    
-        <button id="espd-create-form" class="button button-primary"><?php echo esc_html(__( 'Add Standard Checkout', 'easy-stripe-payments' )); ?></button>
+     
+        <button 
+                id="espd-create-form" 
+                class="button button-primary has-tooltip"
+                data-tooltip="<?php echo esc_html($tooltips['standard']); ?>">
+            <?php echo esc_html(__( 'Add Standard Checkout', 'easy-stripe-payments' )); ?>
+        </button>
 
-        <button id="espd-create-campaign-form" class="button button-primary"><?php echo esc_html(__( 'Add Campaign Checkout', 'easy-stripe-payments' )); ?></button>  
+        <button 
+                id="espd-create-subscription-form" 
+                class="button button-primary has-tooltip"
+                data-tooltip="<?php echo esc_html($tooltips['subscription']); ?>">
+            <?php echo esc_html(__( 'Add Subscription Checkout', 'easy-stripe-payments' )); ?>
+        </button> 
     
-        <button id="espd-create-subscription-form" class="button button-primary"><?php echo esc_html(__( 'Add Subscription Checkout', 'easy-stripe-payments' )); ?></button> 
+        <button 
+                id="espd-create-advanced-form" 
+                class="button button-primary has-tooltip espad-recommended"
+                data-tooltip="<?php echo esc_html($tooltips['advanced']); ?>">
+            <?php echo esc_html(__( 'Add Advanced Checkout', 'easy-stripe-payments' )); ?>
+            <span class="espad-badge"><?php echo esc_html(__( 'Recommended', 'easy-stripe-payments' )); ?></span>
+        </button> 
+    
+        <button 
+                id="espd-create-campaign-form" 
+                class="button button-primary has-tooltip"
+                data-tooltip="<?php echo esc_html($tooltips['campaign']); ?>">
+            <?php echo esc_html(__( 'Add Campaign Checkout', 'easy-stripe-payments' )); ?>
+        </button>  
     
     <?php } ?>
 
@@ -79,7 +126,13 @@ $premium_tooltip = __( "Premium members gain access to advanced features such as
         
         <?php require_once ESPAD_PLUGIN_PATH . 'admin/sections/subscription-checkout.php'; ?>
         
-    </div>     
+    </div>    
+    
+    <div id="espd-form-advanced-modal" style="display:none;">
+        
+        <?php require_once ESPAD_PLUGIN_PATH . 'admin/sections/advanced-checkout.php'; ?>
+        
+    </div>        
     
 </div>
 
@@ -89,6 +142,7 @@ $premium_tooltip = __( "Premium members gain access to advanced features such as
     <table id="espad-table" class="widefat striped" style="margin-top:20px;">
         <thead>
             <tr>
+                <th><?php echo esc_html(__( 'ID', 'easy-stripe-payments' )); ?></th>
                 <th><?php echo esc_html(__( 'Form Name', 'easy-stripe-payments' )); ?></th>
                 <th><?php echo esc_html(__( 'Mode', 'easy-stripe-payments' )); ?></th>
                 <th><?php echo esc_html(__( 'Currency', 'easy-stripe-payments' )); ?></th>
@@ -105,6 +159,7 @@ $premium_tooltip = __( "Premium members gain access to advanced features such as
                     <tr 
                         data-form-name="<?php echo esc_html($form->form_name); ?>"
                         data-form-mode="<?php echo esc_html($form->mode); ?>">
+                        <td><?php echo esc_html($form->id); ?></td>
                         <td><?php echo esc_html($form->form_name); ?></td>
                         <td><?php echo esc_html($form->mode); ?></td>
                         <td><?php echo esc_html($form->currency); ?></td>

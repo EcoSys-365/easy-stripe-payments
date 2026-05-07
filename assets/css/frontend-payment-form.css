@@ -74,10 +74,17 @@ shortcode_payment_form .campaign-image-box img {
 #espad_page strong {
     font-weight: 800 !important;
 }
+#espad_page #prices_box {
+    margin-bottom: 5px !important; 
+} 
+#espad_page .advanced-checkout-form #prices_box {
+    margin-top: 6px !important;
+}
 #espad_page #prices_box input.btn-check {
     box-shadow: none !important; 
 }
-#espad_page #prices_box label.btn {
+#espad_page #prices_box label.btn,
+#espad_page .espad-advanced-checkout-switch label.btn {
     padding: 13px !important;
     border: 1px solid #e1e1e1;
     border-radius: 7px;
@@ -92,6 +99,9 @@ shortcode_payment_form .campaign-image-box img {
     border-radius: 4px;  
     font-size: 15px !important;
     padding-left: 10px;
+}
+.advanced-checkout-form #amountInput {
+    height: 52px !important;
 }
 #amountInput,
 #espad_page input.form-control {
@@ -168,6 +178,15 @@ shortcode_payment_form .campaign-image-box img {
 .espad_subscription_btn.espad-btn-xx-large {
   font-size: 1.8rem;
   padding: 1.2em 2.4em;
+} 
+/* Submit Button */
+button#submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    filter: grayscale(40%);
+} 
+button#submit:disabled:hover {
+    background-color: inherit !important;
 }
 /* Smartphones: max-width 767px */
 @media (max-width: 767px) {
@@ -275,36 +294,124 @@ shortcode_payment_form .campaign-image-box img {
     
 }
 
-/* Loading Animation - Subscription Checkout */
-#payment-element-loading {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 0;
-    font-size: 16px;    
-}
- 
-#payment-element-loading::before {
-    content: "";
-    width: 18px;
-    height: 18px;
-    border: 2px solid #ccc;
-    border-top-color: #333;
-    border-radius: 50%;
-    animation: espad-spin 0.8s linear infinite;
-}
-
-.hidden {
-  display: none;
-}
-
-@keyframes espad-spin {
-    
-  to {
-    transform: rotate(360deg);
-  }
-    
+/* Loading Animation Shimmer for the Checkout Forms */
+#payment-element-wrapper {
+    margin-bottom: 8px;
 } 
+#payment-element-loading {
+    display: block; 
+    padding: 6px 0;
+}
+
+#payment-element-loading.hidden {
+    display: none;
+}
+
+.stripe-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.stripe-row.top {
+    margin-bottom: 12px;
+}
+
+.stripe-row.labels {
+    margin-top: 2px;
+    margin-bottom: 12px;
+}
+
+.stripe-box {
+    border: 1px solid #e6e8eb;
+    border-radius: 4px;
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+.stripe-box-top {
+    height: 66px;
+}
+
+.stripe-box-single {
+    height: 45px;
+    margin-bottom: 12px;
+}
+
+.stripe-box-bottom {
+    height: 45px;
+}
+
+.stripe-mini,
+.stripe-line,
+.stripe-label {
+    display: block;
+    border-radius: 4px;
+    background: linear-gradient(
+        90deg,
+        #f8f9fa 0%,
+        #edf0f2 42%,
+        #f8f9fa 84%
+    );
+    background-size: 240% 100%;
+    animation: espad-stripe-shimmer 1.6s ease-in-out infinite;
+}
+
+.stripe-mini {
+    width: 26px;
+    height: 18px;
+    margin: 10px 0 0 12px;
+}
+
+.stripe-line {
+    height: 18px;
+}
+
+.stripe-line.long {
+    width: 38%;
+    margin: 5px 0 0 12px;
+}
+
+.stripe-line.short {
+    width: 64px;
+    margin: 13px 0 0 12px;
+}
+
+.stripe-line.tiny {
+    width: 40px;
+    margin: 13px 0 0 12px;
+}
+
+.stripe-label {
+    height: 18px;
+}
+
+.stripe-label.medium {
+    width: 72px;
+    margin-bottom: 12px;
+}
+
+.stripe-label.small {
+    width: 28px;
+}
+
+@keyframes espad-stripe-shimmer {
+    0% {
+        background-position: 120% 0;
+    }
+
+    100% {
+        background-position: -120% 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .stripe-row {
+        grid-template-columns: 1fr;
+    }
+} 
+/* End of Animation */
  
 .espad_warning_box {
     padding: 12px; 
@@ -313,4 +420,12 @@ shortcode_payment_form .campaign-image-box img {
     color: #842029; 
     border-radius: 4px; 
     margin-bottom: 15px;
+}
+
+/* Advanced Checkout */
+.espad-advanced-checkout-switch__radio {
+    display: none !important;
+}
+#espad_page .espad-advanced-checkout-switch label.btn {
+    min-width: 180px !important;
 }

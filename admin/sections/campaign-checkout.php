@@ -16,14 +16,13 @@
                 </div>
                 <div class="form-group">
                     <label for="fix_amount"><?php echo esc_html(__( 'Fix Amount', 'easy-stripe-payments' )); ?></label>
-                    <input 
+                    <input  
                            type="number" 
                            id="fix_amount" 
-                           class="has-tooltip"
+                           class="has-tooltip form-control"
                            placeholder="<?php echo esc_html(__( 'This field can be left empty depending on the selected amount type', 'easy-stripe-payments' )); ?>"
                            data-tooltip="<?php echo esc_html(__( 'This field can be left empty depending on the selected amount type', 'easy-stripe-payments' )); ?>"
-                           name="fix_amount" 
-                           class="form-control" 
+                           name="fix_amount"
                            step="1" 
                            min="1">
                 </div>
@@ -182,12 +181,11 @@
                     <input 
                            type="number" 
                            id="campaign_current_amount" 
-                           class="has-tooltip-xl"
+                           class="has-tooltip-xl form-control"
                            placeholder=""
                            data-tooltip="<?php echo esc_html( $campaign_current_amount_text ); ?>"
                            data-offset-top="-17"
                            name="campaign_current_amount" 
-                           class="form-control" 
                            step="1" 
                            min="0">    
                 </div>                 
@@ -196,11 +194,10 @@
                     <input 
                            type="number" 
                            id="campaign_goal_amount" 
-                           class="has-tooltip"
+                           class="has-tooltip form-control"
                            placeholder=""
                            data-tooltip="<?php echo esc_html(__( 'Enter the target amount for this campaign, or leave it empty to hide the progress bar.', 'easy-stripe-payments' )); ?>"
                            name="campaign_goal_amount" 
-                           class="form-control" 
                            step="1" 
                            min="1">                    
                 </div>                       

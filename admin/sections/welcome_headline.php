@@ -15,4 +15,9 @@
     </span>
 </h2>     
 
-<?php printf('<canvas id="payoutChart" width="600" height="300"></canvas>'); ?>
+<?php 
+
+// Payout chart disabled due to ongoing improvements/refactoring
+//printf('<canvas id="payoutChart" width="600" height="300"></canvas>'); 
+
+?>

@@ -9,7 +9,7 @@
      * Build the REST API endpoint URL with the selected form ID,
      * ensuring the ID is safely cast to an integer
     */
-    $create_checkout_url = rest_url(
+    $create_subscription_checkout_url = rest_url(
         'espad-stripe/v1/create-subscription/' . absint($selected_form_id)
     );    
        
@@ -28,7 +28,7 @@
      
     ?>      
     
-    <input type="hidden" id="create-checkout-url" name="create-checkout-url" value="<?php echo esc_html( $create_checkout_url ); ?>" />
+    <input type="hidden" id="create-checkout-url-subscription" name="create-checkout-url-subscription" value="<?php echo esc_url( $create_subscription_checkout_url ); ?>" /> 
     <input type="hidden" id="espad_checkout_mode" name="espad_checkout_mode" value="<?php echo esc_html( $mode ); ?>" />
     <input type="hidden" id="espad-form-id" name="espad-form-id" value="<?php echo esc_html( $selected_form_id ); ?>" />
     <input type="hidden" id="current-url" name="current-url" value="<?php echo esc_html( ESPAD_CURRENT_URL ); ?>" />
@@ -38,30 +38,11 @@
     <input type="hidden" id="choosed_fields" name="choosed_fields" value="<?php echo esc_html( $choosed_fields ); ?>" /> 
     <input type="hidden" id="espad-payment-layout" name="espad-payment-layout" value="<?php echo esc_html( $payment_layout ); ?>" />
     <input type="hidden" id="espad_payment_token" name="espad_payment_token" value="<?php echo esc_html( $espad_token ); ?>" />
- 
-    <div id="payment-element-loading">Loading ...</div>
-    <div id="payment-element" class="hidden"></div>
-    <div id="payment-message" class="hidden"></div>  
+    <input type="hidden" id="espad-form-lang" name="espad-form-lang" value="<?php echo esc_html( $lang ); ?>" />
 
-    <?php
-
-    // Check if Stripe Connect is active
-    $espad_stripe_access_token = \get_option( 'espad_stripe_connect_access_token', '' );
-
-    if ( empty( $espad_stripe_access_token ) ) {
-
-        echo '<div class="espad_warning_box">';
- 
-            echo esc_html__( 
-                'Please go to Settings and click "Connect with Stripe". Alternatively, you can continue using the "Standard Stripe Checkout" with your API keys.', 
-                'easy-stripe-payments' 
-            );
-
-        echo '</div>';
-
-    }                    
-
-    ?>    
+    <?php require_once ESPAD_PLUGIN_PATH . 'admin/sections/preview/stripe-connect-warning.php'; ?>
+    
+    <?php require_once ESPAD_PLUGIN_PATH . 'admin/sections/preview/payment-element-loading.php'; ?>
      
     <?php require_once ESPAD_PLUGIN_PATH . 'admin/sections/preview/element.php'; ?>
     

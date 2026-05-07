@@ -5,7 +5,7 @@ Tags: stripe, payments, subscription, donation, stripe checkout
 Requires at least: 5.5
 Tested up to: 6.9
 Requires PHP: 7.4 
-Stable tag: 1.3.3 
+Stable tag: 1.3.4 
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,7 +20,7 @@ https://www.youtube.com/watch?v=iPNCHNTb_CI
 == Screenshots ==
  
 1. Campaign Checkout example with donation total
-2. Example of a physical product (Smartwatch) integrated with Stripe Checkout
+2. Accept one-time and monthly payments in a single seamless checkout experience
 3. Demo of an annual fitness or coaching program with custom Stripe Checkout form, image, and description
 4. Admin settings page (Stripe Checkout configuration)
 5. Example of received payments in the WordPress Dashboard
@@ -29,12 +29,13 @@ https://www.youtube.com/watch?v=iPNCHNTb_CI
 8. Edit an existing Stripe subscription product and link it with a checkout button
 9. Example of a Stripe-hosted checkout page for subscription payments
 
-== Four checkout modes included: ==
+== Five checkout modes included: ==
 
-1. **Standard Checkout** Accept one-time payments with customizable product name, amount, and currency.  
-2. **Campaign Checkout** Track fundraising campaigns with a frontend progress display showing how much has already been collected. 
-3. **Subscription Checkout** A dedicated checkout form for recurring subscription payments with a modern user experience.
-4. **Subscription Button** Let users subscribe to recurring payments (monthly/yearly) using Stripe's subscription system.
+1. **Standard Checkout** Accept one-time payments with customizable product name, amount, and currency.   
+2. **Subscription Checkout** A dedicated checkout form for recurring subscription payments with a modern user experience. 
+3. **Advanced Checkout** Combine one-time & subscription payments in a single flexible checkout with support for different pricing options.
+4. **Campaign Checkout** Track fundraising campaigns with a frontend progress display showing how much has already been collected.  
+5. **Subscription Button** Let users subscribe to recurring payments (monthly/yearly) via Stripe with a Stripe-hosted checkout page.
   
 == Supported Payment Methods & Currencies ==
 
@@ -209,6 +210,22 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 
 == Changelog ==
 
+= 1.3.4 =
+* Added brand new Advanced Checkout mode combining one-time and subscription payments.
+* Improved compatibility for future switching between one-time and subscription checkout modes.
+* Optimized Stripe Checkout lifecycle. 
+* Stripe Payment Element is now properly destroyed `destroy()` before re-initialization to prevent duplicate mounts. 
+* More stable initialization of the Checkout on repeated loads. 
+* Support separate REST API endpoints for one-time and subscription checkouts.
+* Improved architecture for multi-mode checkout handling.
+* Enhanced overall checkout flexibility and user experience.
+* Added loading state to Stripe checkout: Payment button disabled until form fully loads.
+* Introduce Stripe-like shimmer loading animation in checkout, replacing the previous spinner.
+* Fixed an issue where the Subscription Checkout language setting was not loaded correctly. It is now properly retrieved from the database.
+* Implemented a `Clean Stats Layout` in the Welcome tab for a clearer and more structured dashboard experience. 
+* Temporarily disabled payout chart on the Welcome tab in the admin dashboard while working on improvements.
+* Updated the plugin documentation.
+
 = 1.3.3 =
 * Fixed a PHP deprecated warning when decoding JSON metadata by ensuring a valid string is passed to json_decode().
 * Fixed an issue where empty metadata fields were being sent to Stripe; now only non-empty values are included.
@@ -295,8 +312,11 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
  
 == Upgrade Notice ==
 
+= 1.3.4 =
+Introducing the brand new Advanced Checkout mode with support for one-time and subscription payments, plus major Stripe Checkout improvements and enhanced checkout stability.
+
 = 1.3.3 = 
-This update improves Stripe metadata handling and fixes a PHP deprecation warning. Updating is recommended to maintain clean metadata and improve tracking of Checkout Form IDs, which are already recorded in Stripe metadata.
+This update improves Stripe metadata handling and fixes a PHP deprecation warning. Updating is recommended to ensure clean metadata and better tracking of Checkout Form IDs.
 
 = 1.3.2 =
 * Introduces a brand new Subscription Checkout, UI improvements, and enhanced payment button label customization.

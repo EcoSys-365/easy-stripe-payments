@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Easy Stripe Payments
  * Description: A user-friendly WordPress plugin for accepting <strong>one-time and recurring Stripe payments</strong>. Perfect for businesses, freelancers and Non-Profit organizations. Secure, fast and fully PCI-compliant.
- * Version: 1.3.3
+ * Version: 1.3.4
  * Author: EcoSys365
  * Author URI: https://www.ecosys365.com
  * Plugin URI: https://www.payments-and-donations.com
@@ -126,8 +126,8 @@ function espad_membership_check() {
 function espd_preview_add_scripts() {
     
     // Enqueue CSS styles
-    wp_enqueue_style('espd-bootstrap-scoped', ESPAD_PLUGIN_URL . 'assets/css/bootstrap-scoped.css', [], '1.0.2');
-    wp_enqueue_style('espd-checkout-css', ESPAD_PLUGIN_URL . 'inc/stripeCheckout/checkout.css', [], '1.0.8');
+    wp_enqueue_style('espd-bootstrap-scoped', ESPAD_PLUGIN_URL . 'assets/css/bootstrap-scoped.css', [], '1.0.4');
+    wp_enqueue_style('espd-checkout-css', ESPAD_PLUGIN_URL . 'inc/stripeCheckout/checkout.css', [], '1.0.9');
 
     // Register Stripe.js as an external script
     wp_register_script(
@@ -143,10 +143,10 @@ function espd_preview_add_scripts() {
         'espd-checkout-js',
         ESPAD_PLUGIN_URL . 'inc/stripeCheckout/checkout.js',
         ['stripe-js'],
-        '1.0.197',
+        '1.0.229',
         true // Load in footer
     );
-        
+           
 }    
    
 /**
@@ -165,8 +165,8 @@ function espd_add_payment_shortcode_scripts() {
         'espd-frontend-payment-style',
         ESPAD_PLUGIN_URL . 'assets/css/frontend-payment-form.css',
         array(),
-        '1.1.999'  
-    );
+        '1.2.46'  
+    ); 
        
     // Enqueue built-in jQuery
     wp_enqueue_script('jquery');
@@ -241,7 +241,7 @@ add_action('admin_init', function() {
         add_action('admin_head', 'espd_preview_add_scripts', 99);
         add_action('admin_head', 'espd_add_payment_shortcode_scripts', 99);
     }
-  
+   
     // Load DataTables for the "Payments" tab.
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- GET parameters used for admin UI tabs only, no sensitive action performed.
     if ( isset($_GET['page'], $_GET['tab']) && $_GET['page'] === 'espd_main' && $_GET['tab'] === 'payments' ) { 
@@ -744,24 +744,25 @@ add_action('admin_enqueue_scripts', function($hook) {
             '4.4.1',
             true
         );
-
+ 
         // Backend Chart on Welcome page with Dependency
-        wp_enqueue_script(
+        // Payout chart disabled due to ongoing improvements/refactoring
+        /*wp_enqueue_script(
             'espd-backend-chart',
             ESPAD_PLUGIN_URL . 'assets/js/espd-backend-chart.js',
-            array('espd-chartjs'), // Dependencies 
+            array('espd-chartjs'), 
             '1.0.6',
-            true // Load script in footer
-        );        
+            true 
+        );*/        
 
         // Enqueue ESPAD admin CSS
         wp_enqueue_style(
             'espad-admin-style',
             ESPAD_PLUGIN_URL . 'assets/css/espad.css',
             array(),
-            '1.0.251'
+            '1.0.305'
         );        
-
+ 
         // Enqueue WordPress built-in jQuery script
         wp_enqueue_script('jquery');
 
@@ -779,7 +780,7 @@ add_action('admin_enqueue_scripts', function($hook) {
             'espd-admin', 
             ESPAD_PLUGIN_URL . 'assets/js/espd-admin.js',  
             ['jquery'], 
-            '1.0.221',  
+            '1.0.238',  
             true
         );           
  
@@ -799,9 +800,10 @@ add_action('admin_enqueue_scripts', function($hook) {
             'recurringModalTitle'            => __('Stripe Subscription Product &amp; Button', 'easy-stripe-payments'),
             'standardCheckoutModalTitle'     => __('Stripe Standard Checkout', 'easy-stripe-payments'),
             'campaignCheckoutModalTitle'     => __('Stripe Campaign Checkout', 'easy-stripe-payments'),
-            'subscriptionCheckoutModalTitle' => __('Stripe Subscription Checkout', 'easy-stripe-payments')
+            'subscriptionCheckoutModalTitle' => __('Stripe Subscription Checkout', 'easy-stripe-payments'),
+            'advancedCheckoutModalTitle'     => __('Stripe Advanced Checkout', 'easy-stripe-payments')
         ]);
- 
+  
         // Enqueue jQuery UI dialog styles and scripts for modal/dialog UI components
         wp_enqueue_style('wp-jquery-ui-dialog');
         wp_enqueue_script('jquery-ui-dialog');
@@ -895,7 +897,7 @@ add_action('wp_ajax_espd_save_form', function() {
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Intentionally used for a custom table update with sanitized data.
         $result = $wpdb->insert($table, [
             'form_name'                => sanitize_text_field($form['form_name']),
-            'fix_amount'               => sanitize_text_field($fix_amount),
+            'fix_amount'               => $fix_amount,
             'currency'                 => sanitize_text_field($form['currency']),
             'description'              => sanitize_textarea_field($form['description']),
             'success_url'              => esc_url_raw($form['success_url']),
@@ -1041,6 +1043,151 @@ add_action('wp_ajax_espd_save_new_subscription_form', function() {
             'stripe_metadata_project'  => sanitize_text_field($form['stripe_metadata_project']),
             'stripe_metadata_product'  => sanitize_text_field($form['stripe_metadata_product']),
             'created_at'               => current_time('mysql'),
+            'payment_button'           => sanitize_text_field($form['espad_payment_button']),
+            'mode'                     => sanitize_text_field($form['mode']), 
+            'color'                    => sanitize_text_field($form['color']),
+            'choosed_fields'           => sanitize_text_field($form['show_fields']),
+            'lang'                     => sanitize_text_field($form['form_language']),
+            'payment_layout'           => sanitize_text_field($form['payment_layout']),
+        ]);
+
+        // Return success or error JSON response based on insert result
+        if ($result) {
+            wp_send_json_success();
+        } else {
+            wp_send_json_error('Could not save form.');
+        }
+        
+    }
+    
+}); 
+ 
+// Handles the AJAX request to save form data for Advanced Checkout
+add_action('wp_ajax_espd_save_new_advanced_form', function() {
+  
+    // Verify the AJAX nonce for security
+    check_ajax_referer('espd_form_nonce', 'nonce'); 
+
+    // Parse the serialized form data from the POST request
+    $form = []; 
+       
+    // Check if data exists in POST
+    if ( isset( $_POST['data'] ) ) {
+ 
+        // Unslash and parse the serialized string safely
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Raw data required for parse_str(); sanitization applied after parsing.
+        $raw_data = wp_unslash( $_POST['data'] );
+ 
+        // Ensure the data is a string before parsing
+        if ( is_string( $raw_data ) ) {
+            parse_str( $raw_data, $form );
+ 
+            // Recursively sanitize all fields
+            $form = array_map( 'sanitize_text_field', $form );
+        }
+    }    
+ 
+    global $wpdb;
+    
+    $table = $wpdb->prefix . 'espad_forms';
+    
+    // Set default fix_amount to '-' if empty
+    $fix_amount = !empty($form['fix_amount']) ? sanitize_text_field($form['fix_amount']) : '-';
+    $price_list = !empty($form['price_list']) ? sanitize_text_field($form['price_list']) : '';    
+
+    $subscription_price_id = sanitize_text_field($form['subscription_price_id']);
+
+    // Check if Stripe Connect is active
+    $stripe_access_token = \get_option( 'espad_stripe_connect_access_token', '' );
+
+    // Stripe Connect with Fee
+    if ( ! empty( $stripe_access_token ) ) {
+        
+        if ( !class_exists('\ESPAD\Stripe\StripeESPADManager') ) {
+            require_once ESPAD_PLUGIN_PATH . 'inc/StripeESPADManager.php';
+        }
+         
+        $stripe = \ESPAD\Stripe\StripeESPADManager::get_instance()->get_stripe_client();    
+         
+        // Retrieve price from Stripe
+        $price = $stripe->prices->retrieve($subscription_price_id);
+
+        // Amount (Cent)
+        $amount = $price->unit_amount;
+        
+        $amount_formatted = $amount / 100;        
+  
+        // Currency
+        $subscription_currency = $price->currency;    
+
+        $checkout_metadata_1 = json_encode([
+            'subscription_checkout_price_id'          => $subscription_price_id,
+            'subscription_checkout_amount'            => $amount_formatted,
+            'subscription_checkout_currency'          => $subscription_currency,
+            'subscription_button_label'               => $form['subscription_button_label'],
+            'advanced_subscription_payment_button'    => $form['espad_advanced_subscription_payment_button'],
+            'advanced_checkout_one_time_button_label' => $form['one_time_button_label'],
+        ]);           
+         
+    } else {
+        
+        wp_send_json_error('Please use Stripe Connect when using Advanced Checkout.');    
+         
+    }
+    
+    // Check if form ID is set => update existing form
+    if ( isset($form['form_id']) && !empty($form['form_id']) ) {
+
+        $form_id = intval($form['form_id']);  
+         
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Intentionally used for a custom table update with sanitized data.
+        $result = $wpdb->update($table, [
+            'form_name'                => sanitize_text_field($form['form_name']),
+            'fix_amount'               => $fix_amount,
+            'checkout_metadata_1'      => $checkout_metadata_1,
+            'currency'                 => sanitize_text_field($form['currency']),
+            'description'              => sanitize_textarea_field($form['description']),
+            'success_url'              => esc_url_raw($form['success_url']),
+            'cancel_url'               => esc_url_raw($form['cancel_url']),
+            'stripe_metadata_campaign' => sanitize_text_field($form['stripe_metadata_campaign']),
+            'stripe_metadata_project'  => sanitize_text_field($form['stripe_metadata_project']),
+            'stripe_metadata_product'  => sanitize_text_field($form['stripe_metadata_product']),
+            'created_at'               => current_time('mysql'),  
+            'amount_type'              => sanitize_text_field($form['amount_type']),
+            'price_list'               => $price_list,            
+            'payment_button'           => sanitize_text_field($form['espad_payment_button']),
+            'mode'                     => sanitize_text_field($form['mode']),
+            'color'                    => sanitize_text_field($form['color']),
+            'choosed_fields'           => sanitize_text_field($form['show_fields']),
+            'lang'                     => sanitize_text_field($form['form_language']),
+            'payment_layout'           => sanitize_text_field($form['payment_layout']),
+        ], ['id' => $form_id]);
+        
+        // Return success or error JSON response based on update result
+        if ( $result !== false ) {
+            wp_send_json_success();
+        } else {
+            wp_send_json_error('Could not update form.');
+        }
+         
+    } else {
+        
+        // Insert new form if no ID is provided
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Intentionally used for a custom table update with sanitized data.
+        $result = $wpdb->insert($table, [
+            'form_name'                => sanitize_text_field($form['form_name']),
+            'fix_amount'               => $fix_amount,
+            'checkout_metadata_1'      => $checkout_metadata_1,
+            'currency'                 => sanitize_text_field($form['currency']),
+            'description'              => sanitize_textarea_field($form['description']),
+            'success_url'              => esc_url_raw($form['success_url']),
+            'cancel_url'               => esc_url_raw($form['cancel_url']),
+            'stripe_metadata_campaign' => sanitize_text_field($form['stripe_metadata_campaign']),
+            'stripe_metadata_project'  => sanitize_text_field($form['stripe_metadata_project']),
+            'stripe_metadata_product'  => sanitize_text_field($form['stripe_metadata_product']),
+            'created_at'               => current_time('mysql'),
+            'amount_type'              => sanitize_text_field($form['amount_type']),
+            'price_list'               => $price_list,            
             'payment_button'           => sanitize_text_field($form['espad_payment_button']),
             'mode'                     => sanitize_text_field($form['mode']), 
             'color'                    => sanitize_text_field($form['color']),
@@ -1555,21 +1702,28 @@ function espd_plugin_action_links( $links ) {
 }
 
 /**
- * Register a REST API endpoint for creating a Stripe Checkout session.
- * 
- * Note: This endpoint is intended to be used by the frontend, where the
- * Stripe Checkout form is embedded and visible to all users. Therefore,
- * the permission_callback is set to __return_true to allow public access.
- * 
- * POST requests should be used to securely pass the necessary payment data.
+ * Create Stripe PaymentIntent for a given checkout form via REST API.
  *
- * Usage:
- * - Frontend code can send a POST request with necessary parameters (amount,
- *   product, currency, etc.) and create the Stripe paymentIntent to initiate Stripe Checkout. 
- */ 
+ * This endpoint processes incoming checkout requests, retrieves form-specific
+ * configuration (such as currency and metadata) from the database, and prepares
+ * a Stripe PaymentIntent.
+ *
+ * Metadata is dynamically generated based on stored form settings. If no
+ * metadata is defined, the form ID is used as a fallback.
+ *
+ * Currency is loaded per form, validated, and falls back to a default value
+ * if missing or invalid.
+ *
+ * All incoming request data is validated and sanitized before processing.
+ *
+ * @param \WP_REST_Request $request The REST API request object containing the form ID and JSON payload.
+ *
+ * @return \WP_REST_Response|array Returns a REST response containing the Stripe client secret on success.
+ *                                 Returns an error response on failure.
+ */
 add_action('rest_api_init', function() {
     
-    register_rest_route('espad-stripe/v1', '/create/', [
+    register_rest_route('espad-stripe/v1', '/create/(?P<form_id>\d+)', [
         'methods' => 'POST',
         'callback' => 'espad_create_checkout',
         'permission_callback' => '__return_true', 
@@ -1612,29 +1766,57 @@ function espad_calculate_platform_fee(int $amount, float $percent = 1.8): int {
     
 }
   
-function espad_create_checkout(WP_REST_Request $request) {
+function espad_create_checkout(WP_REST_Request $request) {  
+    
+    global $wpdb;
+
+    $form_id = absint( $request->get_url_params()['form_id'] ?? 0 );
+
+    $table_name = $wpdb->prefix . 'espad_forms';
+
+    /**
+     * Retrieves optional metadata values (campaign, project, product) from the
+     * espad_forms table based on the given form ID. Only non-empty values are
+     * included in the final metadata array.
+     */    
+    $form_data = $wpdb->get_row(
+        $wpdb->prepare(
+            "SELECT stripe_metadata_campaign, stripe_metadata_project, stripe_metadata_product
+             FROM $table_name
+             WHERE id = %d",
+            $form_id
+        ),
+        ARRAY_A
+    );
+ 
+    $metadata = array_filter([
+        'campaign'         => $form_data['stripe_metadata_campaign'] ?? null,
+        'project'          => $form_data['stripe_metadata_project'] ?? null,
+        'product'          => $form_data['stripe_metadata_product'] ?? null,
+        'checkout_form_id' => (string) $form_id,
+    ], fn($value) => !in_array($value, [null, '', false], true));
+
+    $metadata = array_map('strval', $metadata);
      
+    $currency = $wpdb->get_var(
+        $wpdb->prepare(
+            "SELECT currency FROM $table_name WHERE id = %d",
+            $form_id
+        )
+    );    
+
+    // "0", null, or an empty string is treated as invalid.
+    if ( empty($currency) || $currency === '0' ) {
+        $currency = 'USD';
+    } 
+    
     // Load StripeESPADManager if not already loaded
     if ( !class_exists('\ESPAD\Stripe\StripeESPADManager') ) {
         require_once  ESPAD_PLUGIN_PATH . 'inc/StripeESPADManager.php';
     }
    
     // Get singleton instance and retrieve Stripe client
-    $stripe = \ESPAD\Stripe\StripeESPADManager::get_instance()->get_stripe_client();    
-   
-    $metadata = array_map('strval', array_filter([
-        'campaign'         => get_option('espad_stripe_metadata_campaign'),
-        'project'          => get_option('espad_stripe_metadata_project'),
-        'product'          => get_option('espad_stripe_metadata_product'),
-        'checkout_form_id' => get_option('espad_checkout_form_id'),
-    ], fn($value) => !in_array($value, [null, '', false], true)));    
-     
-    $currency = get_option('espad_currency');
-
-    // "0", null, or an empty string is treated as invalid.
-    if ( empty($currency) || $currency === '0' ) {
-        $currency = 'USD';
-    }  
+    $stripe = \ESPAD\Stripe\StripeESPADManager::get_instance()->get_stripe_client();         
          
     try {  
           
@@ -1741,26 +1923,28 @@ function espad_create_checkout(WP_REST_Request $request) {
 } 
  
 /**
- * Create a Stripe subscription via REST API.
+ * Create a Stripe Subscription for a given checkout form via REST API.
  *
- * Registers a custom REST route that allows creating a Stripe subscription
- * based on a stored form configuration. The endpoint retrieves metadata from
- * the database, extracts the Stripe price ID, and creates a subscription
- * using the Stripe API.
+ * Registers a REST endpoint that initializes a Stripe subscription based on
+ * form-specific configuration stored in the database.
  *
- * If Stripe Connect is enabled, an application fee is applied. 
+ * The function retrieves metadata associated with the form, extracts the
+ * subscription price ID, and creates a Stripe customer and subscription.
+ * The form ID is always attached as metadata for traceability.
  *
- * The response includes the subscription ID and a client secret for either
- * a PaymentIntent or SetupIntent, depending on the subscription state.
+ * Supports Stripe Connect with an optional application fee. If enabled,
+ * a platform fee is applied to the subscription.
  *
- * @since 1.0.0
+ * The response includes the client secret required to complete the payment
+ * or setup intent on the frontend.
  *
- * @param WP_REST_Request $request The REST API request object.
+ * All inputs are validated, and appropriate error responses are returned
+ * if required data is missing or invalid.
  *
- * @return WP_REST_Response|void Returns a JSON response with subscription data
- *                               or an error message.
+ * @param \WP_REST_Request $request The REST API request containing the form ID.
  *
- * @throws Exception If no client secret can be generated.
+ * @return void Outputs a JSON response with subscription ID and client secret
+ *              or an error message on failure.
  */
 add_action('rest_api_init', function () {
     register_rest_route('espad-stripe/v1', '/create-subscription/(?P<form_id>\d+)', [

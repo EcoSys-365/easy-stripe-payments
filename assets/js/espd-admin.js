@@ -51,6 +51,20 @@ jQuery(document).ready(function($) {
     });     
     
     /*
+     * Initializes a jQuery UI dialog on the element with ID "espd-form-advanced-modal":
+     * - The dialog does not open automatically (autoOpen: false)
+     * - Enables modal behavior to block interaction with the rest of the page while open
+     * - Sets the dialog width to 1100 pixels
+     * - Uses the localized title from "espd_ajax.advancedCheckoutModalTitle"
+    */     
+    $("#espd-form-advanced-modal").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 1100,
+        title: espd_ajax.advancedCheckoutModalTitle
+    });     
+    
+    /*
      * Initializes a jQuery UI dialog on the element with ID "espd-form-recurring-modal":
      * - Does not open automatically (autoOpen: false)
      * - Enables modal mode to prevent interaction with the page while open
@@ -119,7 +133,28 @@ jQuery(document).ready(function($) {
 
         $("#espd-form-subscription-modal").dialog("open");
         
-    });      
+    });
+    
+    /*
+     * Handles the click event on the element with ID "espd-create-advanced-form":
+     * - Resets the form with ID "espd-new-advanced-form"
+     * - Clears the hidden input field named 'form_id' inside the campaign form
+     * - Hides the element with ID "select-amount-wrapper"
+     * - Opens the modal dialog with ID "espd-form-advanced-modal"
+    */    
+    $("#espd-create-advanced-form").on("click", function() {
+        
+        $("#espd-new-advanced-form")[0].reset();
+
+        $("#espd-new-advanced-form input[name='form_id']").val('');
+
+        $("#select-amount-wrapper").hide();
+        
+        $("#stripe_product_price_id_sup").text('');
+
+        $("#espd-form-advanced-modal").dialog("open");
+        
+    });    
     
     /*
      * This script handles the submission of the form with ID "espd-new-form":
@@ -235,6 +270,45 @@ jQuery(document).ready(function($) {
     });     
     
     /*
+     * This script handles the submission of the form with ID "espd-new-advanced-form":
+     * - Prevents the default form submission to avoid page reload
+     * - Serializes the form data into a URL-encoded string
+     * - Sends an AJAX POST request to the server with a specific action and security nonce
+     * - On success:
+     *   - Smoothly scrolls to the top of the page
+     *   - Displays a success message using showEspdAdminAdvancedNotice
+     *   - Reloads the page after 1.5 seconds
+     * - On failure:
+     *   - Displays an error message with details using showEspdAdminAdvancedNotice
+    */     
+    $("#espd-new-advanced-form").on("submit", function(e) {
+        
+        e.preventDefault();
+        
+        var formData = $(this).serialize();
+ 
+        $.post(espd_ajax.ajax_url, {
+            action: 'espd_save_new_advanced_form',
+            nonce: espd_ajax.nonce,
+            data: formData
+        }, function(response) {
+            if (response.success) {
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                showEspdAdminAdvancedNotice("Form saved successfully", 'success');
+                
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            } else {
+                showEspdAdminAdvancedNotice("Error: " + response.data, 'error');
+            }
+        });   
+        
+    });      
+    
+    /*
      * This script handles the submission of the form with ID "espd-update-recurring-product":
      * - Prevents the default form submission to avoid a page reload
      * - Serializes the form data into a URL-encoded string
@@ -339,6 +413,29 @@ jQuery(document).ready(function($) {
         }, 3000);
         
     }    
+    
+    /*
+     * This function displays a advanced-specific admin notice message in the element with ID "espd-admin-advanced-notice-wrapper":
+     * - Takes a message and an optional type (default is 'success')
+     * - Inserts a dismissible WordPress-style notice with the given message and type ('success', 'error', etc.)
+     * - Automatically hides the notice after 3 seconds by setting its display to 'none'
+    */    
+    function showEspdAdminAdvancedNotice(message, type = 'success') {
+        
+        const wrapper = document.getElementById('espd-admin-advanced-notice-wrapper');
+        
+        wrapper.innerHTML = `
+            <div class="notice notice-${type} is-dismissible">
+                <p>${message}</p>
+            </div>
+        `;
+
+        setTimeout(() => {
+            const notice = wrapper.querySelector('.notice');
+            if (notice) notice.style.display = 'none';
+        }, 3000);
+        
+    }      
     
     /*
      * This script enables "copy to clipboard" functionality for elements with the class "copy-button":
@@ -645,6 +742,38 @@ jQuery(document).ready(function($) {
                         
                         $("#espd-form-subscription-modal").dialog("open");
                         
+                    } else if ( formMode == 'advanced' ) {
+                         
+                        $("#espd-form-advanced-modal").dialog("open");
+                                                                            
+                        let amount_type_advanced_modal = response.data.amount_type;
+                        
+                        if ( amount_type_advanced_modal == 'fix_amount' ) {
+                           
+                            $('#espd-form-advanced-modal #select-amount-wrapper').css('display','none');    
+                            
+                        } else {
+                            
+                            $('#espd-form-advanced-modal #select-amount-wrapper').css('display','block');
+                            
+                        }                                                                           
+                                                                           
+                        // Set the input field values from the response JSON object. Otherwise, fall back to an empty value. 
+                        $('.' + formMode + '-mode #subscription_button_label').val(response.data.checkout_metadata_1?.subscription_button_label || '');
+                        $('.' + formMode + '-mode #espad_advanced_subscription_payment_button').val(response.data.checkout_metadata_1?.advanced_subscription_payment_button || '');
+                        $('.' + formMode + '-mode #one_time_button_label').val(response.data.checkout_metadata_1?.advanced_checkout_one_time_button_label || '');
+                                                                           
+                        const advancedCheckoutSubscriptionAmount = response.data.checkout_metadata_1?.subscription_checkout_amount || '';
+                        const advancedCheckoutCurrency = response.data.checkout_metadata_1?.subscription_checkout_currency?.toUpperCase() || '';                                                   
+
+                        let advancedCheckoutAmountInfo = '';
+
+                        if (advancedCheckoutSubscriptionAmount && advancedCheckoutCurrency) {
+                            advancedCheckoutAmountInfo = advancedCheckoutSubscriptionAmount + ' ' + advancedCheckoutCurrency;
+                        }
+ 
+                        $('.' + formMode + '-mode #stripe_product_price_id_sup').text(advancedCheckoutAmountInfo);                                                                           
+                                                                           
                     }
                     
                 } else {
@@ -800,11 +929,11 @@ jQuery(document).ready(function($) {
         
         if ($(this).val() === 'fix_amount') {
             
-            $('#espd-form-modal #fix_amount').attr('required', true);
+            $('#espd-form-modal #fix_amount').attr('required', true).prop('disabled', false);
             
         } else {
             
-            $('#espd-form-modal #fix_amount').removeAttr('required');
+            $('#espd-form-modal #fix_amount').removeAttr('required').prop('disabled', true);
             
         }        
         
@@ -831,15 +960,46 @@ jQuery(document).ready(function($) {
         
         if ($(this).val() === 'fix_amount') {
             
-            $('#espd-form-campaign-modal #fix_amount').attr('required', true);
+            $('#espd-form-campaign-modal #fix_amount').attr('required', true).prop('disabled', false);
             
         } else {
             
-            $('#espd-form-campaign-modal #fix_amount').removeAttr('required');
+            $('#espd-form-campaign-modal #fix_amount').removeAttr('required').prop('disabled', true);
             
         }        
         
-    });      
+    });  
+
+    /*
+     * This script listens for changes on the "#amount_type" select element inside the "#espd-form-advanced-modal":
+     * - Gets the selected value
+     * - Shows the "#select-amount-wrapper" if the selected type is "select_amount" or "select_and_variable_amount"
+     * - Otherwise, hides the "#select-amount-wrapper"
+     * - Marks the "fix_amount" input as required if the selected type is "fix_amount"
+     * - Removes the required attribute from "fix_amount" if any other option is selected
+    */     
+    $('#espd-form-advanced-modal #amount_type').on('change', function() {
+        
+        const selected = this.value;
+        const selectWrapper = $('#espd-form-advanced-modal #select-amount-wrapper');
+        
+        if ( selected === 'select_amount' || selected === 'select_and_variable_amount' ) {
+            selectWrapper.show();
+        } else {
+            selectWrapper.hide();
+        }
+        
+        if ($(this).val() === 'fix_amount') {
+            
+            $('#espd-form-advanced-modal #fix_amount').attr('required', true).prop('disabled', false);            
+            
+        } else {
+            
+            $('#espd-form-advanced-modal #fix_amount').removeAttr('required').prop('disabled', true);            
+            
+        }        
+        
+    }); 
     
     /*
      * This script adds custom tooltip functionality to elements with classes ".has-tooltip" and ".has-tooltip-xl":
