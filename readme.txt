@@ -5,7 +5,7 @@ Tags: stripe, payments, subscription, donation, stripe checkout
 Requires at least: 5.5
 Tested up to: 6.9
 Requires PHP: 7.4 
-Stable tag: 1.3.4 
+Stable tag: 1.3.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ A light Stripe payment solution that automatically supports all current and futu
 
 == Description ==
 
-**Easy Stripe Payments & Donations** lets you integrate Stripe Checkout into your WordPress site with minimal setup. Perfect for donations, simple eCommerce needs, services, or subscriptions.
+**Easy Stripe Payments & Donations** lets you integrate Stripe Checkout into your WordPress site with minimal setup. Perfect for donations, simple eCommerce needs, services, or subscriptions. 🚀 Live Demo: https://demo.ecosys365.com
 
 https://www.youtube.com/watch?v=iPNCHNTb_CI
 
@@ -118,7 +118,7 @@ Note: This plugin requires a free [Stripe account](https://stripe.com). No addit
 1. Upload the plugin folder to `/wp-content/plugins/`.
 2. Activate via the “Plugins” menu in WordPress.
 3. Go to **Stripe Payments > Settings** in your admin dashboard.
-4. Enter your Stripe API keys (Live or Test).
+4. Click the **Connect with Stripe** button (Live or Test) to securely connect your Stripe account.
 5. Create payment forms for one-time payments, campaigns, or subscriptions using the intuitive form builder.
 6. Use shortcodes to place payment buttons or forms wherever needed on your site.
 
@@ -193,7 +193,7 @@ These requests are required to manage payments, subscriptions, and products in t
 Yes, the Campaign Checkout mode shows the current collected total on the frontend using a shortcode. The payments are also displayed in the WordPress dashboard and stored in a separate WordPress database table.
 
 = Can I accept recurring payments? =  
-Yes, using the **Stripe Subscription Button**, which integrates with Stripe’s recurring billing system.
+Yes, using the **Stripe Subscription Button**, **Subscription Checkout**, or the **Advanced Checkout**, which all integrate with Stripe’s recurring billing system for recurring payments.
 
 = Are there any trial or locked features? =  
 No. All code in this plugin is fully usable. Premium features are provided via a separate extension in compliance with WordPress.org guidelines.
@@ -209,6 +209,13 @@ This plugin supports all payment methods that Stripe currently provides. The fol
 ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, Amazon Pay, American Express, Apple Pay, Bacs Direct Debit, Bancontact, Bank Transfers, BECS Direct Debit, Billie, BLIK, Boleto, Canadian Pre-authorized Debits (PADs), Capchase Pay, Cartes Bancaires, Cash App Pay, Cash-based Vouchers, China UnionPay, Click to Pay, Diners Club, Discover, EPS, FPX, Giropay, Google Pay, GrabPay, iDEAL, Interac, Japan Bank Transfer (Furikomi), JCB, Kakao Pay, Klarna, Konbini, Kriya, Link, Maestro, Mastercard, MB WAY, Mexico Bank Transfer (SPEI), MobilePay, Mondu, Multibanco, Naver Pay, OXXO, P24 (Przelewy24), Pay by Bank, PayCo, PayNow, PayPal, PayTo, Pix, PromptPay, Revolut Pay, Samsung Pay, Satispay, Scalapay, SEPA Direct Debit, SEPA Bank Transfer, SeQura, Sofort, South Korean Cards, Stablecoins (USDC/USDT), Sunbit, Swish, TWINT, UK Bank Transfer, USD Bank Transfer, Visa, WeChat Pay, Zip.
 
 == Changelog ==
+
+= 1.3.5 =
+* Improved Stripe Checkout UI stability during loading to prevent layout shifting and jumping effects.
+* Updated and improved the FAQ section in the readme documentation for better clarity and user guidance.
+* Expanded the Help tab documentation with additional guidance for Stripe Connect Live/Test mode handling and active configuration verification.
+* Added official Live Demo integration for the WordPress.org plugin repository.
+* Added the official Live Demo link to the plugin readme.txt for improved visibility and easier access to interactive checkout demos.
 
 = 1.3.4 =
 * Added brand new Advanced Checkout mode combining one-time and subscription payments.
@@ -311,6 +318,9 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 * Stripe Subscription Button for recurring payments
  
 == Upgrade Notice ==
+
+= 1.3.5 =
+Improved Stripe Checkout UI stability, enhanced Help and FAQ documentation, and added official Live Demo integration for the WordPress.org repository.
 
 = 1.3.4 =
 Introducing the brand new Advanced Checkout mode with support for one-time and subscription payments, plus major Stripe Checkout improvements and enhanced checkout stability.

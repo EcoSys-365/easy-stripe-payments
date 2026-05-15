@@ -121,7 +121,7 @@ foreach ($info as $label => $value) {
     <div class="espd-faq-item">
         <div class="espd-faq-question"><?php echo esc_html(__('Can I use test mode and live mode at the same time?', 'easy-stripe-payments')); ?></div>
         <div class="espd-faq-answer">
-            <?php echo esc_html(__('No, you can only have one mode active at a time — either test or live. You can switch the mode using the Stripe Public and Secret Keys in the plugin settings.', 'easy-stripe-payments')); ?>
+            <?php echo esc_html(__('No, you can only have one mode active at a time — either test or live. Under the Settings tab, you can connect your Stripe account using the Connect with Stripe buttons for either Live or Test mode. Each new connection overrides the current setup, and the last connected mode (Live or Test) will become the active Stripe configuration used by the plugin. Whenever a checkout form is loaded — either in the backend dashboard or on the frontend — the corresponding request will appear in your Stripe account, allowing you to verify which mode is currently active.', 'easy-stripe-payments')); ?>
         </div>
     </div>
     <div class="espd-faq-item">

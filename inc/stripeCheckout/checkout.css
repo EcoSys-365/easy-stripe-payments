@@ -26,6 +26,7 @@
 
 #espad_page #payment-element {
     margin-bottom: 15px;
+    min-height: 225px;
 }
 
 /* Buttons and links */
