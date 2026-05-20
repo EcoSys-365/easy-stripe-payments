@@ -42,11 +42,7 @@ jobs:
           rsync -av --delete \
             --exclude=".git*" \
             --exclude=".github" \
-            --exclude="node_modules" \
-            --exclude="src" \
-            --exclude="package.json" \
-            --exclude="package-lock.json" \
-            --exclude="webpack.config.js" \            
+            --exclude="node_modules" \         
             --exclude="wordpress-svn" \
             ./ wordpress-svn/trunk/
 
