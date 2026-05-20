@@ -5,7 +5,7 @@ Tags: stripe, payments, subscription, donation, stripe checkout
 Requires at least: 5.5
 Tested up to: 7.0
 Requires PHP: 7.4 
-Stable tag: 1.3.8
+Stable tag: 1.3.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -215,6 +215,10 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 
 == Changelog ==
 
+= 1.3.9 =
+* Successfully tested with WordPress 7.0.
+* Fix rsync deployment configuration for WordPress.org release.
+
 = 1.3.8 =
 * Successfully tested with WordPress 7.0.
 * Improved the GitHub deployment workflow for more stable WordPress.org releases.
@@ -341,6 +345,9 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 * Stripe Subscription Button for recurring payments
  
 == Upgrade Notice ==
+
+= 1.3.9 =
+Fix rsync deployment configuration for WordPress.org release.
 
 = 1.3.8 =
 Test WordPress 7.0 compatibility and improve deployment workflow

@@ -3,7 +3,7 @@ name: Deploy to WordPress SVN
 on:
   push:
     tags:
-      - "*" # Löst bei jedem Tag-Push aus
+      - "*"
 
 jobs:
   deploy:
@@ -36,13 +36,13 @@ jobs:
             --password "${{ secrets.SVN_PASSWORD }}" \
             --non-interactive --no-auth-cache
 
-    - name: Copy plugin files to trunk
-      run: |
-        rsync -av --delete \
-          --exclude=".git*" \
-          --exclude=".github" \
-          --exclude="wordpress-svn" \
-          ./ wordpress-svn/trunk/
+      - name: Copy plugin files to trunk
+        run: |
+          rsync -av --delete \
+            --exclude=".git*" \
+            --exclude=".github" \
+            --exclude="wordpress-svn" \
+            ./ wordpress-svn/trunk/
 
       - name: Commit new version to SVN trunk
         working-directory: wordpress-svn/trunk
@@ -55,7 +55,7 @@ jobs:
             --password "${{ secrets.SVN_PASSWORD }}" \
             --non-interactive --no-auth-cache
 
-      - name: Create and commit SVN tag (remote)
+      - name: Create and commit SVN tag
         run: |
           svn copy \
             "${{ secrets.SVN_REPO }}/trunk" \
