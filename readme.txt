@@ -5,7 +5,7 @@ Tags: stripe, payments, subscription, donation, stripe checkout
 Requires at least: 5.5
 Tested up to: 7.0
 Requires PHP: 7.4 
-Stable tag: 1.3.6
+Stable tag: 1.3.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -215,6 +215,10 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 
 == Changelog ==
 
+= 1.3.7 =
+* Successfully tested with WordPress 7.0.
+* Minor deployment workflow improvements.
+
 = 1.3.6 =
 * Introduced a new `Live Demos` section in the Payment Forms tab, allowing users to quickly explore the Stripe Checkout demo environment at `https://demo.ecosys365.com`
 * Removed the payout charts from the Welcome tab in the admin dashboard.
@@ -333,6 +337,9 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 * Stripe Subscription Button for recurring payments
  
 == Upgrade Notice ==
+
+= 1.3.7 =
+Improved deployment workflow stability and successfully tested compatibility with WordPress 7.0.
 
 = 1.3.6 =
 Improved admin dashboard performance with local payment statistics, added a new `Live Demos` section, introduced an `Open Source & Development` section with the official GitHub repository link, and successfully tested compatibility with WordPress 7.0.
