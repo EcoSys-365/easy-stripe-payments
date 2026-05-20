@@ -36,15 +36,13 @@ jobs:
             --password "${{ secrets.SVN_PASSWORD }}" \
             --non-interactive --no-auth-cache
 
-      - name: Copy plugin files to trunk
-        run: |
-          # Kopiere alle Plugin-Dateien in trunk/
-          rsync -av --delete \
-            --exclude=".git*" \
-            --exclude=".github" \
-            --exclude="node_modules" \         
-            --exclude="wordpress-svn" \
-            ./ wordpress-svn/trunk/
+    - name: Copy plugin files to trunk
+      run: |
+        rsync -av --delete \
+          --exclude=".git*" \
+          --exclude=".github" \
+          --exclude="wordpress-svn" \
+          ./ wordpress-svn/trunk/
 
       - name: Commit new version to SVN trunk
         working-directory: wordpress-svn/trunk
