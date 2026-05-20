@@ -43,6 +43,34 @@ $tooltips = [
 ?>
 
 <div class="wrap">
+
+    <div class="espad-preview-overlay">
+
+        <div class="espad-preview-overlay__title">
+
+            <?php echo esc_html__( 'Live Demos', 'easy-stripe-payments' ); ?>
+
+            <button type="button" class="espad-toggle">
+                <span class="dashicons dashicons-arrow-down-alt2"></span>
+            </button>                
+
+        </div>
+
+        <div class="espad-preview-overlay__content">
+            <p>
+                <?php echo esc_html__( 'Explore our live Stripe Checkout demos', 'easy-stripe-payments' ); ?>
+            </p>
+
+            <a 
+                href="<?php echo esc_url( 'https://demo.ecosys365.com' ); ?>" 
+                target="_blank" 
+                rel="noopener noreferrer">
+                <?php echo esc_html__( 'Open Live Demos', 'easy-stripe-payments' ); ?>
+            </a>
+
+        </div>
+
+    </div>    
     
     <h3><?php echo esc_html(__( 'Payment Forms', 'easy-stripe-payments' )); ?> &#128221;</h3>
      

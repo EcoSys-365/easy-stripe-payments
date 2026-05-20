@@ -24,25 +24,6 @@ $subscriptions = espad_safe_stripe_connect_call(
 );
 $subscription_count = $subscriptions ? count($subscriptions->data) : 0;
 
-// 3. Prepare payout data for chart display
-$payouts = espad_safe_stripe_connect_call(
-    fn() => \Stripe\Payout::all(['limit' => 100], $stripe_opts),
-    'Error retrieving payouts'
-);
-
-$payoutData = [];
-
-if ($payouts) {
-    foreach ($payouts->data as $payout) {
-        $payoutData[] = [
-            'date'   => gmdate('Y-m-d', $payout->created),
-            'amount' => $payout->amount / 100,
-        ];
-    }
-
-    payout_chart($payoutData, $account->id ?? null);
-}
-
 // 4. Count products and classify them by active/inactive status
 $products = espad_safe_stripe_connect_call(
     fn() => \Stripe\Product::all(['limit' => 10], $stripe_opts),

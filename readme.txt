@@ -3,9 +3,9 @@ Contributors: ecosys365
 Donate link: https://buymeacoffee.com/ecosys365
 Tags: stripe, payments, subscription, donation, stripe checkout
 Requires at least: 5.5
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.4 
-Stable tag: 1.3.5
+Stable tag: 1.3.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ A light Stripe payment solution that automatically supports all current and futu
 
 == Description ==
 
-**Easy Stripe Payments & Donations** lets you integrate Stripe Checkout into your WordPress site with minimal setup. Perfect for donations, simple eCommerce needs, services, or subscriptions. 🚀 Live Demo: https://demo.ecosys365.com
+**Easy Stripe Payments & Donations** lets you integrate Stripe Checkout into your WordPress site with minimal setup. Perfect for donations, simple eCommerce needs, services, or subscriptions. Live Demo: https://demo.ecosys365.com
 
 https://www.youtube.com/watch?v=iPNCHNTb_CI
 
@@ -186,6 +186,11 @@ These requests are required to manage payments, subscriptions, and products in t
 - Service provider: Stripe  
   - Terms of Service: https://stripe.com/legal  
   - Privacy Policy: https://stripe.com/privacy
+  
+=== Open Source & Development ===
+
+The development of this plugin takes place on GitHub. You can find the full source code here: 
+https://github.com/EcoSys-365/easy-stripe-payments
  
 == Frequently Asked Questions ==
 
@@ -209,6 +214,16 @@ This plugin supports all payment methods that Stripe currently provides. The fol
 ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, Amazon Pay, American Express, Apple Pay, Bacs Direct Debit, Bancontact, Bank Transfers, BECS Direct Debit, Billie, BLIK, Boleto, Canadian Pre-authorized Debits (PADs), Capchase Pay, Cartes Bancaires, Cash App Pay, Cash-based Vouchers, China UnionPay, Click to Pay, Diners Club, Discover, EPS, FPX, Giropay, Google Pay, GrabPay, iDEAL, Interac, Japan Bank Transfer (Furikomi), JCB, Kakao Pay, Klarna, Konbini, Kriya, Link, Maestro, Mastercard, MB WAY, Mexico Bank Transfer (SPEI), MobilePay, Mondu, Multibanco, Naver Pay, OXXO, P24 (Przelewy24), Pay by Bank, PayCo, PayNow, PayPal, PayTo, Pix, PromptPay, Revolut Pay, Samsung Pay, Satispay, Scalapay, SEPA Direct Debit, SEPA Bank Transfer, SeQura, Sofort, South Korean Cards, Stablecoins (USDC/USDT), Sunbit, Swish, TWINT, UK Bank Transfer, USD Bank Transfer, Visa, WeChat Pay, Zip.
 
 == Changelog ==
+
+= 1.3.6 =
+* Introduced a new `Live Demos` section in the Payment Forms tab, allowing users to quickly explore the Stripe Checkout demo environment at `https://demo.ecosys365.com`
+* Removed the payout charts from the Welcome tab in the admin dashboard.
+* Deleted unused chart-related files (`chart.js` and `espd-backend-chart.js`) as part of the cleanup and optimization process.
+* Added local payment statistics to the Welcome tab for faster dashboard loading without requiring Stripe API requests.
+* Introduced database-based metrics such as Total Payments and Total Revenue grouped by currency.
+* Improved admin dashboard performance by reducing unnecessary Stripe API calls.
+* Added a new `Open Source & Development` section to the readme documentation, including the official GitHub repository link for source code access and development transparency.
+* Full compatibility testing completed for WordPress 7.0.
 
 = 1.3.5 =
 * Improved Stripe Checkout UI stability during loading to prevent layout shifting and jumping effects.
@@ -318,6 +333,9 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 * Stripe Subscription Button for recurring payments
  
 == Upgrade Notice ==
+
+= 1.3.6 =
+Improved admin dashboard performance with local payment statistics, added a new `Live Demos` section, introduced an `Open Source & Development` section with the official GitHub repository link, and successfully tested compatibility with WordPress 7.0.
 
 = 1.3.5 =
 Improved Stripe Checkout UI stability, enhanced Help and FAQ documentation, and added official Live Demo integration for the WordPress.org repository.

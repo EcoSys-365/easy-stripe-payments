@@ -2,17 +2,16 @@
 /**
  * Plugin Name: Easy Stripe Payments
  * Description: A user-friendly WordPress plugin for accepting <strong>one-time and recurring Stripe payments</strong>. Perfect for businesses, freelancers and Non-Profit organizations. Secure, fast and fully PCI-compliant.
- * Version: 1.3.5
+ * Version: 1.3.6
  * Author: EcoSys365
  * Author URI: https://www.ecosys365.com
  * Plugin URI: https://www.payments-and-donations.com
- * Demo URI: https://demo.ecosys365.com 
  * Text Domain: easy-stripe-payments
  * Domain Path: /languages
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html 
  * Requires at least: 5.5
- * Tested up to: 6.9
+ * Tested up to: 7.0
  * Requires PHP: 7.4 
  */
 defined( 'ABSPATH' ) || exit;  
@@ -735,33 +734,14 @@ add_action('admin_enqueue_scripts', function($hook) {
             array('datatables-js'),
             '1.0.9',
             true // Load script in footer
-        );        
-         
-        // ChartJS BASIS-SCRIPT
-        wp_enqueue_script(
-            'espd-chartjs',
-            ESPAD_PLUGIN_URL . 'assets/js/chart.js',
-            array(),
-            '4.4.1',
-            true
-        );
- 
-        // Backend Chart on Welcome page with Dependency
-        // Payout chart disabled due to ongoing improvements/refactoring
-        /*wp_enqueue_script(
-            'espd-backend-chart',
-            ESPAD_PLUGIN_URL . 'assets/js/espd-backend-chart.js',
-            array('espd-chartjs'), 
-            '1.0.6',
-            true 
-        );*/        
+        );               
 
         // Enqueue ESPAD admin CSS
         wp_enqueue_style(
             'espad-admin-style',
             ESPAD_PLUGIN_URL . 'assets/css/espad.css',
             array(),
-            '1.0.305'
+            '1.0.306'
         );        
  
         // Enqueue WordPress built-in jQuery script

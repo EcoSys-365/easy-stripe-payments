@@ -27,20 +27,7 @@ if ( defined('ESPAD_STRIPE_ACCESS') && ESPAD_STRIPE_ACCESS ) {
     $subscriptions = safeStripeCall(fn() => \Stripe\Subscription::all(['limit' => 100]), 'Error retrieving subscriptions');
     $subscription_count = $subscriptions ? count($subscriptions->data) : 0;
 
-    // 3. Prepare payout data for chart display
-    $payouts = safeStripeCall(fn() => \Stripe\Payout::all(['limit' => 100]), 'Error retrieving payouts');
-    $payoutData = [];
-    if ($payouts) {
-        foreach ($payouts->data as $payout) {
-            $payoutData[] = [
-                'date' => gmdate('Y-m-d', $payout->created),
-                'amount' => $payout->amount / 100,
-            ];
-        }
-        payout_chart($payoutData, $account->id ?? null);
-    }
-
-    // 4. Count products and classify them by active/inactive status
+    // 3. Count products and classify them by active/inactive status
     $products = safeStripeCall(fn() => \Stripe\Product::all(['limit' => 10]), 'Error retrieving products');
     $totalProducts = $activeProducts = $inactiveProducts = 0;
 
@@ -57,7 +44,7 @@ if ( defined('ESPAD_STRIPE_ACCESS') && ESPAD_STRIPE_ACCESS ) {
         }
     }
 
-    // 5. Count customers with pagination support
+    // 4. Count customers with pagination support
     $totalCustomers = 0;
     $startingAfter = null;
 
@@ -75,7 +62,7 @@ if ( defined('ESPAD_STRIPE_ACCESS') && ESPAD_STRIPE_ACCESS ) {
 
     } while ($startingAfter);
 
-    // 6. Count failed payment attempts
+    // 5. Count failed payment attempts
     $paymentIntents = safeStripeCall(fn() => \Stripe\PaymentIntent::all(['limit' => 100]), 'Error retrieving payment intents');
     $failedCount = 0;
 
@@ -87,7 +74,7 @@ if ( defined('ESPAD_STRIPE_ACCESS') && ESPAD_STRIPE_ACCESS ) {
         }
     }
 
-    // 7. Retrieve Stripe account balance
+    // 6. Retrieve Stripe account balance
     $balance = safeStripeCall(fn() => \Stripe\Balance::retrieve(), 'Error retrieving Stripe balance');
     $espad_amount = $espad_currency = $amount_pending = $currency_pending = null;
 

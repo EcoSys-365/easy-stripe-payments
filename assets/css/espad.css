@@ -1,4 +1,4 @@
-/* Easy Stripe Payments and Donations Plugin v1.3.5 */
+/* Easy Stripe Payments and Donations Plugin v1.3.6 */
 body, p {
     font-size: 15px !important;
 }
@@ -39,9 +39,6 @@ h1.espad_headline .dashicons-money-alt {
     width: 24px;
     cursor: pointer;
 }
-#payoutChart {
-    margin-top: -85px;
-} 
 #wpfooter {
     position: relative !important;
 }

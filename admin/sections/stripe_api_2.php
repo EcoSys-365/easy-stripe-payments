@@ -4,14 +4,14 @@
   <div class="espad-column">
     <?php if ( isset($espad_amount) ) { ?>
       <div class="balance-box">
-        <div class="balance-title"><?php echo esc_html(__( 'Available balance', 'easy-stripe-payments' )); ?></div>
+        <div class="balance-title"><?php echo esc_html(__( 'Available Stripe balance', 'easy-stripe-payments' )); ?></div>
         <div class="balance-amount"><?php echo esc_html($espad_amount . $espad_currency); ?></div>
       </div>
     <?php } ?>
 
     <?php if ( isset($amount_pending) ) { ?>
       <div class="balance-box">
-        <div class="balance-title"><?php echo esc_html(__( 'Pending balance', 'easy-stripe-payments' )); ?></div>
+        <div class="balance-title"><?php echo esc_html(__( 'Pending Stripe balance', 'easy-stripe-payments' )); ?></div>
         <div class="balance-amount"><?php echo esc_html($amount_pending . $currency_pending); ?></div>
       </div>
     <?php } ?>
@@ -39,7 +39,7 @@
     </div>
 
     <div class="balance-box">
-      <div class="balance-title"><?php echo esc_html(__( 'Failed Payments', 'easy-stripe-payments' )); ?></div>
+      <div class="balance-title"><?php echo esc_html(__( 'Failed Stripe Payments', 'easy-stripe-payments' )); ?></div>
       <div class="balance-amount"><?php echo esc_html($failedCount); ?></div>
     </div>
 

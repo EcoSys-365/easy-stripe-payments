@@ -711,29 +711,6 @@ function calculate_progress_bar($campaign_current_amount, $campaign_goal_amount)
     
 }
 
-/**
- * Renders a JavaScript-based payout chart using provided payout data.
- *
- * This function outputs the Chart.js library (assets/js/espd-backend-chart.js).
- * It receives payout data and an account ID, passes the data to JavaScript,
- * and extracts labels (dates) and data (amounts) for use in the chart.
- *
- * Note: This assumes that Chart.js is already enqueued and that there is a canvas element
- * with the ID `payoutChart` available in the DOM where the chart should be rendered.
- *
- * @param array  $payoutData Array of payout entries with 'date' and 'amount' keys.
- * @param string $account_id The Stripe account ID.
- *
- * @return void
- */ 
-function payout_chart($payoutData, $account_id) {
-     
-    echo '<div id="espad-payout-chart-welcome-tab"
-        data-payout-data="' . wp_json_encode( $payoutData ) . '"
-        data-account-id="' . esc_html( $account_id ) . '"></div>';
-    
-} 
-
 /** 
  * Outputs a hidden <div> element that provides data attributes
  * used by the JavaScript welcome modal.

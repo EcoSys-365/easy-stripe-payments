@@ -13,11 +13,44 @@
             );                
         ?>
     </span>
-</h2>     
+</h2>
 
-<?php 
+<?php
 
-// Payout chart disabled due to ongoing improvements/refactoring
-//printf('<canvas id="payoutChart" width="600" height="300"></canvas>'); 
+global $wpdb;
+
+$total_payments = $wpdb->get_var(
+    "SELECT COUNT(*) FROM {$wpdb->prefix}espad_payments"
+);
+
+$total_revenue = $wpdb->get_results(
+    "SELECT currency, SUM(CAST(amount AS DECIMAL(10,2))) as total
+     FROM {$wpdb->prefix}espad_payments
+     GROUP BY currency"
+);
 
 ?>
+
+<div class="espad-wrapper">
+    <div class="espad-column">
+
+        <div class="balance-box">
+            <div class="balance-title"><?php echo esc_html(__( 'Total Payments', 'easy-stripe-payments' )); ?></div>
+            <div class="balance-amount"><?php echo esc_html($total_payments); ?></div>
+        </div>
+
+        <div class="balance-box">
+            <div class="balance-title"><?php echo esc_html(__( 'Total Revenue', 'easy-stripe-payments' )); ?></div>
+            <div class="balance-amount">
+                <?php foreach ( $total_revenue as $revenue ) : ?>
+
+                <span>
+                    <?php echo esc_html(number_format( (float) $revenue->total, 2 ) . ' ' . strtoupper( $revenue->currency )); ?>
+                </span>
+
+                <?php endforeach; ?>        
+            </div>
+        </div>
+
+    </div>
+</div>
