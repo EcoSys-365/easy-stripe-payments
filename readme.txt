@@ -5,7 +5,7 @@ Tags: stripe, payments, subscription, donation, stripe checkout
 Requires at least: 5.5
 Tested up to: 7.0
 Requires PHP: 7.4 
-Stable tag: 1.3.9
+Stable tag: 1.3.10
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -215,6 +215,12 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 
 == Changelog ==
 
+= 1.3.10 =
+* Updated Stripe PHP Library from v19.4.0 to v20.2.0.
+* Improved compatibility with the latest Stripe API features and platform updates.
+* General maintenance and dependency updates.
+* Performance and stability improvements.
+
 = 1.3.9 =
 * Successfully tested with WordPress 7.0.
 * Fix rsync deployment configuration for WordPress.org release.
@@ -346,26 +352,29 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
  
 == Upgrade Notice ==
 
+= 1.3.10 =
+* Updated to Stripe PHP Library v20.2.0 for improved compatibility with the latest Stripe platform, API enhancements, and future Stripe features.
+
 = 1.3.9 =
-Fix rsync deployment configuration for WordPress.org release.
+* Fix rsync deployment configuration for WordPress.org release.
 
 = 1.3.8 =
-Test WordPress 7.0 compatibility and improve deployment workflow
+* Test WordPress 7.0 compatibility and improve deployment workflow
 
 = 1.3.7 =
-Improved deployment workflow stability and successfully tested compatibility with WordPress 7.0.
+* Improved deployment workflow stability and successfully tested compatibility with WordPress 7.0.
 
 = 1.3.6 =
-Improved admin dashboard performance with local payment statistics, added a new `Live Demos` section, introduced an `Open Source & Development` section with the official GitHub repository link, and successfully tested compatibility with WordPress 7.0.
+* Improved admin dashboard performance with local payment statistics, added a new `Live Demos` section, introduced an `Open Source & Development` section with the official GitHub repository link, and successfully tested compatibility with WordPress 7.0.
 
 = 1.3.5 =
-Improved Stripe Checkout UI stability, enhanced Help and FAQ documentation, and added official Live Demo integration for the WordPress.org repository.
+* Improved Stripe Checkout UI stability, enhanced Help and FAQ documentation, and added official Live Demo integration for the WordPress.org repository.
 
 = 1.3.4 =
-Introducing the brand new Advanced Checkout mode with support for one-time and subscription payments, plus major Stripe Checkout improvements and enhanced checkout stability.
+* Introducing the brand new Advanced Checkout mode with support for one-time and subscription payments, plus major Stripe Checkout improvements and enhanced checkout stability.
 
 = 1.3.3 = 
-This update improves Stripe metadata handling and fixes a PHP deprecation warning. Updating is recommended to ensure clean metadata and better tracking of Checkout Form IDs.
+* This update improves Stripe metadata handling and fixes a PHP deprecation warning. Updating is recommended to ensure clean metadata and better tracking of Checkout Form IDs.
 
 = 1.3.2 =
 * Introduces a brand new Subscription Checkout, UI improvements, and enhanced payment button label customization.
@@ -418,4 +427,4 @@ This update improves Stripe metadata handling and fixes a PHP deprecation warnin
 * Plugin functionality remains unchanged
 
 = 1.0.0 =
-Initial stable release with support for one-time payments, recurring payments, campaigns and Stripe subscriptions.
+* Initial stable release with support for one-time payments, recurring payments, campaigns and Stripe subscriptions.
