@@ -27,6 +27,10 @@ if (
     $load_stripe_data = true;
 }
 
+$stripe_connected =
+    ( defined('ESPAD_STRIPE_ACCESS') && ESPAD_STRIPE_ACCESS ) ||
+    ( defined('ESPAD_STRIPE_CONNECTED_ACCOUNT_ACCESS') && ESPAD_STRIPE_CONNECTED_ACCOUNT_ACCESS );
+
 ?>
 
 <div id="content">
@@ -103,9 +107,11 @@ if (
     
     ?>
 
-    <a href="<?php echo esc_url( $load_stripe_data_url ); ?>" class="button button-primary">
-        <?php echo esc_html__( 'Load Stripe Data', 'easy-stripe-payments' ); ?>
-    </a>    
+    <?php if ( $stripe_connected ) : ?>
+        <a href="<?php echo esc_url( $load_stripe_data_url ); ?>" class="button button-primary">
+            <?php echo esc_html__( 'Load Stripe Data', 'easy-stripe-payments' ); ?>
+        </a>   
+    <?php endif; ?>
     
 </div>
 

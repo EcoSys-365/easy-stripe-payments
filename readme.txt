@@ -5,7 +5,7 @@ Tags: stripe, payments, subscription, donation, stripe checkout
 Requires at least: 5.5
 Tested up to: 7.0
 Requires PHP: 7.4 
-Stable tag: 1.3.10
+Stable tag: 1.3.11
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -70,6 +70,7 @@ You can easily enable or disable payment methods directly from your Stripe Dashb
 **MobilePay**
 **Vipps Payments**
 **Satispay**
+**Bizum**
 
 **Crypto (Web3 & Stablecoin support)** – Includes USDC payouts and Stripe-powered crypto onramp integrations for supported platforms and regions.
  
@@ -215,6 +216,12 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 
 == Changelog ==
 
+= 1.3.11 =
+* Improved Welcome page behavior by displaying the `Load Stripe Data` button only when a Stripe account is connected.
+* Prevented errors that could occur on fresh plugin installations before a Stripe connection is established.
+* Updated the plugin documentation and readme.txt for improved clarity and guidance.
+* Minor admin UI improvements and stability enhancements.
+
 = 1.3.10 =
 * Updated Stripe PHP Library from v19.4.0 to v20.2.0.
 * Improved compatibility with the latest Stripe API features and platform updates.
@@ -351,6 +358,9 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 * Stripe Subscription Button for recurring payments
  
 == Upgrade Notice ==
+
+= 1.3.11 =
+* Improved Welcome page behavior by displaying the `Load Stripe Data` button only when Stripe is connected.
 
 = 1.3.10 =
 * Updated to Stripe PHP Library v20.2.0 for improved compatibility with the latest Stripe platform, API enhancements, and future Stripe features.
