@@ -5,7 +5,7 @@ Tags: stripe, payments, subscription, donation, stripe checkout
 Requires at least: 5.5
 Tested up to: 7.0
 Requires PHP: 7.4 
-Stable tag: 1.3.11
+Stable tag: 1.3.12
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -216,6 +216,10 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 
 == Changelog ==
 
+= 1.3.12 =
+* Maintenance release.
+* General repository and release process improvements.
+
 = 1.3.11 =
 * Improved Welcome page behavior by displaying the `Load Stripe Data` button only when a Stripe account is connected.
 * Prevented errors that could occur on fresh plugin installations before a Stripe connection is established.
@@ -358,6 +362,9 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 * Stripe Subscription Button for recurring payments
  
 == Upgrade Notice ==
+
+= 1.3.12 =
+* Maintenance release with general repository and release process improvements.
 
 = 1.3.11 =
 * Improved Welcome page behavior by displaying the `Load Stripe Data` button only when Stripe is connected.
