@@ -47,7 +47,11 @@ jQuery(document).ready(function($) {
             $(".prev-mode-Standard #prices_box label.btn").css("line-height", "31px");
             
             $("#espad_page #payment-form .col-md").css("flex", "0 1 auto");
-            $("#espad_page #payment-form .panel-body div.row .col-md:first-of-type").css("margin-bottom", "17px");
+            
+            $("#espad_page #payment-form .panel-body div.row")
+                .not(':has(select#country)')
+                .find('.col-md:first-of-type')
+                .css("margin-bottom", "17px");            
 
         // Apply styles for mobile layout
         } else if ( value === 'mobile' ) {
@@ -66,9 +70,13 @@ jQuery(document).ready(function($) {
 
             $(".progress-label strong").css("font-size", "26px");
             
-            $("#espad_page #payment-form .col-md").css("flex", "0 1 auto");
-            $("#espad_page #payment-form .panel-body div.row .col-md:first-of-type").css("margin-bottom", "17px");            
+            $("#espad_page #payment-form .col-md").css("flex", "0 1 auto");          
 
+            $("#espad_page #payment-form .panel-body div.row")
+                .not(':has(select#country)')
+                .find('.col-md:first-of-type')
+                .css("margin-bottom", "17px");             
+            
         }
 
     });

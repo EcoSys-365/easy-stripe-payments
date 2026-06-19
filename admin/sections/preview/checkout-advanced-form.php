@@ -166,6 +166,13 @@
                             require_once ESPAD_PLUGIN_PATH . 'admin/sections/preview/street-postal-code.php';
                             require_once ESPAD_PLUGIN_PATH . 'admin/sections/preview/city-telephone.php';
                             break;
+                            
+                        case 'name_email_address_telephone_country_required_fields':
+                            $required_fields_string = 'required';
+                            require_once ESPAD_PLUGIN_PATH . 'admin/sections/preview/street-postal-code.php';
+                            require_once ESPAD_PLUGIN_PATH . 'admin/sections/preview/city-telephone.php';
+                            require_once ESPAD_PLUGIN_PATH . 'admin/sections/preview/country.php';
+                            break;                             
 
                     }
 

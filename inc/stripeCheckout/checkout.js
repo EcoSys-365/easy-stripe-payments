@@ -332,11 +332,11 @@ async function initOneTimeCheckout(renderId) {
         setElementLoading(true);
     }
 
-    try {
+    try { 
         const response = await fetch(createCheckoutUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ items: currentItems }),
+            body: JSON.stringify({ items: currentItems }),          
         });
 
         const data = await response.json();
@@ -423,6 +423,7 @@ async function handleSubmit(e) {
         let postalCode = "";
         let city = "";
         let phoneNumber = "";
+        let country = "";
 
         switch (choosedFields) {
             case "name_email_address":
@@ -439,6 +440,14 @@ async function handleSubmit(e) {
                 city        = document.querySelector("#city")?.value || "";
                 phoneNumber = document.querySelector("#phone_number")?.value || "";
                 break;
+                
+            case "name_email_address_telephone_country_required_fields":
+                street      = document.querySelector("#street")?.value || "";
+                postalCode  = document.querySelector("#postal_code")?.value || "";
+                city        = document.querySelector("#city")?.value || "";
+                phoneNumber = document.querySelector("#phone_number")?.value || "";
+                country     = document.querySelector("#country")?.value || "";
+                break;                
 
             default:
                 break;
@@ -492,7 +501,7 @@ async function handleSubmit(e) {
             "espad_payment_token=" + encodeURIComponent(espadPaymentToken);
 
         espadReturnUrl += "#payment-form";
-
+    
         const { error } = await stripe.confirmPayment({
             elements,
             confirmParams: {
@@ -504,21 +513,22 @@ async function handleSubmit(e) {
                         address: {
                             line1: street,
                             postal_code: postalCode,
-                            city: city
+                            city: city,
+                            country: country
                         }
                     }
                 },
                 return_url: espadReturnUrl
             }
-        });
+        });  
 
         if (error) {
             if (error.type === "card_error" || error.type === "validation_error") {
                 showMessage(error.message);
             } else {
-                showMessage("An unexpected error has occurred.");
+                showMessage(error.message || "An unexpected error has occurred.");
             }
-        }
+        }   
 
     } catch (error) {
         console.error(error);

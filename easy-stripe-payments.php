@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Easy Stripe Payments
  * Description: A user-friendly WordPress plugin for accepting <strong>one-time and recurring Stripe payments</strong>. Perfect for businesses, freelancers and Non-Profit organizations. Secure, fast and fully PCI-compliant.
- * Version: 1.3.12
+ * Version: 1.3.13
  * Author: EcoSys365
  * Author URI: https://www.ecosys365.com
  * Plugin URI: https://www.payments-and-donations.com
@@ -143,7 +143,7 @@ function espd_preview_add_scripts() {
         'espd-checkout-js',
         ESPAD_PLUGIN_URL . 'inc/stripeCheckout/checkout.js',
         ['stripe-js'],
-        '1.0.229',
+        '1.0.245',
         true // Load in footer
     );
            
@@ -165,7 +165,7 @@ function espd_add_payment_shortcode_scripts() {
         'espd-frontend-payment-style',
         ESPAD_PLUGIN_URL . 'assets/css/frontend-payment-form.css',
         array(),
-        '1.2.46'  
+        '1.2.57'  
     ); 
        
     // Enqueue built-in jQuery
@@ -752,7 +752,7 @@ add_action('admin_enqueue_scripts', function($hook) {
             'espd-admin-script',
             ESPAD_PLUGIN_URL . 'assets/js/admin-script.js',
             ['jquery'], 
-            '1.0.78',
+            '1.0.81',
             true // Load script in footer
         );
 
@@ -1855,13 +1855,65 @@ function espad_create_checkout(WP_REST_Request $request) {
         // 8. Prepare parameters for the payment gateway
         $amount = absint( calculateEspadAmount( $jsonObj->items ) );
 
+        $customer = isset( $jsonObj->customer ) && is_object( $jsonObj->customer )
+            ? $jsonObj->customer
+            : null;
+
+        $customer_email = '';
+        $shipping_name  = '';
+
+        $shipping_address = [
+            'line1'       => '',
+            'city'        => '',
+            'state'       => '',
+            'postal_code' => '',
+            'country'     => '',
+        ];
+
+        if ( $customer ) {
+            $customer_email = isset( $customer->email )
+                ? sanitize_email( $customer->email )
+                : '';
+
+            $shipping_name = isset( $customer->name )
+                ? sanitize_text_field( $customer->name )
+                : '';
+
+            if ( isset( $customer->address ) && is_object( $customer->address ) ) {
+                $shipping_address = [
+                    'line1'       => sanitize_text_field( $customer->address->line1 ?? '' ),
+                    'city'        => sanitize_text_field( $customer->address->city ?? '' ),
+                    'state'       => sanitize_text_field( $customer->address->state ?? '' ),
+                    'postal_code' => sanitize_text_field( $customer->address->postal_code ?? '' ),
+                    'country'     => strtoupper( sanitize_text_field( $customer->address->country ?? '' ) ),
+                ];
+            }
+        }
+
         $params = [
-            'amount' => $amount,
+            'amount'   => $amount,
             'currency' => $currency,
             'automatic_payment_methods' => [
                 'enabled' => true,
             ],
         ];
+
+        if ( ! empty( $customer_email ) ) {
+            $params['receipt_email'] = $customer_email;
+        }
+
+        if (
+            ! empty( $shipping_name ) &&
+            ! empty( $shipping_address['line1'] ) &&
+            ! empty( $shipping_address['city'] ) &&
+            ! empty( $shipping_address['postal_code'] ) &&
+            ! empty( $shipping_address['country'] )
+        ) {
+            $params['shipping'] = [
+                'name'    => $shipping_name,
+                'address' => $shipping_address,
+            ];
+        }
 
         // Check if Stripe Connect is active
         $stripe_access_token = \get_option( 'espad_stripe_connect_access_token', '' );
@@ -1874,8 +1926,8 @@ function espad_create_checkout(WP_REST_Request $request) {
             if ( $application_fee_amount > 0 ) {
                 $params['application_fee_amount'] = $application_fee_amount;
             }
-             
-        }        
+
+        }          
                
         // 9. Add metadata only if it contains something.
         if ( !empty($metadata) ) {
@@ -1892,6 +1944,7 @@ function espad_create_checkout(WP_REST_Request $request) {
         ];
   
         return rest_ensure_response($output);
+      
 
     } catch (Error $e) {
 

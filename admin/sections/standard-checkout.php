@@ -105,7 +105,10 @@
                         </option>
                         <option value="name_email_address_telephone_required_fields">
                             <?php echo esc_html(__( 'Name &amp; Email &amp; Full Address &amp; Telephone (Required fields)', 'easy-stripe-payments' )); ?>
-                        </option>                        
+                        </option>  
+                        <option value="name_email_address_telephone_country_required_fields">
+                            <?php echo esc_html(__( 'Name &amp; Email &amp; Full Address &amp; Telephone &amp; Country (Required fields)', 'easy-stripe-payments' )); ?>
+                        </option>                           
                     </select>
                 </div>   
                 <div class="form-group">                

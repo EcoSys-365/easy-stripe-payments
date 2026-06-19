@@ -107,11 +107,20 @@ shortcode_payment_form .campaign-image-box img {
 #espad_page input.form-control {
     transition: border-color 0.3s ease;
 }
-#espad_page input.form-control {
+#espad_page input.form-control,
+#espad_page select#country {
     border: 1px solid #e1e1e1;
     border-radius: 5px;
     height: 58px !important;
 }
+#espad_page select#country {
+    cursor: pointer;
+    width: 100% !important;
+    max-width: 100% !important;
+    text-align: left;
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+} 
 #espad_page input.form-control::placeholder {
     color: #333 !important;
 } 
@@ -217,12 +226,12 @@ button#submit:disabled:hover {
     }
     #espad_page #payment-form .panel-body div.row .col-md:first-of-type {
         margin-bottom: 17px;
-    }    
+    }   
 
 }
 
 /* Tablets: 768px bis 1024px */
-@media (min-width: 768px) and (max-width: 1024px) {   
+@media (min-width: 768px) and (max-width: 1024px) { 
     
     #amountInput {
         width: 100%;
@@ -255,7 +264,7 @@ button#submit:disabled:hover {
     }
     #espad_page #payment-form .panel-body div.row .col-md:first-of-type {
         margin-bottom: 17px;
-    }
+    } 
     
 }
 
