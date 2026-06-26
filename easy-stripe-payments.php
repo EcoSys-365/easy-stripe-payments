@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Easy Stripe Payments
  * Description: A user-friendly WordPress plugin for accepting <strong>one-time and recurring Stripe payments</strong>. Perfect for businesses, freelancers and Non-Profit organizations. Secure, fast and fully PCI-compliant.
- * Version: 1.3.13
+ * Version: 1.3.14
  * Author: EcoSys365
  * Author URI: https://www.ecosys365.com
  * Plugin URI: https://www.payments-and-donations.com
@@ -143,7 +143,7 @@ function espd_preview_add_scripts() {
         'espd-checkout-js',
         ESPAD_PLUGIN_URL . 'inc/stripeCheckout/checkout.js',
         ['stripe-js'],
-        '1.0.245',
+        '1.0.246',
         true // Load in footer
     );
            
@@ -1862,13 +1862,7 @@ function espad_create_checkout(WP_REST_Request $request) {
         $customer_email = '';
         $shipping_name  = '';
 
-        $shipping_address = [
-            'line1'       => '',
-            'city'        => '',
-            'state'       => '',
-            'postal_code' => '',
-            'country'     => '',
-        ];
+        $shipping_address = [];
 
         if ( $customer ) {
             $customer_email = isset( $customer->email )
@@ -1880,13 +1874,28 @@ function espad_create_checkout(WP_REST_Request $request) {
                 : '';
 
             if ( isset( $customer->address ) && is_object( $customer->address ) ) {
-                $shipping_address = [
-                    'line1'       => sanitize_text_field( $customer->address->line1 ?? '' ),
-                    'city'        => sanitize_text_field( $customer->address->city ?? '' ),
-                    'state'       => sanitize_text_field( $customer->address->state ?? '' ),
-                    'postal_code' => sanitize_text_field( $customer->address->postal_code ?? '' ),
-                    'country'     => strtoupper( sanitize_text_field( $customer->address->country ?? '' ) ),
-                ];
+
+                if ( ! empty( $customer->address->line1 ) ) {
+                    $shipping_address['line1'] = sanitize_text_field( $customer->address->line1 );
+                }
+
+                if ( ! empty( $customer->address->city ) ) {
+                    $shipping_address['city'] = sanitize_text_field( $customer->address->city );
+                }
+
+                if ( ! empty( $customer->address->state ) ) {
+                    $shipping_address['state'] = sanitize_text_field( $customer->address->state );
+                }
+
+                if ( ! empty( $customer->address->postal_code ) ) {
+                    $shipping_address['postal_code'] = sanitize_text_field( $customer->address->postal_code );
+                }
+
+                if ( ! empty( $customer->address->country ) ) {
+                    $shipping_address['country'] = strtoupper(
+                        sanitize_text_field( $customer->address->country )
+                    );
+                }
             }
         }
 

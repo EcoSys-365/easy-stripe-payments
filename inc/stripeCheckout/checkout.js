@@ -502,25 +502,51 @@ async function handleSubmit(e) {
 
         espadReturnUrl += "#payment-form";
     
+        const billingDetails = {};
+
+        if (name.trim()) { 
+            billingDetails.name = name.trim();
+        }
+
+        if (email.trim()) {
+            billingDetails.email = email.trim();
+        }
+
+        if (phoneNumber.trim()) {
+            billingDetails.phone = phoneNumber.trim();
+        }
+
+        const billingAddress = {};
+
+        if (street.trim()) {
+            billingAddress.line1 = street.trim();
+        }
+
+        if (postalCode.trim()) {
+            billingAddress.postal_code = postalCode.trim();
+        }
+
+        if (city.trim()) {
+            billingAddress.city = city.trim();
+        }
+
+        if (country.trim()) {
+            billingAddress.country = country.trim().toUpperCase();
+        }
+
+        if (Object.keys(billingAddress).length > 0) {
+            billingDetails.address = billingAddress;
+        }
+
         const { error } = await stripe.confirmPayment({
             elements,
             confirmParams: {
                 payment_method_data: {
-                    billing_details: {
-                        name: name,
-                        email: email,
-                        phone: phoneNumber,
-                        address: {
-                            line1: street,
-                            postal_code: postalCode,
-                            city: city,
-                            country: country
-                        }
-                    }
+                    billing_details: billingDetails
                 },
                 return_url: espadReturnUrl
             }
-        });  
+        }); 
 
         if (error) {
             if (error.type === "card_error" || error.type === "validation_error") {
