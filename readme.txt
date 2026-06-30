@@ -5,7 +5,7 @@ Tags: stripe, payments, subscription, donation, stripe checkout
 Requires at least: 5.5
 Tested up to: 7.0
 Requires PHP: 7.4 
-Stable tag: 1.3.14
+Stable tag: 1.3.15
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -216,10 +216,13 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 
 == Changelog ==
 
+= 1.3.15 =
+* Added new demo package images for the Standard Checkout example.
+
 = 1.3.14 =
 * Improved Stripe Checkout by sending billing and shipping address data only when the corresponding fields are available and populated.
 * Fixed an issue where empty address values could cause payment method errors with certain Stripe payment methods such as `Alipay`.
-* Improved compatibility with payment methods that have different `billing` & `shipping` information requirements.
+* Improved compatibility with payment methods that have different `billing & shipping` information requirements.
 
 = 1.3.13 =
 * Added Country field support to checkout forms.
@@ -374,6 +377,9 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 * Stripe Subscription Button for recurring payments
  
 == Upgrade Notice ==
+
+= 1.3.15 =
+* Added new demo package images for the Standard Checkout example.
 
 = 1.3.14 = 
 * Improved compatibility with Stripe payment methods by preventing empty billing and shipping address fields from being sent during checkout.
