@@ -63,6 +63,54 @@ $info['Active Plugins'] = trim($plugins_output);
 
 <?php espd_domain_is_not_registered(); ?>
 
+<div class="espad-preview-overlay">
+
+    <div class="espad-preview-overlay__title">
+
+        <?php echo esc_html__( 'Quick Setup Guide', 'easy-stripe-payments' ); ?>
+
+        <button type="button" class="espad-toggle">
+            <span class="dashicons dashicons-arrow-down-alt2"></span>
+        </button>                
+
+    </div>
+
+    <div class="espad-preview-overlay__content">
+        
+        <p>
+                <b>1.</b> <?php echo esc_html(__( 'Go to Settings, click “Connect with Stripe,” choose Live or Test mode', 'easy-stripe-payments' )); ?>
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=espd_main&tab=settings' ) ); ?>" target="_blank">
+                    <?php echo esc_html(__( 'Settings', 'easy-stripe-payments' )); ?>
+                </a>
+
+        </p>
+        <p>
+                <b>2.</b> <?php echo esc_html(__( 'Create a Payment Form ( Checkout Form or Campaign Form )', 'easy-stripe-payments' )); ?>
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=espd_main&tab=forms' ) ); ?>" target="_blank">
+                    <?php echo esc_html(__( 'Payment Forms', 'easy-stripe-payments' )); ?>
+                </a>
+
+        </p>
+        <p>
+                <b>3.</b> <?php echo esc_html(__( 'Create a Stripe Product for recurring Payments', 'easy-stripe-payments' )); ?>
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=espd_main&tab=recurring' ) ); ?>" target="_blank">
+                    <?php echo esc_html(__( 'Recurring Payments', 'easy-stripe-payments' )); ?>
+                </a>
+
+        </p>
+        <p>
+                <b>4.</b> <?php echo esc_html(__( 'Add the shortcodes to the appropriate page', 'easy-stripe-payments' )); ?>
+        </p>
+        <p>
+                <b>5.</b> <?php echo esc_html(__( 'Register your domain and get priority support &amp; access to Multiple Stripe Checkouts, Multiple Subscription Payments, Stripe Metadata &amp; more', 'easy-stripe-payments' ));   
+                    echo ' <a href=" ' . esc_url(ESPAD_REGISTER_LINK) . '" target="_blank" rel="noopener">' . esc_html(__( 'Become a Premium Member', 'easy-stripe-payments' )) . '</a>';    
+                ?>
+        </p> 
+
+    </div>
+
+</div>  
+
 <h2><?php echo esc_html(__('Help &amp; FAQ', 'easy-stripe-payments')); ?> &#10067;</h2>
 
 <p>
@@ -153,7 +201,7 @@ foreach ($info as $label => $value) {
     <div class="espd-faq-item">
         <div class="espd-faq-question"><?php echo esc_html(__('How can I issue refunds?', 'easy-stripe-payments')); ?></div>
         <div class="espd-faq-answer">
-            <?php echo esc_html(__('Refunds must be made directly through the Stripe dashboard. The plugin currently does not offer an in-plugin refund feature.', 'easy-stripe-payments')); ?>
+            <?php echo esc_html(__('Refunds must be made directly through the Stripe dashboard. The plugin currently does not offer an in-plugin refund feature. Please note that neither Stripe processing fees nor any fees charged by EcoSys 365 Solutions LLC are refunded when a payment is refunded.', 'easy-stripe-payments')); ?>
         </div>
     </div> 
     <div class="espd-faq-item">

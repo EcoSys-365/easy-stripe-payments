@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Easy Stripe Payments
  * Description: A user-friendly WordPress plugin for accepting <strong>one-time and recurring Stripe payments</strong>. Perfect for businesses, freelancers and Non-Profit organizations. Secure, fast and fully PCI-compliant.
- * Version: 1.3.15
+ * Version: 1.3.16
  * Author: EcoSys365
  * Author URI: https://www.ecosys365.com
  * Plugin URI: https://www.payments-and-donations.com
@@ -1668,15 +1668,14 @@ function espad_show_stripe_success_message() {
     
 }
 
-// Add custom action links (Settings and Setup) to the plugin row on the Plugins page
+// Add custom action links (Settings) to the plugin row on the Plugins page
 add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), 'espd_plugin_action_links' );
 
 function espd_plugin_action_links( $links ) {
      
-    $settings_link = '<a href="admin.php?page=espd_main&tab=settings">Settings</a>';
-    $setup_link    = '<a href="admin.php?page=espd_main&tab=setup">Setup</a>';    
+    $settings_link = '<a href="admin.php?page=espd_main&tab=settings">Settings</a>';  
  
-    array_unshift( $links, $setup_link, $settings_link );
+    array_unshift( $links, $settings_link );
     
     return $links;
     

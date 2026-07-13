@@ -7,10 +7,7 @@
     <h2 class="nav-tab-wrapper">
         <a href="?page=espd_main&tab=welcome" class="nav-tab <?php echo esc_attr( $active_tab == 'welcome' ? 'nav-tab-active' : ''); ?>">
             <?php echo esc_html(__( 'Overview', 'easy-stripe-payments' )); ?> &#10024;
-        </a>
-        <a href="?page=espd_main&tab=setup" class="nav-tab <?php echo esc_attr( $active_tab == 'setup' ? 'nav-tab-active' : ''); ?>">
-            <?php echo esc_html(__( 'Setup', 'easy-stripe-payments' )); ?>  &#9881;
-        </a>            
+        </a>           
         <a href="?page=espd_main&tab=payments" class="nav-tab <?php echo esc_attr( $active_tab == 'payments' ? 'nav-tab-active' : ''); ?>">
             <?php echo esc_html(__( 'Payments', 'easy-stripe-payments' )); ?> &#128176;
         </a>            
@@ -42,10 +39,6 @@
         <?php
 
         switch ( $active_tab ) {
-
-            case 'setup':
-                require_once ESPAD_PLUGIN_PATH . 'admin/setup.php';
-                break; 
 
             case 'settings':
                 require_once ESPAD_PLUGIN_PATH . 'admin/settings.php';
