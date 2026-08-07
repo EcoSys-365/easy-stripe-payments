@@ -5,7 +5,7 @@ Tags: stripe, payments, donation, ecommerce, checkout
 Requires at least: 5.5
 Tested up to: 7.0
 Requires PHP: 7.4 
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -205,6 +205,12 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 
 == Changelog ==
 
+= 1.4.1 =
+* Fixed a PHP fatal error that could occur when sending confirmation emails after a successful payment.
+* Fixed "Cannot modify header information" warnings after successful payments.
+* Improved payment return handling to ensure better compatibility with the WordPress request lifecycle.
+* Improved reliability of post-payment processing and redirects.
+
 = 1.4.0 =
 * The new React-powered `Checkout Builder` gives you far more flexibility and customization options than ever before. Build modern, multi-step checkout experiences with an intuitive drag-and-drop interface and create payment forms tailored to your needs.
 * Improved the design and layout of payment form tables in the WordPress admin dashboard.
@@ -385,6 +391,9 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 * Stripe Subscription Button for recurring payments
  
 == Upgrade Notice ==
+
+= 1.4.1 =
+* Recommended update that improves payment return handling and fixes email notification and redirect-related PHP errors.
 
 = 1.4.0 =
 * New React-powered Checkout Builder with flexible multi-step checkouts, improved admin navigation, and better compatibility.

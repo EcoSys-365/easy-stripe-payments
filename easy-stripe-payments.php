@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Easy Stripe Payments
  * Description: A user-friendly WordPress plugin for accepting <strong>one-time and recurring Stripe payments</strong>. Perfect for businesses, freelancers and Non-Profit organizations. Secure, fast and fully PCI-compliant.
- * Version: 1.4.0
+ * Version: 1.4.1
  * Author: EcoSys365
  * Author URI: https://www.ecosys365.com
  * Plugin URI: https://www.payments-and-donations.com
@@ -44,10 +44,27 @@ define( 'ESPAD_DB_VERSION', '1.3.3' );
 require_once ESPAD_PLUGIN_PATH . 'inc/functions.php';
 
 /*
- * Handle Stripe payment return requests after the customer
- * is redirected back from Stripe.
+ * Handle Stripe payment return requests after WordPress
+ * has completed its early request and redirect handling.
+ *
+ * Important:
+ * Do not execute the payment return handler while plugins
+ * are still being loaded. The handler may eventually prepare
+ * frontend output, which would otherwise cause
+ * "headers already sent" warnings.
  */
-require_once ESPAD_PLUGIN_PATH . 'inc/handle-payment-return.php'; 
+add_action( 'template_redirect', 'espad_handle_payment_return', 20 );
+
+function espad_handle_payment_return() {
+
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    if ( ! isset( $_GET['espad_payment_token'] ) ) {
+        return;
+    }
+
+    require ESPAD_PLUGIN_PATH . 'inc/handle-payment-return.php';
+    
+}
  
 // Hook into the 'init' action to run custom initialization logic early.
 add_action( 'init', function () {

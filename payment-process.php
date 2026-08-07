@@ -185,16 +185,33 @@ if ( isset($_GET['payment_intent']) && preg_match('/^pi_[a-zA-Z0-9]+$/', sanitiz
             "SELECT COUNT(*) FROM {$wpdb->prefix}espad_payments WHERE stripe_payment_id = %s",
             $payment_intent_id
         ));
+         
+        $is_existing_payment = ( $exists > 0 );
 
-        if ( $exists > 0 ) {
+        if ( $is_existing_payment ) {
 
-            require_once ESPAD_PLUGIN_PATH . 'frontend/sections/payment-successful-reload.php';
+            /*
+             * Do not output HTML during payment processing.
+             * Queue the success marker for the footer instead.
+             */
+            add_action(
+                'wp_footer',
+                function () use (
+                    $name,
+                    $email,
+                    $phone,
+                    $address_str,
+                    $amount,
+                    $currency,
+                    $payment_method_type
+                ) {
+                    require ESPAD_PLUGIN_PATH . 'frontend/sections/payment-successful-reload.php';
+                },
+                5
+            );
+
             return;
-
-        } else {
-
-            require_once ESPAD_PLUGIN_PATH . 'frontend/sections/payment-successful.php';
-        }
+        }        
 
         // Neue Zahlung speichern
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Intentionally used for a custom table
@@ -257,6 +274,26 @@ if ( isset($_GET['payment_intent']) && preg_match('/^pi_[a-zA-Z0-9]+$/', sanitiz
         }
 
         require_once ESPAD_PLUGIN_PATH . 'inc/paymentProcess/send-mail.php';
+        
+        /*
+         * Render the success marker only after WordPress has finished
+         * processing headers.
+         */
+        add_action(
+            'wp_footer',
+            function () use (
+                $name,
+                $email,
+                $phone,
+                $address_str,
+                $amount,
+                $currency,
+                $payment_method_type
+            ) {
+                require ESPAD_PLUGIN_PATH . 'frontend/sections/payment-successful.php';
+            },
+            5
+        );        
 
         // Redirect to success_url
         espad_redirect_to_url($success_url);

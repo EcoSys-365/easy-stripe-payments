@@ -2,12 +2,12 @@
 
 <div
      id="espad-payment-successful" 
-     data-name="<?php echo esc_html($name); ?>"
-     data-email="<?php echo esc_html($email); ?>"
-     data-phone="<?php echo esc_html($phone); ?>"
-     data-address-street="<?php echo esc_html($address_str); ?>"
-     data-amount="<?php echo esc_html($amount); ?>"
-     data-currency="<?php echo esc_html($currency); ?>"
-     data-payment-method="<?php echo esc_html($payment_method_type); ?>">
+     data-name="<?php echo esc_attr($name); ?>"
+     data-email="<?php echo esc_attr($email); ?>"
+     data-phone="<?php echo esc_attr($phone); ?>"
+     data-address-street="<?php echo esc_attr($address_str); ?>"
+     data-amount="<?php echo esc_attr($amount); ?>"
+     data-currency="<?php echo esc_attr($currency); ?>"
+     data-payment-method="<?php echo esc_attr($payment_method_type); ?>">
 </div>   
  

@@ -33,5 +33,3 @@ if ( $email_enabled == 1 ) {
     wp_mail( $to, sanitize_text_field( $subject ), $html_message, $headers ); 
 
 }
-
-?>
