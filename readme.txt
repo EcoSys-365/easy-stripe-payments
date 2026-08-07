@@ -5,7 +5,7 @@ Tags: stripe, payments, donation, ecommerce, checkout
 Requires at least: 5.5
 Tested up to: 7.0
 Requires PHP: 7.4 
-Stable tag: 1.4.1
+Stable tag: 1.4.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,6 +28,7 @@ https://www.youtube.com/watch?v=iPNCHNTb_CI
 7. Create a new Stripe subscription product without logging into Stripe
 8. Edit an existing Stripe subscription product and link it with a checkout button
 9. Example of a Stripe-hosted checkout page for subscription payments
+10. Multi-Step Checkout Builder example combining products, donations, custom fields, and Stripe payments in a single checkout flow 
 
 == Flexible Stripe Payment & Checkout Options ==
 
@@ -204,6 +205,11 @@ This plugin supports all payment methods that Stripe currently provides. The fol
 ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, Amazon Pay, American Express, Apple Pay, Bacs Direct Debit, Bancontact, Bank Transfers, BECS Direct Debit, Billie, BLIK, Boleto, Canadian Pre-authorized Debits (PADs), Capchase Pay, Cartes Bancaires, Cash App Pay, Cash-based Vouchers, China UnionPay, Click to Pay, Diners Club, Discover, EPS, FPX, Giropay, Google Pay, GrabPay, iDEAL, Interac, Japan Bank Transfer (Furikomi), JCB, Kakao Pay, Klarna, Konbini, Kriya, Link, Maestro, Mastercard, MB WAY, Mexico Bank Transfer (SPEI), MobilePay, Mondu, Multibanco, Naver Pay, OXXO, P24 (Przelewy24), Pay by Bank, PayCo, PayNow, PayPal, PayTo, Pix, PromptPay, Revolut Pay, Samsung Pay, Satispay, Scalapay, SEPA Direct Debit, SEPA Bank Transfer, SeQura, Sofort, South Korean Cards, Stablecoins (USDC/USDT), Sunbit, Swish, TWINT, UK Bank Transfer, USD Bank Transfer, Visa, WeChat Pay, Zip.
 
 == Changelog ==
+
+= 1.4.2 =
+* Added a new screenshot showcasing the Multi-Step Checkout Builder.
+* Improved the WordPress.org plugin presentation with a complete checkout example combining products, donations, custom fields, and Stripe payments.
+* Updated plugin documentation and assets.
 
 = 1.4.1 =
 * Fixed a PHP fatal error that could occur when sending confirmation emails after a successful payment.
@@ -391,6 +397,9 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 * Stripe Subscription Button for recurring payments
  
 == Upgrade Notice ==
+
+= 1.4.2 =
+* Documentation and asset update showcasing the Multi-Step Checkout Builder with products, donations, custom fields, and Stripe payments. 
 
 = 1.4.1 =
 * Recommended update that improves payment return handling and fixes email notification and redirect-related PHP errors.
