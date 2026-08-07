@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Easy Stripe Payments
  * Description: A user-friendly WordPress plugin for accepting <strong>one-time and recurring Stripe payments</strong>. Perfect for businesses, freelancers and Non-Profit organizations. Secure, fast and fully PCI-compliant.
- * Version: 1.3.16
+ * Version: 1.4.0
  * Author: EcoSys365
  * Author URI: https://www.ecosys365.com
  * Plugin URI: https://www.payments-and-donations.com
@@ -42,12 +42,15 @@ define( 'ESPAD_DB_VERSION', '1.3.3' );
  
 // Include the plugin's helper functions.
 require_once ESPAD_PLUGIN_PATH . 'inc/functions.php';
+
+/*
+ * Handle Stripe payment return requests after the customer
+ * is redirected back from Stripe.
+ */
+require_once ESPAD_PLUGIN_PATH . 'inc/handle-payment-return.php'; 
  
 // Hook into the 'init' action to run custom initialization logic early.
 add_action( 'init', function () {
-    
-    // Start a session if none is currently active.
-    if ( session_status() === PHP_SESSION_NONE ) session_start();
     
     // Load the Stripe ESPAD Manager class if not already loaded
     class_exists( 'ESPAD\Stripe\StripeESPADManager' ) || espad_stripe_manager_init(); 
@@ -143,11 +146,65 @@ function espd_preview_add_scripts() {
         'espd-checkout-js',
         ESPAD_PLUGIN_URL . 'inc/stripeCheckout/checkout.js',
         ['stripe-js'],
-        '1.0.246',
+        '1.0.242',
         true // Load in footer
     );
            
-}    
+}
+
+/**
+ * Enqueues Stripe.js without loading the legacy checkout.js file.
+ *
+ * Used by the dynamic React-based Multi-Step Checkout.
+ */
+function espad_enqueue_stripe_base_assets() {
+
+    wp_enqueue_script(
+        'stripe-js',
+        'https://js.stripe.com/v3/',
+        array(),
+        '3',
+        true
+    );
+
+}
+
+/**
+ * Enqueues all assets required by an existing ESPAD Payment Form.
+ */
+function espad_enqueue_existing_checkout_assets() {
+
+    wp_enqueue_style(
+        'espd-bootstrap-scoped',
+        ESPAD_PLUGIN_URL . 'assets/css/bootstrap-scoped.css',
+        array(),
+        '1.0.4'
+    );
+
+    wp_enqueue_style(
+        'espd-checkout-css',
+        ESPAD_PLUGIN_URL . 'inc/stripeCheckout/checkout.css',
+        array(),
+        '1.0.10'
+    );
+
+    wp_enqueue_script(
+        'stripe-js',
+        'https://js.stripe.com/v3/',
+        array(),
+        '3',
+        true
+    );
+
+    wp_enqueue_script(
+        'espd-checkout-js',
+        ESPAD_PLUGIN_URL . 'inc/stripeCheckout/checkout.js',
+        array('stripe-js'),
+        '1.0.242',
+        true
+    );
+
+}
    
 /**
  * Enqueues styles and scripts required for rendering the frontend payment form.
@@ -165,7 +222,7 @@ function espd_add_payment_shortcode_scripts() {
         'espd-frontend-payment-style',
         ESPAD_PLUGIN_URL . 'assets/css/frontend-payment-form.css',
         array(),
-        '1.2.57'  
+        '1.2.46'  
     ); 
        
     // Enqueue built-in jQuery
@@ -237,10 +294,49 @@ add_action('admin_init', function() {
      
     // Load scripts for the "Preview" tab.
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- GET parameters used for admin UI tabs only, no sensitive action performed.
-    if ( isset($_GET['page'], $_GET['tab']) && $_GET['page'] === 'espd_main' && $_GET['tab'] === 'preview' ) { 
-        add_action('admin_head', 'espd_preview_add_scripts', 99);
-        add_action('admin_head', 'espd_add_payment_shortcode_scripts', 99);
-    }
+    if (
+        isset( $_GET['page'], $_GET['tab'] ) &&
+        sanitize_key( wp_unslash( $_GET['page'] ) ) === 'espd_main' &&
+        sanitize_key( wp_unslash( $_GET['tab'] ) ) === 'preview'
+    ) {
+        global $wpdb; 
+
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $preview_form_id = isset( $_GET['form_id'] )
+            ? absint( $_GET['form_id'] )
+            : 0;
+
+        $preview_form_mode = '';
+
+        if ( $preview_form_id ) {
+            $table = $wpdb->prefix . 'espad_forms';
+
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+            $preview_form_mode = (string) $wpdb->get_var(
+                $wpdb->prepare(
+                    "SELECT mode
+                     FROM {$table}
+                     WHERE id = %d
+                     LIMIT 1",
+                    $preview_form_id
+                )
+            );
+        }
+
+        if ( $preview_form_mode !== 'Multistep' ) {
+            add_action(
+                'admin_head',
+                'espd_preview_add_scripts',
+                99
+            );
+
+            add_action(
+                'admin_head',
+                'espd_add_payment_shortcode_scripts',
+                99
+            );
+        }
+    }    
    
     // Load DataTables for the "Payments" tab.
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- GET parameters used for admin UI tabs only, no sensitive action performed.
@@ -638,7 +734,27 @@ function espd_register_admin_menu() {
         __( 'Payments &#128176;', 'easy-stripe-payments' ), 
         'manage_options',
         'espd_main&tab=payments',  
-        'espd_render_payments_page'
+        'espd_render_admin_page'
+    ); 
+    
+    // Add submenu page for Payments tab
+    add_submenu_page(
+        'espd_main', 
+        __( 'Payment Forms 💳', 'easy-stripe-payments' ), 
+        __( 'Payment Forms 💳', 'easy-stripe-payments' ), 
+        'manage_options',
+        'espd_main&tab=forms',  
+        'espd_render_admin_page'
+    );     
+    
+    // Add submenu page for Checkout Builder tab
+    add_submenu_page(
+        'espd_main',
+        __( 'Checkout Builder &#129513;', 'easy-stripe-payments' ),
+        __( 'Checkout Builder &#129513;', 'easy-stripe-payments' ),
+        'manage_options',
+        'espd_main&tab=checkout-builder-overview',
+        'espd_render_admin_page'
     );     
     
     // Add submenu page for Settings tab
@@ -648,7 +764,7 @@ function espd_register_admin_menu() {
         __( 'Settings &#128295;', 'easy-stripe-payments' ), 
         'manage_options',
         'espd_main&tab=settings', 
-        'espd_render_settings_page' 
+        'espd_render_admin_page' 
     ); 
     
     // Add submenu page for Premium tab
@@ -658,7 +774,7 @@ function espd_register_admin_menu() {
         __( 'Premium &#9733;', 'easy-stripe-payments' ), 
         'manage_options',
         'espd_main&tab=premium', 
-        'espd_render_premium_page' 
+        'espd_render_admin_page' 
     );     
     
     // Add submenu page for Help & FAQ tab
@@ -668,9 +784,76 @@ function espd_register_admin_menu() {
         __( 'Help &amp; FAQ &#10068;', 'easy-stripe-payments' ), 
         'manage_options',
         'espd_main&tab=help',
-        'espd_render_help_page' 
+        'espd_render_admin_page' 
     );    
     
+}
+
+/**
+ * Set the active submenu item based on the current plugin tab.
+ *
+ * @param string $submenu_file Current submenu slug.
+ * @return string Active submenu slug.
+ */
+add_filter( 'submenu_file', 'espd_set_active_submenu' );
+
+function espd_set_active_submenu( $submenu_file ) {
+
+    if ( empty( $_GET['page'] ) || $_GET['page'] !== 'espd_main' ) {
+        return $submenu_file;
+    }
+ 
+    $tab = sanitize_key( wp_unslash( $_GET['tab'] ?? 'welcome' ) );    
+
+    switch ( $tab ) {
+
+        case 'payments':
+            return 'espd_main&tab=payments';
+
+        case 'forms':
+            return 'espd_main&tab=forms';
+            
+        case 'checkout-builder-overview':
+        case 'checkout-builder':
+            return 'espd_main&tab=checkout-builder-overview';            
+
+        case 'settings':
+            return 'espd_main&tab=settings';
+
+        case 'premium':
+            return 'espd_main&tab=premium';
+
+        case 'help':
+            return 'espd_main&tab=help';
+
+        case 'welcome':
+            return 'espd_main'; 
+            
+        default:
+            return '';
+            
+    }
+    
+}
+
+/**
+ * Ensure the plugin's top-level admin menu remains highlighted.
+ *
+ * @param string $parent_file Current parent menu slug.
+ * @return string Parent menu slug.
+ */
+add_filter( 'parent_file', 'espd_set_parent_menu' );
+
+function espd_set_parent_menu( $parent_file ) {
+
+    if (
+        isset( $_GET['page'] ) &&
+        $_GET['page'] === 'espd_main'
+    ) {
+        return 'espd_main';
+    }
+
+    return $parent_file;
 }
 
 // Register for Frontend
@@ -708,16 +891,155 @@ add_action('wp_enqueue_scripts', 'espd_register_scripts');
 add_action('admin_enqueue_scripts', function($hook) {
             
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Safe to read GET for admin page detection only, no sensitive action performed.
-    if ( isset($_GET['page']) && $_GET['page'] === 'espd_main' ) { 
+    if ( isset($_GET['page']) && $_GET['page'] === 'espd_main' ) {
+
+        // Load the React-based Multi-Step Checkout Builder assets only on the dedicated admin tab
+        if ( isset($_GET['tab']) && $_GET['tab'] === 'checkout-builder' ) {
+
+            $asset_file = ESPAD_PLUGIN_PATH . 'build/index.asset.php';
+            $js_file    = ESPAD_PLUGIN_PATH . 'build/index.js';
+            $css_file   = ESPAD_PLUGIN_PATH . 'build/style-index.css';
+  
+            if (
+                file_exists( $asset_file ) &&
+                file_exists( $js_file )
+            ) {
+                $asset = include $asset_file;
+
+                /*
+                 * Use the physical file modification time as the version.
+                 * This automatically changes after every successful build
+                 * and prevents the browser from loading an outdated bundle.
+                 */
+                $js_version = filemtime( $js_file );
+
+                wp_enqueue_script(
+                    'espad-checkout-builder',
+                    ESPAD_PLUGIN_URL . 'build/index.js',
+                    isset( $asset['dependencies'] )
+                        ? $asset['dependencies']
+                        : array(),
+                    $js_version,
+                    true
+                );
+                
+                // Enqueue WordPress's built-in media uploader
+                wp_enqueue_media();
+
+                /*
+                 * Load builder configuration and existing checkout data
+                 * for the React-based Multi-Step Checkout Builder.
+                 *
+                 * Provides:
+                 * - Available builder languages and currencies
+                 * - Builder mode (new or edit)
+                 * - Checkout ID for edit operations
+                 * - Existing checkout flow data when editing
+                 * - REST API endpoint for saving checkout flows
+                 * - WordPress REST API nonce for authenticated requests
+                 * - Premium membership status for feature availability
+                 *
+                 * The data is exposed through the global
+                 * window.espadBuilderData object before the React app loads.
+                */
+                $languages  = require ESPAD_PLUGIN_PATH . 'inc/data/languages.php';
+                $currencies = require ESPAD_PLUGIN_PATH . 'inc/data/currencies.php';
+                
+                $builder_action = isset( $_GET['builder_action'] )
+                    ? sanitize_key( wp_unslash( $_GET['builder_action'] ) )
+                    : 'new';
+
+                $checkout_id = isset( $_GET['checkout_id'] )
+                    ? absint( $_GET['checkout_id'] )
+                    : 0;
+
+                $existing_flow   = null;
+                $checkout_exists = false;
+                
+                global $wpdb; 
+
+                if ( $builder_action === 'edit' && $checkout_id > 0 ) {
+
+                    $table = $wpdb->prefix . 'espad_forms';
+
+                    $row = $wpdb->get_row(
+                        $wpdb->prepare(
+                            "SELECT checkout_metadata_1
+                             FROM {$table}
+                             WHERE id = %d
+                             AND mode = %s
+                             LIMIT 1",
+                            $checkout_id,
+                            'Multistep'
+                        )
+                    ); 
+
+                    if ( $row && ! empty( $row->checkout_metadata_1 ) ) {
+                        $decoded_flow = json_decode( $row->checkout_metadata_1, true );
+
+                        if ( is_array( $decoded_flow ) ) {
+                            $existing_flow = $decoded_flow;
+                            $checkout_exists = true;
+                        }
+                    }
+                }
+                
+                $payment_forms = $wpdb->get_results(
+                    "SELECT id, form_name, mode
+                     FROM {$wpdb->prefix}espad_forms
+                     WHERE mode <> 'Multistep'
+                     ORDER BY created_at DESC",
+                    ARRAY_A
+                );                
+                 
+                wp_add_inline_script(
+                    'espad-checkout-builder',
+                    'window.espadBuilderData = ' . wp_json_encode([
+                        'restUrl'   => esc_url_raw(
+                            rest_url('espad-stripe/v1/save-multistep-checkout')
+                        ),
+                        'nonce'            => wp_create_nonce('wp_rest'),
+                        'languages'        => $languages,
+                        'currencies'       => $currencies,
+                        'builderAction'    => $builder_action,
+                        'checkoutId'       => $checkout_id,
+                        'existingFlow'     => $existing_flow, 
+                        'checkoutExists'   => $checkout_exists,
+                        'paymentForms'     => $payment_forms,
+                        'membershipStatus' => get_current_membership_status(),
+                        'isPremium'        => get_current_membership_status() === '1',                        
+                    ]) . ';',
+                    'before'
+                );                
+                
+                wp_enqueue_style(
+                    'espad-checkout-builder',
+                    ESPAD_PLUGIN_URL . 'build/style-index.css',
+                    array(),
+                    filemtime( $css_file )
+                );      
+                
+            } 
+            
+        }
+        
+        // SweetAlert JS
+        wp_enqueue_script(
+            'sweetalert',
+            ESPAD_PLUGIN_URL . 'assets/js/sweetalert.js',
+            array(),
+            '1.0.1',
+            false
+        );         
  
         wp_enqueue_script(
             'espd-backend-enqueue',
             ESPAD_PLUGIN_URL . 'assets/js/espd-backend-enqueue.js',
             array('sweetalert'), // Dependencies
-            '1.0.68',                
+            '1.0.79',                
             true // Load script in footer
         );         
-        
+         
         // DataTables register/enqueue first
         wp_enqueue_script(
             'datatables-js',
@@ -741,8 +1063,8 @@ add_action('admin_enqueue_scripts', function($hook) {
             'espad-admin-style',
             ESPAD_PLUGIN_URL . 'assets/css/espad.css',
             array(),
-            '1.0.306'
-        );        
+            '1.0.325'
+        );         
  
         // Enqueue WordPress built-in jQuery script
         wp_enqueue_script('jquery');
@@ -752,7 +1074,7 @@ add_action('admin_enqueue_scripts', function($hook) {
             'espd-admin-script',
             ESPAD_PLUGIN_URL . 'assets/js/admin-script.js',
             ['jquery'], 
-            '1.0.81',
+            '1.0.78',
             true // Load script in footer
         );
 
@@ -764,15 +1086,6 @@ add_action('admin_enqueue_scripts', function($hook) {
             '1.0.238',  
             true
         );           
- 
-        // SweetAlert JS
-        wp_enqueue_script(
-            'sweetalert',
-            ESPAD_PLUGIN_URL . 'assets/js/sweetalert.js',
-            array(),
-            '1.0.0',
-            false
-        ); 
 
         // Pass dynamic data from PHP to JavaScript using wp_localize_script
         wp_localize_script('espd-admin', 'espd_ajax', [
@@ -1538,41 +1851,6 @@ function espd_get_product_data() {
     
 }
 
-// Loads the welcome page for the admin interface.
-function espd_render_welcome_page() {
-    
-    require_once ESPAD_PLUGIN_PATH . 'admin/welcome.php';
-
-}
-
-// Loads the settings page for the admin interface.
-function espd_render_settings_page() {
-    
-    require_once ESPAD_PLUGIN_PATH . 'admin/settings.php';
-
-}
-
-// Loads the payments page for the admin interface.
-function espd_render_payments_page() {
-    
-    require_once ESPAD_PLUGIN_PATH . 'admin/payments.php';
-
-}
-
-// Loads the premium features page for the admin interface.
-function espd_render_premium_page() {
-    
-    require_once ESPAD_PLUGIN_PATH . 'admin/premium.php';
-
-}
-
-// Loads the help/documentation page for the admin interface.
-function espd_render_help_page() {
-    
-    require_once ESPAD_PLUGIN_PATH . 'admin/help.php';
-
-}
-
 /**
  * Renders the specified admin subpage if it is within the list of allowed pages.
  *
@@ -1600,7 +1878,7 @@ add_action('admin_footer', function () {
         'espad-admin-footer', 
         ESPAD_PLUGIN_URL . 'assets/js/admin-footer.js',  
         ['jquery'], 
-        '1.0.11',  
+        '1.0.13',  
         true
     ); 
       
@@ -1668,12 +1946,12 @@ function espad_show_stripe_success_message() {
     
 }
 
-// Add custom action links (Settings) to the plugin row on the Plugins page
+// Add custom action link (Settings) to the plugin row on the Plugins page
 add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), 'espd_plugin_action_links' );
 
 function espd_plugin_action_links( $links ) {
      
-    $settings_link = '<a href="admin.php?page=espd_main&tab=settings">Settings</a>';  
+    $settings_link = '<a href="admin.php?page=espd_main&tab=settings">Settings</a>';    
  
     array_unshift( $links, $settings_link );
     
@@ -2131,5 +2409,2845 @@ function espad_create_subscription(WP_REST_Request $request) {
     
 }
 
+/*
+ * Register a custom WordPress REST API endpoint
+ * used by the React-based Multi-Step Checkout Builder.
+ *
+ * This endpoint receives the complete checkout flow JSON state
+ * from the React application and stores it inside the local
+ * WordPress database table wp_espad_forms.
+ *
+ * Saved data includes:
+ * - Checkout name
+ * - Selected language and currency
+ * - Builder flow structure
+ * - Multi-Step configuration JSON
+ *
+ * The complete React flow state is stored in the
+ * checkout_metadata_1 database column so the
+ * checkout builder can later restore and re-edit
+ * the exact saved configuration.
+ *
+ * Access is restricted to WordPress administrators.
+ *
+ */
+add_action('rest_api_init', function () {
+    register_rest_route('espad-stripe/v1', '/save-multistep-checkout', [
+        'methods'  => 'POST',
+        'callback' => 'espad_save_multistep_checkout',
+        'permission_callback' => function () {
+            return current_user_can('manage_options');
+        },
+    ]);
+});
 
+function espad_save_multistep_checkout(WP_REST_Request $request) {
+    
+    global $wpdb;
+
+    $flow = $request->get_param('flow');
+
+    if (empty($flow) || !is_array($flow)) {
+        return new WP_Error(
+            'invalid_flow',
+            'Invalid checkout flow data.',
+            ['status' => 400]
+        );
+    }
+
+    $settings = $flow['settings'] ?? [];
+ 
+    $form_name = sanitize_text_field($settings['checkoutName'] ?? 'Multi-Step Checkout');
+    $currency  = strtoupper( sanitize_text_field($settings['currency'] ?? 'USD') );
+    $lang      = sanitize_text_field($settings['language'] ?? 'en');
+
+    $checkout_id = absint($request->get_param('checkoutId'));
+    $builder_action = sanitize_key($request->get_param('builderAction') ?: 'new');
+
+    $table = $wpdb->prefix . 'espad_forms';
+
+    $flow_json = wp_json_encode($flow);
+
+    /*
+     * Update existing Multi-Step Checkout
+     */
+    if ($builder_action === 'edit' && $checkout_id > 0) {
+
+        $result = $wpdb->update(
+            $table,
+            [
+                'form_name'           => $form_name,
+                'currency'            => $currency,
+                'lang'                => $lang,
+                'checkout_metadata_1' => $flow_json,
+            ],
+            [
+                'id'   => $checkout_id,
+                'mode' => 'Multistep',
+            ],
+            [
+                '%s',
+                '%s',
+                '%s',
+                '%s',
+            ],
+            [
+                '%d',
+                '%s',
+            ]
+        );
+
+        if ($result === false) {
+            return new WP_Error(
+                'db_error',
+                'Checkout could not be updated.',
+                ['status' => 500]
+            );
+        }
+
+        return [
+            'success' => true,
+            'id'      => $checkout_id,
+            'action'  => 'updated',
+            'message' => 'Multi-Step checkout updated successfully.',
+        ];
+    }
+
+    /*
+     * Insert new Multi-Step Checkout
+     */
+    $result = $wpdb->insert(
+        $table,
+        [
+            'form_name'                => $form_name,
+            'fix_amount'               => '',
+            'currency'                 => $currency,
+            'description'              => '',
+            'success_url'              => '',
+            'cancel_url'               => '',
+            'stripe_metadata_campaign' => '',
+            'stripe_metadata_project'  => '',
+            'stripe_metadata_product'  => '',
+            'amount_type'              => '',
+            'price_list'               => '',
+            'campaign_image'           => '',
+            'payment_button'           => '',
+            'mode'                     => 'Multistep',
+            'campaign_current_amount'  => '',
+            'campaign_goal_amount'     => '',
+            'color'                    => '',
+            'choosed_fields'           => '',
+            'lang'                     => $lang,
+            'payment_layout'           => '',
+            'checkout_metadata_1'      => $flow_json,
+        ],
+        [
+            '%s', '%s', '%s', '%s', '%s', '%s',
+            '%s', '%s', '%s', '%s', '%s', '%s',
+            '%s', '%s', '%s', '%s', '%s', '%s',
+            '%s', '%s', '%s',
+        ]
+    );
+
+    if (!$result) {
+        return new WP_Error(
+            'db_error',
+            'Checkout could not be saved.',
+            ['status' => 500]
+        );
+    }
+
+    return [
+        'success' => true,
+        'id'      => $wpdb->insert_id,
+        'action'  => 'created',
+        'message' => 'Multi-Step checkout saved successfully.',
+    ];
+    
+}
+
+/**
+ * Checks whether the current request is the ESPAD admin Preview tab.
+ *
+ * @return bool
+ */
+function espad_is_admin_preview(): bool {
+
+    if ( ! is_admin() ) {
+        return false;
+    }
+
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $page = isset( $_GET['page'] )
+        ? sanitize_key( wp_unslash( $_GET['page'] ) )
+        : '';
+
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $tab = isset( $_GET['tab'] )
+        ? sanitize_key( wp_unslash( $_GET['tab'] ) )
+        : '';
+
+    return (
+        $page === 'espd_main' &&
+        $tab === 'preview'
+    );
+}
+ 
+/**
+ * Registers the [espad_multistep_checkout] shortcode and renders
+ * the React-based Multi-Step Checkout frontend application.
+ *
+ * This shortcode:
+ * - Loads the saved checkout flow JSON from the database
+ * - Enqueues the React frontend assets
+ * - Renders the React mount container with serialized flow data
+ * - Pre-renders the existing Stripe Checkout form in PHP
+ *   so React can later move and display it dynamically
+ *   inside the "stripe_payments" component step
+ *
+ * Usage:
+ * [espad_multistep_checkout id="123"]
+ */
+add_shortcode('espad_multistep_checkout', 'espad_render_multistep_checkout');
+
+function espad_render_multistep_checkout($atts) {
+
+    global $wpdb;
+
+    $is_admin_preview = espad_is_admin_preview();
+
+    if (
+        doing_filter( 'get_the_excerpt' ) ||
+        doing_filter( 'the_excerpt' ) ||
+        (
+            ! $is_admin_preview &&
+            (
+                is_archive() ||
+                is_search() ||
+                ! is_singular()
+            )
+        )
+    ) {
+        return '';
+    }
+
+    $atts = shortcode_atts(
+        array(
+            'id' => 0,
+        ),
+        $atts,
+        'espad_multistep_checkout'
+    );
+
+    /*
+     * This is the ID of the Multistep Checkout itself.
+     */
+    $form_id = absint($atts['id']);
+
+    if (!$form_id) {
+        return '<p>' .
+            esc_html__(
+                'Invalid multistep checkout ID.',
+                'easy-stripe-payments'
+            ) .
+        '</p>';
+    }
+
+    $table = $wpdb->prefix . 'espad_forms';
+
+    $form = $wpdb->get_row(
+        $wpdb->prepare(
+            "SELECT id, mode, checkout_metadata_1
+             FROM {$table}
+             WHERE id = %d
+             AND mode = %s
+             LIMIT 1",
+            $form_id,
+            'Multistep'
+        )
+    );
+
+    if (
+        !$form ||
+        empty($form->checkout_metadata_1)
+    ) {
+        return '<p>' .
+            esc_html__(
+                'The Multistep Checkout could not be found.',
+                'easy-stripe-payments'
+            ) .
+        '</p>';
+    }
+
+    $flow_json = $form->checkout_metadata_1;
+    $flow      = json_decode($flow_json, true);
+
+    if (!is_array($flow)) {
+        return '<p>' .
+            esc_html__(
+                'The checkout configuration is invalid.',
+                'easy-stripe-payments'
+            ) .
+        '</p>';
+    }
+
+    /*
+     * Find the Stripe Payments field inside the saved JSON state.
+     */
+    $stripe_payment_field = null;
+
+    foreach (($flow['steps'] ?? array()) as $step) {
+        foreach (($step['fields'] ?? array()) as $field) {
+            if (
+                isset($field['type']) &&
+                $field['type'] === 'stripe_payments'
+            ) {
+                $stripe_payment_field = $field;
+                break 2;
+            }
+        }
+    }
+
+    if (!$stripe_payment_field) {
+        return '<p>' .
+            esc_html__(
+                'The Stripe Payments component is missing.',
+                'easy-stripe-payments'
+            ) .
+        '</p>';
+    }
+
+    /*
+     * ID of an existing normal ESPAD Payment Form.
+     *
+     * Empty or zero means:
+     * Use the dynamic React Stripe checkout.
+     */
+    $selected_payment_form_id = absint(
+        $stripe_payment_field['settings']['paymentFormId'] ?? 0
+    );
+
+    $payment_mode      = 'dynamic';
+    $payment_form_html = '';
+    $payment_template  = '';
+
+    /*
+     * Load general payment frontend assets & SweetAlert for both payment modes:
+     * existing Payment Form and dynamic React checkout.
+     */ 
+    espd_add_payment_shortcode_scripts();
+    wp_enqueue_script('sweetalert');    
+ 
+    /*
+     * Existing Payment Form mode.
+     */
+    if ($selected_payment_form_id > 0) {
+
+        $existing_payment_form = $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT id
+                 FROM {$table}
+                 WHERE id = %d
+                 AND mode <> %s
+                 LIMIT 1",
+                $selected_payment_form_id,
+                'Multistep'
+            )
+        );
+
+        if (!$existing_payment_form) {
+            return '<p>' .
+                esc_html__(
+                    'The selected Stripe Payment Form could not be found.',
+                    'easy-stripe-payments'
+                ) .
+            '</p>';
+        }
+
+        $payment_mode = 'existing';
+
+        /*
+         * Load assets for the legacy, existing Payment Form.
+         */
+        espad_enqueue_existing_checkout_assets();
+
+        /* 
+         * Pass the selected normal Payment Form ID to main-form.php.
+         */
+        $shortcode_form_id = $selected_payment_form_id;
+        $mode              = '';
+
+        ob_start();
+
+        require ESPAD_PLUGIN_PATH . 'frontend/main-form.php';
+
+        $payment_form_html = ob_get_clean();
+
+        /*
+         * React later moves this wrapper into the Stripe step.
+         */
+        $payment_template = sprintf(
+            '<div
+                id="espad-payment-form-template-%1$d"
+                class="espad-payment-form-template"
+                data-payment-form-id="%2$d"
+                style="display:none;"
+            >%3$s</div>',
+            $form_id,
+            $selected_payment_form_id,
+            $payment_form_html
+        );
+
+    } else {
+
+        /*
+         * Dynamic React Payment Element mode.
+         *
+         * Do not load checkout.js here.
+         */
+        espad_enqueue_stripe_base_assets();
+        
+    }
+
+    return sprintf(
+        '<div
+            class="espad-multistep-checkout"
+            data-form-id="%1$d"
+            data-flow="%2$s"
+            data-payment-mode="%3$s"
+            data-payment-form-id="%4$d"
+        ></div>
+        %5$s',
+        $form_id,
+        esc_attr($flow_json),
+        esc_attr($payment_mode),
+        $selected_payment_form_id,
+        $payment_template
+    );
+
+}
+
+/**
+ * Registers and enqueues the React Multi-Step Checkout assets.
+ *
+ * Can be used in both frontend and admin preview.
+ *
+ * @return void
+ */
+function espad_enqueue_multistep_frontend_assets() {
+
+    $asset_file = ESPAD_PLUGIN_PATH . 'build/index.asset.php';
+    $js_file    = ESPAD_PLUGIN_PATH . 'build/index.js';
+    $css_file   = ESPAD_PLUGIN_PATH . 'build/style-index.css';
+
+    $asset = file_exists( $asset_file )
+        ? include $asset_file
+        : array(
+            'dependencies' => array(
+                'wp-element',
+                'wp-i18n',
+            ),
+            'version' => '1.0.0',
+        );
+
+    $dependencies = (
+        isset( $asset['dependencies'] ) &&
+        is_array( $asset['dependencies'] )
+    )
+        ? $asset['dependencies']
+        : array(
+            'wp-element',
+            'wp-i18n',
+        );
+ 
+    /*
+     * Use each generated file's modification time.
+     * The version changes automatically whenever the file
+     * is rewritten by npm run build.
+     */
+    $js_version = file_exists( $js_file )
+        ? (string) filemtime( $js_file )
+        : (string) ( $asset['version'] ?? '1.0.0' );
+
+    $css_version = file_exists( $css_file )
+        ? (string) filemtime( $css_file )
+        : (string) ( $asset['version'] ?? '1.0.0' );
+
+    wp_register_script(
+        'espad-multistep-frontend',
+        ESPAD_PLUGIN_URL . 'build/index.js',
+        $dependencies,
+        $js_version,
+        true
+    );
+ 
+    wp_register_style(
+        'espad-multistep-frontend',
+        ESPAD_PLUGIN_URL . 'build/style-index.css',
+        array(),
+        $css_version
+    );
+
+    /*
+     * Create the token used for Stripe return URLs.
+     */
+    try {
+        $espad_payment_token = bin2hex(
+            random_bytes( 16 )
+        );
+    } catch ( Exception $exception ) {
+        $espad_payment_token = wp_generate_password(
+            32,
+            false,
+            false
+        );
+    }
+
+    $current_url = is_admin()
+        ? admin_url(
+            'admin.php?page=espd_main&tab=preview'
+        )
+        : ESPAD_CURRENT_URL;
+
+    $espad_return_url = remove_query_arg(
+        array(
+            'payment_intent',
+            'payment_intent_client_secret',
+            'redirect_status',
+            'espad_payment_token',
+        ),
+        $current_url
+    );
+
+    $espad_return_url = add_query_arg(
+        'espad_payment_token',
+        $espad_payment_token,
+        $espad_return_url
+    );
+
+    wp_add_inline_script(
+        'espad-multistep-frontend',
+        'window.espadMultistepData = ' .
+        wp_json_encode(
+            array(
+                'createPaymentIntentUrl' => esc_url_raw(
+                    rest_url(
+                        'espad-stripe/v1/multistep-payment-intent'
+                    )
+                ),
+                'updateExistingMetadataUrl' => esc_url_raw(
+                    rest_url(
+                        'espad-stripe/v1/update-existing-payment-metadata'
+                    )
+                ),
+                'returnUrl' => esc_url_raw(
+                    $espad_return_url
+                ),
+                'paymentToken' => sanitize_text_field(
+                    $espad_payment_token
+                ),
+                'nonce' => wp_create_nonce( 'wp_rest' ),
+            )
+        ) . ';',
+        'before'
+    );
+
+    wp_enqueue_script(
+        'espad-multistep-frontend'
+    );
+
+    wp_enqueue_style(
+        'espad-multistep-frontend'
+    );
+
+    wp_set_script_translations(
+        'espad-multistep-frontend',
+        'easy-stripe-payments',
+        ESPAD_PLUGIN_PATH . 'languages'
+    );
+}
+
+/**
+ * Registers and enqueues the React-based Multi-Step Checkout assets.
+ */
+add_action('wp_enqueue_scripts', 'espad_register_multistep_frontend_assets');
+ 
+function espad_register_multistep_frontend_assets() {
+
+    if ( ! is_singular() ) {
+        return;
+    }
+
+    $post = get_queried_object();
+
+    if ( ! ( $post instanceof WP_Post ) ) {
+        return;
+    }
+
+    if (
+        ! has_shortcode(
+            $post->post_content,
+            'espad_multistep_checkout'
+        )
+    ) {
+        return;
+    }
+ 
+    espad_enqueue_multistep_frontend_assets();
+
+}
+
+/**
+ * Loads the React Multi-Step Checkout bundle in the ESPAD Preview tab.
+ *
+ * @param string $hook_suffix Current WordPress admin page hook.
+ *
+ * @return void
+ */ 
+add_action('admin_enqueue_scripts', 'espad_enqueue_multistep_preview_assets');
+
+function espad_enqueue_multistep_preview_assets(
+    $hook_suffix
+) {
+
+    // phpcs:disable WordPress.Security.NonceVerification.Recommended
+
+    $page = isset( $_GET['page'] )
+        ? sanitize_key(
+            wp_unslash( $_GET['page'] )
+        )
+        : '';
+
+    $tab = isset( $_GET['tab'] )
+        ? sanitize_key(
+            wp_unslash( $_GET['tab'] )
+        )
+        : '';
+
+    $form_id = isset( $_GET['form_id'] )
+        ? absint( $_GET['form_id'] )
+        : 0;
+
+    // phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+    if (
+        $page !== 'espd_main' ||
+        $tab !== 'preview' ||
+        ! $form_id
+    ) {
+        return;
+    }
+
+    global $wpdb;
+
+    $table = $wpdb->prefix . 'espad_forms';
+
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+    $form_mode = $wpdb->get_var(
+        $wpdb->prepare(
+            "SELECT mode
+             FROM {$table}
+             WHERE id = %d
+             LIMIT 1",
+            $form_id
+        )
+    );
+
+    if ( $form_mode !== 'Multistep' ) {
+        return;
+    }
+
+    espad_enqueue_multistep_frontend_assets();
+
+    /*
+     * Stripe.js is needed for the dynamic Stripe Payment Element.
+     */
+    espad_enqueue_stripe_base_assets();
+
+    wp_enqueue_script( 'sweetalert' );
+    
+}
+
+/**
+ * Converts a checkout amount into a consistently formatted
+ * decimal string for Stripe metadata.
+ *
+ * @param float|int|string $amount Amount in the checkout currency.
+ * @return string
+ */
+function espad_format_checkout_metadata_amount( $amount ) {
+
+    return number_format(
+        round( (float) $amount, 2 ),
+        2,
+        '.',
+        ''
+    );
+
+}
+
+/**
+ * Converts a submitted checkout value into a readable string.
+ *
+ * @param mixed  $value      Submitted frontend value.
+ * @param string $field_type Checkout Builder field type.
+ * @return string
+ */
+function espad_format_checkout_metadata_value(
+    $value,
+    $field_type = ''
+) {
+
+    if ( $field_type === 'checkbox' ) {
+        return filter_var(
+            $value,
+            FILTER_VALIDATE_BOOLEAN
+        ) ? 'Yes' : 'No';
+    }
+
+    if ( is_bool( $value ) ) {
+        return $value ? 'Yes' : 'No';
+    }
+
+    if ( is_array( $value ) ) {
+        $value = implode(
+            ', ',
+            array_map(
+                'sanitize_text_field',
+                $value
+            )
+        );
+    }
+
+    if ( ! is_scalar( $value ) ) {
+        return '';
+    }
+
+    return sanitize_text_field(
+        (string) $value
+    );
+
+}
+
+/**
+ * Returns the readable label of a selected dropdown option.
+ *
+ * @param array  $field           Checkout Builder field configuration.
+ * @param string $submitted_value Submitted dropdown value.
+ * @return string
+ */
+function espad_get_dropdown_metadata_value(
+    array $field,
+    $submitted_value
+) {
+
+    $submitted_value = sanitize_text_field(
+        (string) $submitted_value
+    );
+
+    foreach (
+        ( $field['settings']['options'] ?? array() )
+        as $option
+    ) {
+        $option_value = sanitize_text_field(
+            (string) ( $option['value'] ?? '' )
+        );
+
+        if ( $option_value === $submitted_value ) {
+            return sanitize_text_field(
+                (string) (
+                    $option['label'] ??
+                    $submitted_value
+                )
+            );
+        }
+    }
+
+    return $submitted_value;
+
+}
+
+/**
+ * Adds a safe value to Stripe metadata.
+ *
+ * Stripe metadata is flat and has strict limits. The helper
+ * therefore shortens keys and values and prevents an excessive
+ * number of metadata entries.
+ *
+ * @param array  $metadata Metadata array passed by reference.
+ * @param string $key      Metadata key.
+ * @param mixed  $value    Metadata value.
+ * @return void
+ */
+function espad_add_checkout_metadata(
+    array &$metadata,
+    $key,
+    $value
+) {
+
+    /*
+     * Keep two metadata slots available for possible future
+     * plugin-level values.
+     */
+    if ( count( $metadata ) >= 48 ) {
+        return;
+    }
+
+    if ( ! is_scalar( $value ) ) {
+        return;
+    }
+
+    $key = sanitize_key( $key );
+
+    /*
+     * Stripe metadata keys must remain short.
+     */
+    $key = substr( $key, 0, 40 );
+
+    $value = sanitize_text_field(
+        (string) $value
+    );
+
+    if ( $key === '' || $value === '' ) {
+        return;
+    }
+
+    $metadata[ $key ] = substr(
+        $value,
+        0,
+        500
+    );
+
+}
+
+/*
+ * Register the REST API endpoint for the Checkout Builder.
+ *
+ * This endpoint validates the submitted checkout data, calculates
+ * the final payment amount, creates a Stripe PaymentIntent, and
+ * returns the client secret required by the Stripe Payment Element.
+ */
+add_action('rest_api_init', function () {
+    register_rest_route(
+        'espad-stripe/v1',
+        '/multistep-payment-intent',
+        [
+            'methods'             => WP_REST_Server::CREATABLE,
+            'callback'            => 'espad_create_multistep_payment_intent',
+            'permission_callback' => '__return_true',
+        ]
+    );
+}); 
+
+function espad_create_multistep_payment_intent( WP_REST_Request $request ) {
+
+    global $wpdb;
+
+    $checkout_id = absint(
+        $request->get_param( 'checkoutId' )
+    );
+
+    $submitted_cart = $request->get_param(
+        'cartItems'
+    );
+
+    $submitted_data = $request->get_param(
+        'formData'
+    );
+
+    if ( ! $checkout_id ) {
+        return new WP_Error(
+            'invalid_checkout',
+            __(
+                'Invalid checkout ID.',
+                'easy-stripe-payments'
+            ),
+            array(
+                'status' => 400,
+            )
+        );
+    }
+
+    if ( ! is_array( $submitted_cart ) ) {
+        $submitted_cart = array();
+    }
+
+    if ( ! is_array( $submitted_data ) ) {
+        $submitted_data = array();
+    }
+
+    $table = $wpdb->prefix . 'espad_forms';
+
+    $form = $wpdb->get_row(
+        $wpdb->prepare(
+            "SELECT id, currency, checkout_metadata_1
+             FROM {$table}
+             WHERE id = %d
+             AND mode = %s
+             LIMIT 1",
+            $checkout_id,
+            'Multistep'
+        )
+    );
+
+    if (
+        ! $form ||
+        empty( $form->checkout_metadata_1 )
+    ) {
+        return new WP_Error(
+            'checkout_not_found',
+            __(
+                'Checkout not found.',
+                'easy-stripe-payments'
+            ),
+            array(
+                'status' => 404,
+            )
+        );
+    }
+
+    $flow = json_decode(
+        $form->checkout_metadata_1,
+        true
+    );
+
+    if ( ! is_array( $flow ) ) {
+        return new WP_Error(
+            'invalid_flow',
+            __(
+                'Invalid checkout configuration.',
+                'easy-stripe-payments'
+            ),
+            array(
+                'status' => 500,
+            )
+        );
+    }
+
+    $currency = strtolower(
+        sanitize_key(
+            $flow['settings']['currency'] ??
+            $form->currency ??
+            'usd'
+        )
+    );
+
+    $available_products = array();
+    $frontend_fields    = array();
+    $tax_items          = array();
+    $coupon_items       = array();
+    $donation_fields    = array(); 
+
+    $cover_fees_enabled = false;
+    $cover_fees_label   = 'Cover transaction fees';
+    $cover_fees_percent = 1.8;    
+
+    /*
+     * Read the authoritative checkout configuration from the
+     * database. Prices, fees and discounts must never be trusted
+     * directly from the frontend request.
+     */
+    foreach (
+        ( $flow['steps'] ?? array() )
+        as $step
+    ) {
+        foreach (
+            ( $step['fields'] ?? array() )
+            as $field
+        ) {
+            $field_id = sanitize_text_field(
+                (string) ( $field['id'] ?? '' )
+            );
+
+            $field_type = sanitize_key(
+                $field['type'] ?? ''
+            );
+
+            $field_label = sanitize_text_field(
+                (string) (
+                    $field['label'] ??
+                    $field_type ??
+                    'Field'
+                )
+            );
+
+            /*
+             * Products.
+             */
+            if ( $field_type === 'product' ) {
+                $product_key = (string) (
+                    $field['settings']['productId'] ??
+                    $field_id
+                );
+
+                if ( $product_key === '' ) {
+                    continue;
+                }
+
+                $available_products[ $product_key ] = array(
+                    'id'           => $product_key,
+                    'field_id'     => $field_id,
+                    'title'        => $field_label ?: 'Product',
+                    'price'        => max(
+                        0,
+                        (float) (
+                            $field['settings']['price'] ??
+                            0
+                        )
+                    ),
+                    'max_quantity' => max(
+                        1,
+                        absint(
+                            $field['settings']['maxQuantity'] ??
+                            1
+                        )
+                    ),
+                );
+
+                continue;
+            }
+
+            /*
+             * Fees and taxes.
+             */
+            if ( $field_type === 'tax' ) {
+                $tax_items[] = array(
+                    'id'     => $field_id,
+                    'label'  => $field_label ?: 'Fees & Taxes',
+                    'amount' => max(
+                        0,
+                        (float) (
+                            $field['settings']['amount'] ??
+                            0
+                        )
+                    ),
+                );
+
+                continue;
+            }
+
+            /*
+             * Discounts and coupons.
+             */
+            if ( $field_type === 'coupon' ) {
+                $coupon_items[] = array(
+                    'id'     => $field_id,
+                    'label'  => $field_label ?: 'Discount',
+                    'amount' => max(
+                        0,
+                        (float) (
+                            $field['settings']['amount'] ??
+                            0
+                        )
+                    ),
+                );
+
+                continue;
+            }
+             
+            /*
+             * Donation Widgets.
+             *
+             * The selected donation is submitted through formData,
+             * but its validity is checked against the authoritative
+             * server-side Checkout Builder configuration.
+             */
+            if ( $field_type === 'donation' ) {
+
+                $configured_amounts = array();
+
+                foreach (
+                    (array) (
+                        $field['settings']['amounts'] ??
+                        array()
+                    )
+                    as $configured_amount
+                ) {
+                    $configured_amount = round(
+                        max(
+                            0,
+                            (float) $configured_amount
+                        ),
+                        2
+                    );
+
+                    if ( $configured_amount > 0 ) {
+                        $configured_amounts[] =
+                            $configured_amount;
+                    }
+                }
+
+                $donation_fields[ $field_id ] = array(
+                    'id' => $field_id,
+
+                    'amounts' => array_slice(
+                        array_values(
+                            array_unique(
+                                $configured_amounts
+                            )
+                        ),
+                        0,
+                        6
+                    ),
+
+                    'allow_custom_amount' =>
+                        ! empty(
+                            $field['settings']['allowCustomAmount']
+                        ),
+
+                    'minimum_amount' => round(
+                        max(
+                            0,
+                            (float) (
+                                $field['settings']['minimumAmount'] ??
+                                1
+                            )
+                        ),
+                        2
+                    ),
+                );
+
+                continue;
+            }            
+            
+            /*
+             * Dynamic transaction fee.
+             *
+             * The amount is never read from the frontend. The component
+             * only determines whether the fixed 1.8% fee is enabled.
+             */
+            if ( $field_type === 'cover_fees' ) {
+                $cover_fees_enabled = true;
+
+                $cover_fees_label = $field_label
+                    ?: 'Cover transaction fees';
+
+                continue;
+            }            
+
+            /*
+             * Components without a user-submitted value must not
+             * be stored as form fields.
+             */
+            $excluded_types = array(
+                'stripe_payments',
+                'image_field',
+                'stripe_metadata',
+                'cover_fees',
+            );
+
+            if (
+                $field_id !== '' &&
+                ! in_array(
+                    $field_type,
+                    $excluded_types,
+                    true
+                )
+            ) {
+                $frontend_fields[ $field_id ] = array(
+                    'id'       => $field_id,
+                    'type'     => $field_type,
+                    'label'    => $field_label ?: 'Field',
+                    'settings' => is_array(
+                        $field['settings'] ?? null
+                    )
+                        ? $field['settings']
+                        : array(),
+                );
+            }
+        }
+    }
+
+    /*
+     * Validate the submitted products and calculate the product
+     * subtotal from the saved server-side configuration.
+     */
+    $product_total = 0;
+    $line_items    = array();
+
+    foreach (
+        $submitted_cart
+        as $cart_key => $cart_item
+    ) {
+        $cart_key = (string) $cart_key;
+
+        if (
+            ! isset(
+                $available_products[ $cart_key ]
+            )
+        ) {
+            continue;
+        }
+
+        if ( ! is_array( $cart_item ) ) {
+            continue;
+        }
+
+        $configured_product =
+            $available_products[ $cart_key ];
+
+        $quantity = min(
+            $configured_product['max_quantity'],
+            max(
+                0,
+                absint(
+                    $cart_item['quantity'] ?? 0
+                )
+            )
+        );
+
+        if ( $quantity < 1 ) {
+            continue;
+        }
+
+        $unit_price = round(
+            (float) $configured_product['price'],
+            2
+        );
+
+        $line_total = round(
+            $unit_price * $quantity,
+            2
+        );
+
+        $product_total += $line_total;
+
+        $line_items[] = array(
+            'product_id' => $configured_product['id'],
+            'title'      => $configured_product['title'],
+            'quantity'   => $quantity,
+            'unit_price' => $unit_price,
+            'line_total' => $line_total,
+        );
+    }
+
+    $product_total = round(
+        $product_total,
+        2
+    );
+    
+    /*
+     * Validate and calculate selected donations.
+     */
+    $donation_total = 0.0;
+
+    foreach (
+        $donation_fields
+        as $donation_field_id => $donation_field
+    ) {
+        if (
+            ! array_key_exists(
+                $donation_field_id,
+                $submitted_data
+            )
+        ) {
+            continue;
+        }
+
+        $submitted_donation = round(
+            (float) $submitted_data[
+                $donation_field_id
+            ],
+            2
+        );
+
+        /*
+         * An empty or zero donation does not contribute
+         * to the checkout total.
+         */
+        if ( $submitted_donation <= 0 ) {
+            continue;
+        }
+
+        $is_predefined_amount = false;
+
+        foreach (
+            $donation_field['amounts']
+            as $configured_amount
+        ) {
+            if (
+                abs(
+                    $submitted_donation -
+                    (float) $configured_amount
+                ) < 0.001
+            ) {
+                $is_predefined_amount = true;
+
+                break;
+            }
+        }
+
+        /*
+         * Values that are not predefined are only accepted
+         * when Custom Amount is enabled and the configured
+         * minimum amount is respected.
+         */
+        if ( ! $is_predefined_amount ) {
+
+            if (
+                ! $donation_field[
+                    'allow_custom_amount'
+                ]
+            ) {
+                return new WP_Error(
+                    'invalid_donation_amount',
+                    __(
+                        'The selected donation amount is invalid.',
+                        'easy-stripe-payments'
+                    ),
+                    array(
+                        'status' => 400,
+                    )
+                );
+            }
+
+            if (
+                $submitted_donation <
+                $donation_field['minimum_amount']
+            ) {
+                return new WP_Error(
+                    'donation_amount_too_low',
+                    sprintf(
+                        /* translators: %s: minimum donation amount */
+                        __(
+                            'The minimum donation amount is %s.',
+                            'easy-stripe-payments'
+                        ),
+                        espad_format_checkout_metadata_amount(
+                            $donation_field[
+                                'minimum_amount'
+                            ]
+                        ) . ' ' . strtoupper(
+                            $currency
+                        )
+                    ),
+                    array(
+                        'status' => 400,
+                    )
+                );
+            }
+        }
+
+        $donation_total +=
+            $submitted_donation;
+    }
+
+    $donation_total = round(
+        $donation_total,
+        2
+    );    
+
+    $tax_total = round(
+        array_reduce(
+            $tax_items,
+            static function (
+                $total,
+                $item
+            ) {
+                return $total +
+                    (float) $item['amount'];
+            },
+            0
+        ),
+        2
+    );
+
+    $coupon_total = round(
+        array_reduce(
+            $coupon_items,
+            static function (
+                $total,
+                $item
+            ) {
+                return $total +
+                    (float) $item['amount'];
+            },
+            0
+        ),
+        2
+    );
+    
+    /*
+     * Checkout total before the transaction fee.
+     */  
+    $checkout_subtotal = round(
+        max(
+            0,
+            $product_total +
+            $donation_total +
+            $tax_total -
+            $coupon_total
+        ),
+        2
+    );    
+ 
+    /*
+     * Fixed 1.8% transaction fee.
+     */
+    $cover_fees_amount = $cover_fees_enabled
+        ? round(
+            $checkout_subtotal *
+            ( $cover_fees_percent / 100 ),
+            2
+        )
+        : 0.0;
+
+    /*
+     * Final amount charged through Stripe.
+     */
+    $total = round(
+        $checkout_subtotal +
+        $cover_fees_amount,
+        2
+    );    
+
+    /*
+     * Stripe expects the amount in the smallest currency unit.
+     * This assumes a two-decimal currency.
+     */
+    $amount = (int) round(
+        $total * 100
+    );
+
+    if ( $amount < 50 ) {
+        return new WP_Error(
+            'invalid_amount',
+            __(
+                'The payment amount is too low.',
+                'easy-stripe-payments'
+            ),
+            array(
+                'status' => 400,
+            )
+        );
+    }
+
+    /*
+     * Build readable Stripe metadata.
+     */
+    $metadata = array();
+
+    espad_add_checkout_metadata(
+        $metadata,
+        'checkout_id',
+        $checkout_id
+    );
+
+    espad_add_checkout_metadata(
+        $metadata,
+        'currency',
+        strtoupper( $currency )
+    );
+
+    /*
+     * Product line items.
+     */
+    foreach (
+        $line_items
+        as $index => $line_item
+    ) {
+        $number = str_pad(
+            (string) ( $index + 1 ),
+            2,
+            '0',
+            STR_PAD_LEFT
+        );
+
+        $line_value = sprintf(
+            '%s | Qty: %d | Unit: %s %s | Line total: %s %s',
+            $line_item['title'],
+            $line_item['quantity'],
+            espad_format_checkout_metadata_amount(
+                $line_item['unit_price']
+            ),
+            strtoupper( $currency ),
+            espad_format_checkout_metadata_amount(
+                $line_item['line_total']
+            ),
+            strtoupper( $currency )
+        );
+
+        espad_add_checkout_metadata(
+            $metadata,
+            'line_item_' . $number,
+            $line_value
+        );
+    }
+     
+    /*
+     * Selected donation.
+     */
+    if ( $donation_total > 0 ) {
+        espad_add_checkout_metadata(
+            $metadata,
+            'donation',
+            espad_format_checkout_metadata_amount(
+                $donation_total
+            ) . ' ' . strtoupper(
+                $currency
+            )
+        );
+    }    
+
+    /*
+     * User-entered frontend fields.
+     */
+    $form_field_number = 1;
+    $customer_email    = '';
+
+    foreach (
+        $frontend_fields
+        as $field_id => $field
+    ) {
+        if (
+            ! array_key_exists(
+                $field_id,
+                $submitted_data
+            )
+        ) {
+            continue;
+        }
+
+        $value = $submitted_data[ $field_id ];
+
+        if (
+            $field['type'] === 'dropdown_field'
+        ) {
+            $value = espad_get_dropdown_metadata_value(
+                $field,
+                $value
+            );
+        } else {
+            $value = espad_format_checkout_metadata_value(
+                $value,
+                $field['type']
+            );
+        }
+
+        /*
+         * Empty optional fields are not added to Stripe.
+         */
+        if (
+            $value === '' &&
+            $field['type'] !== 'checkbox'
+        ) {
+            continue;
+        }
+
+        $number = str_pad(
+            (string) $form_field_number,
+            2,
+            '0',
+            STR_PAD_LEFT
+        );
+
+        espad_add_checkout_metadata(
+            $metadata,
+            'form_field_' . $number,
+            sprintf(
+                '%s: %s',
+                $field['label'],
+                $value
+            )
+        );
+
+        /*
+         * Also use the submitted email as the Stripe receipt
+         * email when the component is an email field.
+         */
+        if (
+            $field['type'] === 'email' &&
+            is_email( $value )
+        ) {
+            $customer_email = sanitize_email(
+                $value
+            );
+        }
+
+        $form_field_number++;
+    }
+
+    /*
+     * Individually named fees and taxes.
+     */
+    foreach (
+        $tax_items
+        as $index => $tax_item
+    ) {
+        $number = str_pad(
+            (string) ( $index + 1 ),
+            2,
+            '0',
+            STR_PAD_LEFT
+        );
+
+        espad_add_checkout_metadata(
+            $metadata,
+            'fee_tax_' . $number,
+            sprintf(
+                '%s: +%s %s',
+                $tax_item['label'],
+                espad_format_checkout_metadata_amount(
+                    $tax_item['amount']
+                ),
+                strtoupper( $currency )
+            )
+        );
+    }
+
+    /*
+     * Individually named discounts and coupons.
+     */
+    foreach (
+        $coupon_items
+        as $index => $coupon_item
+    ) {
+        $number = str_pad(
+            (string) ( $index + 1 ),
+            2,
+            '0',
+            STR_PAD_LEFT
+        );
+
+        espad_add_checkout_metadata(
+            $metadata,
+            'discount_' . $number,
+            sprintf(
+                '%s: -%s %s',
+                $coupon_item['label'],
+                espad_format_checkout_metadata_amount(
+                    $coupon_item['amount']
+                ),
+                strtoupper( $currency )
+            )
+        );
+    }
+    
+    /*
+     * Dynamic Cover transaction fees metadata.
+     */
+    if ( $cover_fees_enabled ) {
+        espad_add_checkout_metadata(
+            $metadata,
+            'cover_transaction_fees',
+            sprintf(
+                '%s (%s%%): +%s %s',
+                $cover_fees_label,
+                espad_format_checkout_metadata_amount(
+                    $cover_fees_percent
+                ),
+                espad_format_checkout_metadata_amount(
+                    $cover_fees_amount
+                ),
+                strtoupper( $currency )
+            )
+        );
+    }     
+
+    /*
+     * Complete Stripe Payments overview.
+     */
+    if ( $product_total > 0 ) {
+        espad_add_checkout_metadata(
+            $metadata,
+            'product_subtotal',
+            espad_format_checkout_metadata_amount(
+                $product_total
+            ) . ' ' . strtoupper( $currency )
+        );
+    }
+
+    if ( $tax_total > 0 ) {
+        espad_add_checkout_metadata(
+            $metadata,
+            'fees_taxes_total',
+            espad_format_checkout_metadata_amount(
+                $tax_total
+            ) . ' ' . strtoupper( $currency )
+        );
+    }
+ 
+    if ( $coupon_total > 0 ) {
+        espad_add_checkout_metadata(
+            $metadata,
+            'discounts_total',
+            espad_format_checkout_metadata_amount(
+                $coupon_total
+            ) . ' ' . strtoupper( $currency )
+        );
+    }
+ 
+    /*
+     * The final payment total always exists and is therefore
+     * always added to Stripe metadata.
+     */        
+    espad_add_checkout_metadata(
+        $metadata,
+        'payment_total',
+        espad_format_checkout_metadata_amount(
+            $total
+        ) . ' ' . strtoupper( $currency )
+    );
+
+    try {
+        if (
+            ! class_exists(
+                '\ESPAD\Stripe\StripeESPADManager'
+            )
+        ) {
+            require_once ESPAD_PLUGIN_PATH .
+                'inc/StripeESPADManager.php';
+        }
+
+        $connect_access_token_encrypted = get_option(
+            'espad_stripe_connect_access_token',
+            ''
+        );
+
+        $connect_publishable_key_encrypted =
+            get_option(
+                'espad_stripe_connect_publishable_key',
+                ''
+            );
+
+        if (
+            empty( $connect_access_token_encrypted ) ||
+            empty( $connect_publishable_key_encrypted )
+        ) {
+            return new WP_Error(
+                'stripe_connect_required',
+                __(
+                    'To use the Checkout Builder, connect your Stripe account under Settings.',
+                    'easy-stripe-payments'
+                ),
+                array(
+                    'status' => 400,
+                )
+            );
+        }
+
+        $connect_access_token = espd_decrypt(
+            $connect_access_token_encrypted
+        );
+
+        $connect_publishable_key = espd_decrypt(
+            $connect_publishable_key_encrypted
+        );
+
+        if (
+            empty( $connect_access_token ) ||
+            empty( $connect_publishable_key )
+        ) {
+            return new WP_Error(
+                'invalid_stripe_connect_credentials',
+                __(
+                    'The Stripe Connect credentials are invalid. Please reconnect your Stripe account.',
+                    'easy-stripe-payments'
+                ),
+                array(
+                    'status' => 500,
+                )
+            );
+        }
+
+        $stripe =
+            \ESPAD\Stripe\StripeESPADManager::get_instance()
+                ->get_stripe_client();
+
+        $params = array(
+            'amount'   => $amount,
+            'currency' => $currency,
+            'metadata' => $metadata,
+            'automatic_payment_methods' => array(
+                'enabled' => true,
+            ),
+        );
+
+        if ( ! empty( $customer_email ) ) {
+            $params['receipt_email'] =
+                $customer_email;
+        }
+
+        $application_fee_amount =
+            espad_calculate_platform_fee(
+                $amount
+            );
+
+        if ( $application_fee_amount > 0 ) {
+            $params['application_fee_amount'] =
+                $application_fee_amount;
+        }
+
+        $payment_intent =
+            $stripe->paymentIntents->create(
+                $params
+            );
+
+        return rest_ensure_response(
+            array(
+                'clientSecret' =>
+                    $payment_intent->client_secret,
+
+                'paymentIntentId' =>
+                    $payment_intent->id,
+
+                'publishableKey' =>
+                    $connect_publishable_key,
+
+                'amount' =>
+                    $amount,
+
+                'currency' =>
+                    $currency,
+            )  
+        );
+    } catch ( \Throwable $exception ) {
+        return new WP_Error(
+            'stripe_error',
+            $exception->getMessage(),
+            array(
+                'status' => 500,
+            )
+        );
+    }
+    
+}
+
+/*
+ * Add Multi-Step Checkout metadata to a PaymentIntent
+ * created by an existing legacy ESPAD Payment Form.
+ */
+add_action(
+    'rest_api_init',
+    function () {
+        register_rest_route(
+            'espad-stripe/v1',
+            '/update-existing-payment-metadata',
+            array(
+                'methods'             =>
+                    WP_REST_Server::CREATABLE,
+
+                'callback'            =>
+                    'espad_update_existing_payment_metadata',
+
+                'permission_callback' =>
+                    '__return_true',
+            )
+        );
+    }
+);
+
+/**
+ * Adds the Multi-Step Checkout metadata to a successfully
+ * paid PaymentIntent created by an existing ESPAD form.
+ *
+ * Existing Stripe metadata is preserved.
+ *
+ * @param WP_REST_Request $request REST request.
+ * @return WP_REST_Response|WP_Error
+ */
+function espad_update_existing_payment_metadata(
+    WP_REST_Request $request
+) {
+
+    global $wpdb;
+
+    $checkout_id = absint(
+        $request->get_param( 'checkoutId' )
+    );
+
+    $payment_form_id = absint(
+        $request->get_param( 'paymentFormId' )
+    );
+
+    $payment_intent_id = sanitize_text_field(
+        (string) $request->get_param(
+            'paymentIntentId'
+        )
+    );
+
+    $payment_intent_client_secret =
+        sanitize_text_field(
+            (string) $request->get_param(
+                'paymentIntentClientSecret'
+            )
+        );
+
+    $submitted_cart = $request->get_param(
+        'cartItems'
+    );
+
+    $submitted_data = $request->get_param(
+        'formData'
+    );
+
+    if (
+        ! $checkout_id ||
+        ! $payment_form_id ||
+        ! preg_match(
+            '/^pi_[A-Za-z0-9]+$/',
+            $payment_intent_id
+        ) ||
+        strpos(
+            $payment_intent_client_secret,
+            $payment_intent_id . '_secret_'
+        ) !== 0
+    ) {
+        return new WP_Error(
+            'invalid_metadata_request',
+            __(
+                'Invalid payment metadata request.',
+                'easy-stripe-payments'
+            ),
+            array(
+                'status' => 400,
+            )
+        );
+    }
+
+    if ( ! is_array( $submitted_cart ) ) {
+        $submitted_cart = array();
+    }
+
+    if ( ! is_array( $submitted_data ) ) {
+        $submitted_data = array();
+    }
+
+    $table = $wpdb->prefix . 'espad_forms';
+
+    /*
+     * Load the Multi-Step Checkout configuration.
+     */
+    $multistep_form = $wpdb->get_row(
+        $wpdb->prepare(
+            "SELECT id, currency, checkout_metadata_1
+             FROM {$table}
+             WHERE id = %d
+             AND mode = %s
+             LIMIT 1",
+            $checkout_id,
+            'Multistep'
+        )
+    );
+
+    if (
+        ! $multistep_form ||
+        empty(
+            $multistep_form->checkout_metadata_1
+        )
+    ) {
+        return new WP_Error(
+            'multistep_checkout_not_found',
+            __(
+                'The Multi-Step Checkout could not be found.',
+                'easy-stripe-payments'
+            ),
+            array(
+                'status' => 404,
+            )
+        );
+    }
+
+    /*
+     * Verify that the submitted legacy Payment Form exists.
+     */
+    $legacy_form_exists = $wpdb->get_var(
+        $wpdb->prepare(
+            "SELECT id
+             FROM {$table}
+             WHERE id = %d
+             AND mode <> %s
+             LIMIT 1",
+            $payment_form_id,
+            'Multistep'
+        )
+    );
+
+    if ( ! $legacy_form_exists ) {
+        return new WP_Error(
+            'payment_form_not_found',
+            __(
+                'The selected payment form could not be found.',
+                'easy-stripe-payments'
+            ),
+            array(
+                'status' => 404,
+            )
+        );
+    }
+
+    $flow = json_decode(
+        $multistep_form->checkout_metadata_1,
+        true
+    );
+
+    if ( ! is_array( $flow ) ) {
+        return new WP_Error(
+            'invalid_checkout_flow',
+            __(
+                'The checkout flow is invalid.',
+                'easy-stripe-payments'
+            ),
+            array(
+                'status' => 500,
+            )
+        );
+    }
+
+    /*
+     * Ensure that this Multi-Step Checkout actually uses
+     * the submitted existing Payment Form.
+     */
+    $configured_payment_form_id = 0;
+
+    foreach (
+        ( $flow['steps'] ?? array() )
+        as $step
+    ) {
+        foreach (
+            ( $step['fields'] ?? array() )
+            as $field
+        ) {
+            if (
+                ( $field['type'] ?? '' ) !==
+                'stripe_payments'
+            ) {
+                continue;
+            }
+
+            $configured_payment_form_id = absint(
+                $field['settings']['paymentFormId'] ?? 0
+            );
+
+            break 2;
+        }
+    }
+
+    if (
+        $configured_payment_form_id !==
+        $payment_form_id
+    ) {
+        return new WP_Error(
+            'payment_form_mismatch',
+            __(
+                'The payment form does not belong to this checkout.',
+                'easy-stripe-payments'
+            ),
+            array(
+                'status' => 403,
+            )
+        );
+    }
+
+    try {
+        if (
+            ! class_exists(
+                '\ESPAD\Stripe\StripeESPADManager'
+            )
+        ) {
+            require_once ESPAD_PLUGIN_PATH .
+                'inc/StripeESPADManager.php';
+        }
+
+        $stripe =
+            \ESPAD\Stripe\StripeESPADManager::get_instance()
+                ->get_stripe_client();
+
+        /*
+         * Retrieve the PaymentIntent directly from Stripe.
+         */
+        $payment_intent =
+            $stripe->paymentIntents->retrieve(
+                $payment_intent_id,
+                array()
+            );
+
+        /*
+         * Verify that the returned client secret belongs
+         * to the retrieved PaymentIntent.
+         */
+        if (
+            empty( $payment_intent->client_secret ) ||
+            ! hash_equals(
+                (string) $payment_intent->client_secret,
+                $payment_intent_client_secret
+            )
+        ) {
+            return new WP_Error(
+                'payment_intent_mismatch',
+                __(
+                    'The PaymentIntent verification failed.',
+                    'easy-stripe-payments'
+                ),
+                array(
+                    'status' => 403,
+                )
+            );
+        }
+
+        /*
+         * Do not trust redirect_status alone.
+         * Stripe must confirm the successful payment.
+         */
+        if (
+            (string) $payment_intent->status !==
+            'succeeded'
+        ) {
+            return new WP_Error(
+                'payment_not_succeeded',
+                __(
+                    'The payment has not been completed.',
+                    'easy-stripe-payments'
+                ),
+                array(
+                    'status' => 409,
+                )
+            );
+        }
+
+        /*
+         * Build the Multi-Step Checkout metadata.
+         *
+         * This helper is shown in the next section.
+         */
+        $multistep_metadata =
+            espad_build_multistep_checkout_metadata(
+                $checkout_id,
+                $flow,
+                $submitted_cart,
+                $submitted_data,
+                $multistep_form->currency
+            );
+
+        if ( is_wp_error( $multistep_metadata ) ) {
+            return $multistep_metadata;
+        }        
+
+        /*
+         * Convert StripeObject metadata into a normal array.
+         */
+        $existing_metadata = array();
+
+        if ( ! empty( $payment_intent->metadata ) ) {
+            $existing_metadata =
+                $payment_intent->metadata->toArray();
+        }
+ 
+        /*
+         * Preserve all existing legacy metadata first.
+         */
+        $merged_metadata = array_slice(
+            $existing_metadata,
+            0,
+            50,
+            true
+        );
+
+        /*
+         * Append as many Multi-Step Checkout metadata entries
+         * as Stripe's 50-entry limit allows.
+         */
+        foreach (
+            $multistep_metadata
+            as $key => $value
+        ) {
+            if ( count( $merged_metadata ) >= 50 ) {
+                break;
+            }
+
+            /*
+             * Add a prefix to prevent collisions with metadata
+             * created by the existing Payment Form.
+             */
+            $multistep_key = sanitize_key(
+                'multistep_' . $key
+            );
+
+            $multistep_key = substr(
+                $multistep_key,
+                0,
+                40
+            );
+
+            if (
+                array_key_exists(
+                    $multistep_key,
+                    $merged_metadata
+                )
+            ) {
+                continue;
+            }
+ 
+            $merged_metadata[ $multistep_key ] =
+                substr(
+                    sanitize_text_field(
+                        (string) $value
+                    ),
+                    0,
+                    500
+                );
+        }
+
+        $stripe->paymentIntents->update(
+            $payment_intent_id,
+            array(
+                'metadata' => $merged_metadata,
+            )
+        );
+
+        return rest_ensure_response(
+            array(
+                'success'         => true,
+                'paymentIntentId' =>
+                    $payment_intent_id,
+            )
+        );
+
+    } catch ( \Stripe\Exception\ApiErrorException $e ) {
+        return new WP_Error(
+            'stripe_metadata_update_failed',
+            sanitize_text_field(
+                $e->getMessage()
+            ),
+            array(
+                'status' => 500,
+            )
+        );
+    } catch ( Throwable $e ) {
+        return new WP_Error(
+            'metadata_update_failed',
+            __(
+                'The payment metadata could not be updated.',
+                'easy-stripe-payments'
+            ),
+            array(
+                'status' => 500,
+            )
+        );
+    }
+
+}
+
+/**
+ * Builds the complete readable Stripe metadata for a
+ * React-based Multi-Step Checkout.
+ *
+ * Product prices, maximum quantities, fees, taxes and discounts
+ * are always loaded from the saved checkout flow. The submitted
+ * frontend cart is only used to determine selected quantities.
+ *
+ * @param int    $checkout_id      Multi-Step Checkout ID.
+ * @param array  $flow             Saved Checkout Builder flow.
+ * @param array  $submitted_cart   Cart submitted by React.
+ * @param array  $submitted_data   Form data submitted by React.
+ * @param string $fallback_currency Fallback checkout currency.
+ *
+ * @return array<string,string>|WP_Error
+ */ 
+function espad_build_multistep_checkout_metadata(
+    $checkout_id,
+    array $flow,
+    array $submitted_cart,
+    array $submitted_data,
+    $fallback_currency = 'USD'
+) {
+ 
+    $checkout_id = absint( $checkout_id );
+
+    if ( ! $checkout_id ) {
+        return new WP_Error(
+            'invalid_checkout',
+            __(
+                'Invalid checkout ID.',
+                'easy-stripe-payments'
+            ),
+            array(
+                'status' => 400,
+            )
+        );
+    }
+
+    /*
+     * Determine the authoritative checkout currency.
+     */
+    $currency = strtolower(
+        sanitize_key(
+            $flow['settings']['currency'] ??
+            $fallback_currency ??
+            'usd'
+        )
+    );
+
+    if (
+        $currency === '' ||
+        strlen( $currency ) !== 3
+    ) {
+        $currency = 'usd';
+    }
+
+    $available_products = array();
+    $frontend_fields    = array();
+    $tax_items          = array();
+    $coupon_items       = array();
+
+    /*
+     * Read all authoritative checkout values from the saved
+     * Checkout Builder flow.
+     *
+     * Never trust product prices, taxes or discounts sent
+     * from the frontend.
+     */
+    foreach (
+        ( $flow['steps'] ?? array() )
+        as $step
+    ) {
+        foreach (
+            ( $step['fields'] ?? array() )
+            as $field
+        ) {
+            if ( ! is_array( $field ) ) {
+                continue;
+            }
+
+            $field_id = sanitize_text_field(
+                (string) (
+                    $field['id'] ?? ''
+                )
+            );
+
+            $field_type = sanitize_key(
+                (string) (
+                    $field['type'] ?? ''
+                )
+            );
+
+            $field_label = sanitize_text_field(
+                (string) (
+                    $field['label'] ??
+                    $field_type ??
+                    'Field'
+                )
+            );
+
+            /*
+             * Products.
+             */
+            if ( $field_type === 'product' ) {
+                $product_key = sanitize_text_field(
+                    (string) (
+                        $field['settings']['productId'] ??
+                        $field_id
+                    )
+                );
+
+                if ( $product_key === '' ) {
+                    continue;
+                }
+
+                $available_products[ $product_key ] = array(
+                    'id'       => $product_key,
+                    'field_id' => $field_id,
+                    'title'    => $field_label ?: 'Product',
+
+                    'price' => round(
+                        max(
+                            0,
+                            (float) (
+                                $field['settings']['price'] ??
+                                0
+                            )
+                        ),
+                        2
+                    ),
+
+                    'max_quantity' => max(
+                        1,
+                        absint(
+                            $field['settings']['maxQuantity'] ??
+                            1
+                        )
+                    ),
+                );
+
+                continue;
+            }
+
+            /*
+             * Fees and taxes.
+             */
+            if ( $field_type === 'tax' ) {
+                $tax_items[] = array(
+                    'id'    => $field_id,
+
+                    'label' => $field_label
+                        ?: 'Fees & Taxes',
+
+                    'amount' => round(
+                        max(
+                            0,
+                            (float) (
+                                $field['settings']['amount'] ??
+                                0
+                            )
+                        ),
+                        2
+                    ),
+                );
+
+                continue;
+            }
+
+            /*
+             * Coupons and discounts.
+             */
+            if ( $field_type === 'coupon' ) {
+                $coupon_items[] = array(
+                    'id'    => $field_id,
+
+                    'label' => $field_label
+                        ?: 'Coupon',
+
+                    'amount' => round(
+                        max(
+                            0,
+                            (float) (
+                                $field['settings']['amount'] ??
+                                0
+                            )
+                        ),
+                        2
+                    ),
+                );
+
+                continue;
+            }
+
+            /*
+             * Components that should be stored as submitted
+             * frontend form values.
+             *
+             * Visual, product, payment and calculation components
+             * are intentionally excluded.
+             */
+            if (
+                $field_id !== '' &&
+                ! in_array(
+                    $field_type,
+                    array(
+                        'product',
+                        'stripe_payments',
+                        'tax',
+                        'coupon',
+                        'image_field',
+                    ),
+                    true
+                )
+            ) {
+                $frontend_fields[ $field_id ] = array(
+                    'id'       => $field_id,
+                    'type'     => $field_type,
+                    'label'    => $field_label ?: 'Field',
+                    'settings' => is_array(
+                        $field['settings'] ?? null
+                    )
+                        ? $field['settings']
+                        : array(),
+                );
+            }
+        }
+    }
+
+    /*
+     * Build validated product line items.
+     */
+    $line_items   = array();
+    $product_total = 0.0;
+
+    foreach (
+        $submitted_cart
+        as $submitted_product_key => $submitted_item
+    ) {
+        if ( ! is_array( $submitted_item ) ) {
+            continue;
+        }
+
+        $submitted_product_key = sanitize_text_field(
+            (string) $submitted_product_key
+        );
+
+        /*
+         * Depending on the React cart structure, the product
+         * can be identified either by the cart array key or by
+         * the submitted productId value.
+         */
+        $submitted_product_id = sanitize_text_field(
+            (string) (
+                $submitted_item['productId'] ??
+                $submitted_product_key
+            )
+        );
+
+        $configured_product = null;
+
+        if (
+            isset(
+                $available_products[
+                    $submitted_product_key
+                ]
+            )
+        ) {
+            $configured_product =
+                $available_products[
+                    $submitted_product_key
+                ];
+        } elseif (
+            $submitted_product_id !== '' &&
+            isset(
+                $available_products[
+                    $submitted_product_id
+                ]
+            )
+        ) {
+            $configured_product =
+                $available_products[
+                    $submitted_product_id
+                ];
+        }
+
+        /*
+         * Ignore unknown frontend products.
+         */
+        if ( ! is_array( $configured_product ) ) {
+            continue;
+        }
+
+        $quantity = absint(
+            $submitted_item['quantity'] ?? 0
+        );
+
+        if ( $quantity < 1 ) {
+            continue;
+        }
+
+        /*
+         * Enforce the maximum quantity stored in the flow.
+         */
+        $quantity = min(
+            $quantity,
+            $configured_product['max_quantity']
+        );
+
+        $unit_price = round(
+            (float) $configured_product['price'],
+            2
+        );
+
+        $line_total = round(
+            $unit_price * $quantity,
+            2
+        );
+
+        $product_total += $line_total;
+
+        $line_items[] = array(
+            'product_id' =>
+                $configured_product['id'],
+
+            'title' =>
+                $configured_product['title'],
+
+            'quantity' =>
+                $quantity,
+
+            'unit_price' =>
+                $unit_price,
+
+            'line_total' =>
+                $line_total,
+        );
+    }
+
+    $product_total = round(
+        $product_total,
+        2
+    );
+
+    /*
+     * Calculate fees and taxes from the saved flow.
+     */
+    $tax_total = round(
+        array_reduce(
+            $tax_items,
+            static function (
+                $total,
+                $item
+            ) {
+                return $total +
+                    (float) $item['amount'];
+            },
+            0.0
+        ),
+        2
+    );
+
+    /*
+     * Calculate coupons and discounts from the saved flow.
+     */
+    $coupon_total = round(
+        array_reduce(
+            $coupon_items,
+            static function (
+                $total,
+                $item
+            ) {
+                return $total +
+                    (float) $item['amount'];
+            },
+            0.0
+        ),
+        2
+    );
+
+    /*
+     * The final checkout total can never become negative.
+     */
+    $payment_total = round(
+        max(
+            0,
+            $product_total +
+            $tax_total -
+            $coupon_total
+        ),
+        2
+    );
+
+    /*
+     * Build the readable Stripe metadata.
+     */
+    $metadata = array();
+
+    espad_add_checkout_metadata(
+        $metadata,
+        'checkout_id',
+        $checkout_id
+    );
+
+    espad_add_checkout_metadata(
+        $metadata,
+        'currency',
+        strtoupper( $currency )
+    );
+
+    /*
+     * Individual product line items.
+     */
+    foreach (
+        $line_items
+        as $index => $line_item
+    ) {
+        $number = str_pad(
+            (string) ( $index + 1 ),
+            2,
+            '0',
+            STR_PAD_LEFT
+        );
+
+        espad_add_checkout_metadata(
+            $metadata,
+            'line_item_' . $number,
+            sprintf(
+                '%s | Qty: %d | Unit: %s %s | Line total: %s %s',
+                $line_item['title'],
+                $line_item['quantity'],
+
+                espad_format_checkout_metadata_amount(
+                    $line_item['unit_price']
+                ),
+
+                strtoupper( $currency ),
+
+                espad_format_checkout_metadata_amount(
+                    $line_item['line_total']
+                ),
+
+                strtoupper( $currency )
+            )
+        );
+    }
+
+    /*
+     * Submitted frontend fields.
+     */
+    $form_field_number = 1;
+
+    foreach (
+        $frontend_fields
+        as $field_id => $field
+    ) {
+        if (
+            ! array_key_exists(
+                $field_id,
+                $submitted_data
+            )
+        ) {
+            continue;
+        }
+
+        $value = $submitted_data[ $field_id ];
+
+        if (
+            $field['type'] ===
+            'dropdown_field'
+        ) {
+            $value =
+                espad_get_dropdown_metadata_value(
+                    $field,
+                    $value
+                );
+        } else {
+            $value =
+                espad_format_checkout_metadata_value(
+                    $value,
+                    $field['type']
+                );
+        }
+
+        /*
+         * Keep false checkbox values because "No" is meaningful,
+         * but skip genuinely empty values.
+         */
+        if (
+            $value === '' ||
+            $value === null
+        ) {
+            continue;
+        }
+
+        $number = str_pad(
+            (string) $form_field_number,
+            2,
+            '0',
+            STR_PAD_LEFT
+        );
+
+        espad_add_checkout_metadata(
+            $metadata,
+            'form_field_' . $number,
+            sprintf(
+                '%s: %s',
+                $field['label'],
+                $value
+            )
+        );
+
+        $form_field_number++;
+    }
+
+    /*
+     * Individual fees and taxes.
+     */
+    foreach (
+        $tax_items
+        as $index => $tax_item
+    ) {
+        $number = str_pad(
+            (string) ( $index + 1 ),
+            2,
+            '0',
+            STR_PAD_LEFT
+        );
+
+        espad_add_checkout_metadata(
+            $metadata,
+            'fee_tax_' . $number,
+            sprintf(
+                '%s: +%s %s',
+                $tax_item['label'],
+
+                espad_format_checkout_metadata_amount(
+                    $tax_item['amount']
+                ),
+
+                strtoupper( $currency )
+            )
+        );
+    }
+
+    /*
+     * Individual coupons and discounts.
+     */
+    foreach (
+        $coupon_items
+        as $index => $coupon_item
+    ) {
+        $number = str_pad(
+            (string) ( $index + 1 ),
+            2,
+            '0',
+            STR_PAD_LEFT
+        );
+
+        espad_add_checkout_metadata(
+            $metadata,
+            'discount_' . $number,
+            sprintf(
+                '%s: -%s %s',
+                $coupon_item['label'],
+
+                espad_format_checkout_metadata_amount(
+                    $coupon_item['amount']
+                ),
+
+                strtoupper( $currency )
+            )
+        );
+    }
+
+    /*
+     * Complete Stripe Payments overview.
+     */
+    if ( $product_total > 0 ) {
+        espad_add_checkout_metadata(
+            $metadata,
+            'product_subtotal',
+            espad_format_checkout_metadata_amount(
+                $product_total
+            ) . ' ' . strtoupper( $currency )
+        );
+    }
+
+    if ( $tax_total > 0 ) {
+        espad_add_checkout_metadata(
+            $metadata,
+            'fees_taxes_total',
+            espad_format_checkout_metadata_amount(
+                $tax_total
+            ) . ' ' . strtoupper( $currency )
+        );
+    }
+
+    if ( $coupon_total > 0 ) {
+        espad_add_checkout_metadata(
+            $metadata,
+            'discounts_total',
+            espad_format_checkout_metadata_amount(
+                $coupon_total
+            ) . ' ' . strtoupper( $currency )
+        );
+    }
+  
+    /*
+     * The final payment total always exists and is therefore
+     * always added to Stripe metadata.
+     */    
+    espad_add_checkout_metadata(
+        $metadata,
+        'payment_total',
+        espad_format_checkout_metadata_amount(
+            $payment_total
+        ) . ' ' . strtoupper( $currency )
+    );
+
+    return $metadata;
+}
 

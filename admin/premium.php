@@ -35,7 +35,7 @@ if ( isset($_GET['check_premium_status_now']) && $_GET['check_premium_status_now
 
 <?php
 
-$premium_member_text = __( 'As a Premium &#x1F48E; Member, you\'ll get <b>Priority Support</b> and access to <b class="blue">Multiple Stripe Checkouts</b>, <b>Multiple Subscription Payments</b>,  <b class="blue">Stripe Metadata</b> &amp; <b>more</b>.<br /><br />Membership is quick &amp; easy — register your website for a full year in minutes.', 'easy-stripe-payments' );
+$premium_member_text = __( 'As a Premium &#x1F48E; Member, you\'ll get <b>Priority Support</b> and access to <b class="blue">Multiple Stripe Checkouts</b>, <b>Multiple Subscription Payments</b>, <b class="blue">Stripe Metadata</b> &amp; <b>more</b>.<br /><br />Membership is quick &amp; easy — register your website for a full year in minutes.', 'easy-stripe-payments' );
 
 ?>
 

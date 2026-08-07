@@ -12,18 +12,18 @@
     $create_one_time_checkout_url = rest_url(
         'espad-stripe/v1/create/' . absint($selected_form_id)
     );     
-      
-    // Generate Token if not already exists
-    if ( ! isset($_SESSION['espad_payment_token']) ) {
-
-        $espad_token = bin2hex(random_bytes(16)); // 32-character hex string
-
-        $_SESSION['espad_payment_token'] = $espad_token;    
-
-    } else {
-         
-        $espad_token = sanitize_text_field( $_SESSION['espad_payment_token']);
-        
+       
+    // Generate Token
+    try {
+        $espad_token = bin2hex(
+            random_bytes( 16 )
+        );
+    } catch ( Exception $exception ) {
+        $espad_token = wp_generate_password(
+            32,
+            false,
+            false
+        );
     }    
      
     ?>
@@ -189,14 +189,7 @@
                             require_once ESPAD_PLUGIN_PATH . 'admin/sections/preview/street-postal-code.php';
                             require_once ESPAD_PLUGIN_PATH . 'admin/sections/preview/city-telephone.php';
                             break;
-                            
-                        case 'name_email_address_telephone_country_required_fields':
-                            $required_fields_string = 'required';
-                            require_once ESPAD_PLUGIN_PATH . 'admin/sections/preview/street-postal-code.php';
-                            require_once ESPAD_PLUGIN_PATH . 'admin/sections/preview/city-telephone.php';
-                            require_once ESPAD_PLUGIN_PATH . 'admin/sections/preview/country.php';
-                            break;                            
- 
+
                     }
 
                     ?>

@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @package CustomStripeIntegration
  */
-require_once ESPAD_PLUGIN_PATH . 'admin/sections/preview/form-db.php'; ?>
+require ESPAD_PLUGIN_PATH . 'admin/sections/preview/form-db.php'; ?>
 
 <div id="espad_page" class="preview_page prev-mode-<?php echo esc_attr($mode); ?> shortcode_payment_form">
  

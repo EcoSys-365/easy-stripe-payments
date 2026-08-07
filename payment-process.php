@@ -75,6 +75,7 @@ if ( isset($_GET['payment_intent']) && preg_match('/^pi_[a-zA-Z0-9]+$/', sanitiz
             });
 
             return;
+            
         }
 
         // payment_method ID
@@ -113,7 +114,7 @@ if ( isset($_GET['payment_intent']) && preg_match('/^pi_[a-zA-Z0-9]+$/', sanitiz
         $phone   = $billing->phone ?? '';
         $address = $billing->address ?? null;
 
-        // Fallbacks für recurring / subscriptions
+        // Fallbacks for recurring / subscriptions
         if ( $payment_mode === 'recurring' ) {
 
             if ( empty($name) && !empty($invoice) && !empty($invoice->customer_name) ) {

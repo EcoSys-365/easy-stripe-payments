@@ -19,18 +19,29 @@ if ( isset($_REQUEST['form_id']) || isset($shortcode_form_id) ) {
     // Fetch the form data from the database using a prepared statement
     // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Intentionally used custom table
     $forms = $wpdb->get_results( $wpdb->prepare("SELECT * FROM {$table} WHERE id = %d", $selected_form_id) );
+    
+    $selected_form_mode = '';
+
+    if ( ! empty( $forms ) && isset( $forms[0]->mode ) ) {
+        $selected_form_mode = sanitize_text_field(
+            $forms[0]->mode
+        );
+    }    
      
 } else {
-    
+      
     // No form selected
-    $selected_form_id = '';
-    $forms = false;
+    $selected_form_id   = '';
+    $selected_form_mode = '';
+    $forms              = false;
     
 }
   
 // Fetch all available forms to populate dropdowns or form selectors
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Intentionally used custom table
-$all_form_titles = $wpdb->get_results("SELECT id, form_name FROM {$table}");
+$all_form_titles = $wpdb->get_results(
+    "SELECT id, form_name, mode FROM {$table} ORDER BY id ASC"
+); 
 
 // Retrieve and decrypt the stored Stripe public key
 // Prefer Stripe Connect publishable key

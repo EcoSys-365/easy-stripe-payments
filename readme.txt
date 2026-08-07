@@ -1,11 +1,11 @@
 === Easy Stripe Payments & Donations ===
 Contributors: ecosys365
 Donate link: https://buymeacoffee.com/ecosys365
-Tags: stripe, payments, subscription, donation, stripe checkout
+Tags: stripe, payments, donation, ecommerce, checkout
 Requires at least: 5.5
 Tested up to: 7.0
 Requires PHP: 7.4 
-Stable tag: 1.3.16
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ A light Stripe payment solution that automatically supports all current and futu
 
 == Description ==
 
-**Easy Stripe Payments & Donations** lets you integrate Stripe Checkout into your WordPress site with minimal setup. Perfect for donations, simple eCommerce needs, services, or subscriptions. Live Demo: https://demo.ecosys365.com
+**Easy Stripe Payments & Donations** lets you integrate Stripe Checkout into your WordPress site with minimal setup. Perfect for payments, donations, simple eCommerce needs, services, or subscriptions. [Live Demos](https://demo.ecosys365.com)
 
 https://www.youtube.com/watch?v=iPNCHNTb_CI
 
@@ -29,13 +29,28 @@ https://www.youtube.com/watch?v=iPNCHNTb_CI
 8. Edit an existing Stripe subscription product and link it with a checkout button
 9. Example of a Stripe-hosted checkout page for subscription payments
 
-== Five checkout modes included: ==
+== Flexible Stripe Payment & Checkout Options ==
 
-1. **Standard Checkout** Accept one-time payments with customizable product name, amount, and currency.   
-2. **Subscription Checkout** A dedicated checkout form for recurring subscription payments with a modern user experience. 
-3. **Advanced Checkout** Combine one-time & subscription payments in a single flexible checkout with support for different pricing options.
-4. **Campaign Checkout** Track fundraising campaigns with a frontend progress display showing how much has already been collected.  
-5. **Subscription Button** Let users subscribe to recurring payments (monthly/yearly) via Stripe with a Stripe-hosted checkout page.
+Choose the payment experience that fits your needs — from simple payment forms and subscriptions to fundraising campaigns and fully customizable multi-step checkouts.
+
+1. **Multi-Step Checkout Builder** Create flexible multi-step checkout experiences with products, custom fields, content, images, discounts, fees, taxes, and Stripe payments.
+2. **Standard Checkout** Accept one-time payments with a customizable product name, amount, and currency.
+3. **Subscription Checkout** Accept recurring subscription payments with a simple and modern checkout experience. 
+4. **Advanced Checkout** Combine one-time & subscription payments in a single flexible checkout with support for different pricing options.
+5. **Campaign Checkout** Create fundraising campaigns with a frontend progress display showing how much has already been collected.  
+6. **Subscription Button** Add a simple button for recurring monthly or yearly payments via a Stripe-hosted checkout page.
+
+== Sell Products & Accept Donations in One Checkout ==
+
+The **Checkout Builder** combines eCommerce and fundraising in one flexible Stripe checkout experience. Sell products and give customers the option to add a donation — all within the same multi-step checkout.
+
+Create your checkout with an intuitive drag-and-drop interface and combine products, donation amounts, custom fields, images, text, discounts, fees, taxes, and Stripe payments exactly the way you need.
+
+Whether you're a nonprofit selling merchandise, a charity offering supporter products, a creator selling digital products, a coach offering programs or services, or a business that wants to collect optional contributions alongside purchases, the Checkout Builder gives you the flexibility to handle both product sales and donations in a single checkout flow.
+
+Think of it as a lightweight **mini shop** that lets you start selling quickly without setting up or maintaining a complete eCommerce system. Create your checkout, add your products or services, and start accepting payments with Stripe.  
+
+No WooCommerce required.
   
 == Supported Payment Methods & Currencies ==
 
@@ -44,33 +59,7 @@ You can easily enable or disable payment methods directly from your Stripe Dashb
 
 **Popular Stripe Payment Methods Supported**
 
-**Credit & debit cards** (Visa, MasterCard, American Express, Discover, etc.)
-**Apple Pay**
-**Google Pay**
-**Klarna**
-**PayPal via Stripe** (if enabled in your Stripe account)
-**SEPA Direct Debit**
-**Bancontact**
-**iDEAL**
-**Sofort**
-**EPS**
-**Giropay**
-**Przelewy24 (P24)**
-**BLIK**
-**Afterpay / Clearpay**
-**Alipay**
-**WeChat Pay**
-**Revolut Pay**
-**OXXO**
-**Pix**
-**Amazon Pay**
-**Affirm**
-**Zip**
-**Link by Stripe**
-**MobilePay**
-**Vipps Payments**
-**Satispay**
-**Bizum**
+**Credit & debit cards** (Visa, MasterCard, American Express, Discover, etc.), **Apple Pay**, **Google Pay**, **Klarna**, **PayPal via Stripe** (if enabled in your Stripe account), **SEPA Direct Debit**, **Bancontact**, **iDEAL**, **Sofort**, **EPS**, **Giropay**, **Przelewy24 (P24)**, **BLIK**, **Afterpay / Clearpay**, **Alipay**, **WeChat Pay**, **Revolut Pay**, **OXXO**, **Pix**, **Amazon Pay**, **Affirm**, **Zip**, **Link by Stripe**, **MobilePay**, **Vipps Payments**, **Satispay**, **Bizum**
 
 **Crypto (Web3 & Stablecoin support)** – Includes USDC payouts and Stripe-powered crypto onramp integrations for supported platforms and regions.
  
@@ -215,6 +204,19 @@ This plugin supports all payment methods that Stripe currently provides. The fol
 ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, Amazon Pay, American Express, Apple Pay, Bacs Direct Debit, Bancontact, Bank Transfers, BECS Direct Debit, Billie, BLIK, Boleto, Canadian Pre-authorized Debits (PADs), Capchase Pay, Cartes Bancaires, Cash App Pay, Cash-based Vouchers, China UnionPay, Click to Pay, Diners Club, Discover, EPS, FPX, Giropay, Google Pay, GrabPay, iDEAL, Interac, Japan Bank Transfer (Furikomi), JCB, Kakao Pay, Klarna, Konbini, Kriya, Link, Maestro, Mastercard, MB WAY, Mexico Bank Transfer (SPEI), MobilePay, Mondu, Multibanco, Naver Pay, OXXO, P24 (Przelewy24), Pay by Bank, PayCo, PayNow, PayPal, PayTo, Pix, PromptPay, Revolut Pay, Samsung Pay, Satispay, Scalapay, SEPA Direct Debit, SEPA Bank Transfer, SeQura, Sofort, South Korean Cards, Stablecoins (USDC/USDT), Sunbit, Swish, TWINT, UK Bank Transfer, USD Bank Transfer, Visa, WeChat Pay, Zip.
 
 == Changelog ==
+
+= 1.4.0 =
+* The new React-powered `Checkout Builder` gives you far more flexibility and customization options than ever before. Build modern, multi-step checkout experiences with an intuitive drag-and-drop interface and create payment forms tailored to your needs.
+* Improved the design and layout of payment form tables in the WordPress admin dashboard.
+* Enhanced table styling for better readability and user experience.
+* Refinements and visual improvements across the payment forms management screen.
+* Improved plugin navigation and overall admin user experience.
+* Enhanced navigation flow for easier access to plugin features and settings.
+* Refactored the plugin's admin navigation for improved maintainability and consistency.
+* Simplified submenu page rendering and reduced duplicate code. 
+* Removed all `PHP session usage` from the plugin to improve compatibility with WordPress themes and server environments. Stripe payment verification now relies entirely on secure `Stripe API validation` instead of PHP sessions.
+* Added new plugin assets and images.
+* Updated the readme.txt file.
 
 = 1.3.16 =
 * Updated Help & FAQ tab content.
@@ -383,6 +385,9 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 * Stripe Subscription Button for recurring payments
  
 == Upgrade Notice ==
+
+= 1.4.0 =
+* New React-powered Checkout Builder with flexible multi-step checkouts, improved admin navigation, and better compatibility.
 
 = 1.3.16 =
 * Improved the plugin interface by removing the Setup section and refining the Help and FAQ and Premium tab content.

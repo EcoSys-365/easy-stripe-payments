@@ -157,7 +157,7 @@ function espd_domain_is_not_registered() {
     if ( $membership_status != "1" ) {
     
         echo '<div class="notice notice-info is-dismissible">';
-            echo '<p><strong>' . esc_html(__( 'Domain is not registered', 'easy-stripe-payments' )) . '</strong>: ' . esc_html( ESPAD_DOMAIN ) . ' <a href=" ' . esc_url(ESPAD_REGISTER_LINK) . '" target="_blank" rel="noopener">' . esc_html(__( 'Register now', 'easy-stripe-payments' )) . '</a></p>';
+            echo '<p><strong>' . esc_html(__( 'Domain is not registered', 'easy-stripe-payments' )) . '</strong>: ' . esc_html( ESPAD_DOMAIN ) . ' <a href=" ' . esc_url(ESPAD_REGISTER_LINK) . '" target="_blank" rel="noopener" id="espad-domain-is-not-registered">' . esc_html(__( 'Register now', 'easy-stripe-payments' )) . '</a></p>';
         echo '</div>';
         
     }
@@ -514,9 +514,8 @@ function espd_setup_steps_infobox() {
  * price ID and configuration. It supports recurring payments (subscriptions)
  * and conditionally applies a platform fee when Stripe Connect is enabled.
  *
- * A unique payment token is generated and stored in the session to track
- * the payment flow. If session creation fails due to an invalid locale,
- * a fallback attempt using 'en' is performed.
+ * A unique payment token is generated for the payment flow and included
+ * in the Stripe Checkout success URL.
  *
  * When Stripe Connect is active, a platform fee of 1.8% is applied to
  * each recurring payment using `application_fee_percent`.
@@ -527,7 +526,7 @@ function espd_setup_steps_infobox() {
  * @param string       $product_language       Locale for Stripe Checkout (e.g. 'en', 'de').
  * @param array        $active_payment_methods List of allowed Stripe payment methods.
  *
- * @return array {
+ * @return array { 
  *     Array containing checkout session data.
  *
  *     @type string|null $checkout_url URL to redirect the customer to Stripe Checkout.
@@ -546,11 +545,16 @@ function create_stripe_product_and_session($price_id, $product_id, $product_curr
     $product_language = (string) ($product_language ?? 'en');
 
     // Generate Token
-    if ( ! isset($_SESSION['espad_payment_token']) ) {
-        $espad_token = bin2hex(random_bytes(16));
-        $_SESSION['espad_payment_token'] = $espad_token;
-    } else {
-        $espad_token = sanitize_text_field($_SESSION['espad_payment_token']);
+    try {
+        $espad_token = bin2hex(
+            random_bytes( 16 )
+        );
+    } catch ( Exception $exception ) {
+        $espad_token = wp_generate_password(
+            32,
+            false,
+            false
+        );
     }
 
     // Stripe Connect Check

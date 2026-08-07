@@ -26,10 +26,20 @@ global $wpdb;
 $table = $wpdb->prefix . 'espad_forms';
 
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Intentionally used for a custom table
-$forms = $wpdb->get_results("SELECT * FROM $table ORDER BY created_at DESC");
+$forms = $wpdb->get_results(
+    $wpdb->prepare(
+        "SELECT * FROM $table WHERE mode != %s ORDER BY created_at DESC",
+        'Multistep'
+    )
+);
 
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Intentionally used for a custom table
-$db_count = $wpdb->get_var( "SELECT COUNT(*) FROM $table" );
+$db_count = $wpdb->get_var(
+    $wpdb->prepare(
+        "SELECT COUNT(*) FROM $table WHERE mode != %s",
+        'Multistep'
+    )
+);
 
 $premium_tooltip = __( "Premium members gain access to advanced features such as priority support and enhanced Stripe payment workflows, while all core functionality remains freely available.", "easy-stripe-payments" );
 
@@ -72,7 +82,7 @@ $tooltips = [
 
     </div>    
     
-    <h3><?php echo esc_html(__( 'Payment Forms', 'easy-stripe-payments' )); ?> &#128221;</h3>
+    <h3><?php echo esc_html(__( 'Payment Forms', 'easy-stripe-payments' )); ?> 💳</h3>
      
     <?php if ( $db_count >= 2 && $membership_status != "1" ) { ?>
     
@@ -171,7 +181,7 @@ $tooltips = [
         <thead>
             <tr>
                 <th><?php echo esc_html(__( 'ID', 'easy-stripe-payments' )); ?></th>
-                <th><?php echo esc_html(__( 'Form Name', 'easy-stripe-payments' )); ?></th>
+                <th><?php echo esc_html(__( 'Name', 'easy-stripe-payments' )); ?></th>
                 <th><?php echo esc_html(__( 'Mode', 'easy-stripe-payments' )); ?></th>
                 <th><?php echo esc_html(__( 'Currency', 'easy-stripe-payments' )); ?></th>
                 <th><?php echo esc_html(__( 'Description', 'easy-stripe-payments' )); ?></th>

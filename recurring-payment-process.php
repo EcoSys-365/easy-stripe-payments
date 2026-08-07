@@ -1,22 +1,21 @@
 <?php
 
 defined('ABSPATH') || exit; // Direct access is prohibited!
- 
+   
 /**
+ *
  * recurring-payment-process.php
  *
+ * Handles the return from Stripe Checkout.
  *
- * This logic ensures that the redirect from Stripe is valid and initiated
- * from the same user session that created the payment.
+ * The Stripe Checkout Session is retrieved using the returned session ID.
+ * The customer is redirected to the success page only after the payment
+ * status has been verified through the Stripe API.
  *
- * Steps:
- * 1. Check the payment status — only proceed if it’s "succeeded" or "paid".
- * 2. Redirect the user to the success page if payment is confirmed.
- * 3. Handle any API or validation errors gracefully and display proper messages.
- * 
  * Security:
  * - Sanitizes all incoming GET parameters.
- * - Prevents direct access or invalid session references.
+ * - Validates the Stripe Checkout Session ID format.
+ * - Verifies the payment status directly through the Stripe API.
  */
       
 // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Instead of nonce verification, we are checking the status of each payment because this is a redirect from Stripe 

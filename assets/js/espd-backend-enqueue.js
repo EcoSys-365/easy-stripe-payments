@@ -118,10 +118,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     case "premium_member":
                       window.open(registerLink, "_blank");      
                       break;
-
+ 
                     case "maybe_later":
                           
-                      swal( "Demo content installed successfully" , "Check out the Demo Campaign under the Payment Forms tab and see a live preview in the Preview section – you can even run a test payment there to experience the full payment flow, including the confirmation Email." ,  "success" );
+                      swal( "Demo content installed successfully" , "Check out the Multi-Step Demo Checkout under the Checkout Builder tab and the Demo Campaign under the Payment Forms tab, with live previews available in the Preview section." ,  "success" );
                           
                       break;
 
@@ -383,10 +383,25 @@ document.addEventListener('DOMContentLoaded', function () {
     const membershipFormsIsFalse = document.getElementById('membership-forms-is-false');
     
     if ( membershipFormsIsFalse ) {
-         
-        alert("Your domain is not registered\n\nSign up now and enjoy unlimited forms, unlimited Stripe subscription buttons and your exclusive discount!");
-         
-    }
+
+        const registerLinkElement = document.getElementById('espad-domain-is-not-registered');
+        const registerLink = registerLinkElement ? registerLinkElement.href : '#';
+
+        const footer = document.createElement('div');
+        footer.innerHTML = `
+            <a href="${registerLink}" target="_blank">
+                Register your domain
+            </a>
+        `;
+
+        swal({
+            title: "Your domain is not registered",
+            text: "Sign up now and enjoy unlimited forms.",
+            icon: "warning",
+            content: footer
+        });
+        
+    }    
        
     // Check if the element with ID 'membership-is-false' exists on the page.
     // If it does, display a SweetAlert (version 1) warning to notify the user that their domain is not registered.   
@@ -484,5 +499,103 @@ document.addEventListener('DOMContentLoaded', function () {
         style.textContent = customCSS;
         document.head.appendChild(style);
     }
+    
+    /**
+     * Show Payment Success Modal
+     *
+     * This JavaScript snippet is responsible for displaying a SweetAlert modal
+     * after a successful payment. All values are read from the HTML element
+     * with the ID "espad-payment-successful" via data-* attributes.
+     *
+     * The variables like name, email etc. are defined in payment-process.php
+    */
+    const espadPaymentSuccessful = document.getElementById('espad-payment-successful');
+      
+    if ( espadPaymentSuccessful ) {  
+        
+        let name          = espadPaymentSuccessful.dataset.name;
+        let email         = espadPaymentSuccessful.dataset.email;
+        let phone         = espadPaymentSuccessful.dataset.phone;
+        let address       = espadPaymentSuccessful.dataset.addressStreet;
+        let amount        = espadPaymentSuccessful.dataset.amount;
+        let currency      = espadPaymentSuccessful.dataset.currency;
+        let paymentMethod = espadPaymentSuccessful.dataset.paymentMethod;
+  
+        // Creating the table dynamically
+        let tableRows = `
+            <tr>
+              <td style="padding: 4px; border: 1px solid #ddd; width: 30%; text-align: left; color: #5E5E5E;">Name:</td>
+              <td style="padding: 4px; border: 1px solid #ddd; text-align: left; color: #5E5E5E;">${name}</td>
+            </tr>
+            <tr>
+              <td style="padding: 4px; border: 1px solid #ddd; text-align: left; color: #5E5E5E;">Email:</td>
+              <td style="padding: 4px; border: 1px solid #ddd; text-align: left; color: #5E5E5E;">${email}</td>
+            </tr>
+        `;
+
+        if (phone) {
+            tableRows += `
+                <tr>
+                  <td style="padding: 4px; border: 1px solid #ddd; text-align: left; color: #5E5E5E;">Telephone:</td>
+                  <td style="padding: 4px; border: 1px solid #ddd; text-align: left; color: #5E5E5E;">${phone}</td>
+                </tr>
+            `;
+        }
+
+        if (address) {
+            tableRows += `
+                <tr>
+                  <td style="padding: 4px; border: 1px solid #ddd; text-align: left; color: #5E5E5E;">Address:</td>
+                  <td style="padding: 4px; border: 1px solid #ddd; text-align: left; color: #5E5E5E;">${address}</td>
+                </tr>
+            `;
+        }
+
+        if (amount && currency) {
+            tableRows += `
+                <tr>
+                  <td style="padding: 4px; border: 1px solid #ddd; text-align: left; color: #5E5E5E;">Amount:</td>
+                  <td style="padding: 4px; border: 1px solid #ddd; text-align: left; color: #5E5E5E;">${amount} ${currency}</td>
+                </tr>
+            `;
+        }
+
+        if (paymentMethod) {
+            tableRows += `
+                <tr>
+                  <td style="padding: 4px; border: 1px solid #ddd; text-align: left; color: #5E5E5E;">Method:</td>
+                  <td style="padding: 4px; border: 1px solid #ddd; text-align: left; color: #5E5E5E;">${paymentMethod}</td>
+                </tr>
+            `;
+        }
+
+        swal({
+            title: "Payment successful",
+            content: {
+                element: "div",
+                attributes: {
+                    innerHTML: `
+                        <table style="width:100%; border-collapse: collapse; font-family: Arial, sans-serif;">
+                          <tbody>
+                            ${tableRows}
+                          </tbody>
+                        </table>
+                    `
+                }
+            },
+            buttons: {
+                cancel: {
+                    text: "OK",
+                    value: "maybe_later",
+                    visible: true,
+                    className: "btn-secondary",
+                    closeModal: true,
+                }
+            },
+            icon: "success"    
+        }).then((value) => {
+            // your further logic here
+        });
+    }     
    
 }); 

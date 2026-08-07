@@ -12,8 +12,16 @@
             <?php echo esc_html(__( 'Payments', 'easy-stripe-payments' )); ?> &#128176;
         </a>            
         <a href="?page=espd_main&tab=forms" class="nav-tab <?php echo esc_attr( $active_tab == 'forms' ? 'nav-tab-active' : ''); ?>">
-            <?php echo esc_html(__( 'Payment Forms', 'easy-stripe-payments' )); ?> &#128221;
+            <?php echo esc_html(__( 'Payment Forms', 'easy-stripe-payments' )); ?> 💳
         </a> 
+        <a href="?page=espd_main&tab=checkout-builder-overview"
+           class="nav-tab <?php echo esc_attr(
+               in_array( $active_tab, [ 'checkout-builder-overview', 'checkout-builder' ], true )
+                   ? 'nav-tab-active'
+                   : ''
+           ); ?>">
+            <?php echo esc_html__( 'Checkout Builder', 'easy-stripe-payments' ); ?> &#129513;
+        </a>        
         <a href="?page=espd_main&tab=preview" class="nav-tab <?php echo esc_attr( $active_tab == 'preview' ? 'nav-tab-active' : ''); ?>">
             <?php echo esc_html(__( 'Preview', 'easy-stripe-payments' )); ?> &#128270;           
         </a>          
@@ -70,7 +78,15 @@
 
             case 'help':
                 require_once ESPAD_PLUGIN_PATH . 'admin/help.php';
-                break;                    
+                break;
+                
+            case 'checkout-builder-overview':
+                require_once ESPAD_PLUGIN_PATH . 'admin/checkout-builder-overview.php';
+                break;  
+                
+            case 'checkout-builder':
+                require_once ESPAD_PLUGIN_PATH . 'admin/checkout-builder.php';
+                break;                
 
             default:
                 require_once ESPAD_PLUGIN_PATH . 'admin/welcome.php';
