@@ -5,7 +5,7 @@ Tags: stripe, payments, donation, ecommerce, checkout
 Requires at least: 5.5
 Tested up to: 7.0
 Requires PHP: 7.4 
-Stable tag: 1.4.2
+Stable tag: 1.4.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -206,6 +206,9 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 
 == Changelog ==
 
+= 1.4.3 =
+* Tested and confirmed compatibility with WordPress 7.1.
+
 = 1.4.2 =
 * Added a new screenshot showcasing the Multi-Step Checkout Builder.
 * Improved the WordPress.org plugin presentation with a complete checkout example combining products, donations, custom fields, and Stripe payments.
@@ -397,6 +400,9 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 * Stripe Subscription Button for recurring payments
  
 == Upgrade Notice ==
+
+= 1.4.3 =
+* Compatibility confirmed with WordPress 7.1. No functional changes were required.
 
 = 1.4.2 =
 * Documentation and asset update showcasing the Multi-Step Checkout Builder with products, donations, custom fields, and Stripe payments. 
