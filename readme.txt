@@ -3,9 +3,9 @@ Contributors: ecosys365
 Donate link: https://buymeacoffee.com/ecosys365
 Tags: stripe, payments, donation, ecommerce, checkout
 Requires at least: 5.5
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4 
-Stable tag: 1.4.3
+Stable tag: 1.4.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -206,6 +206,10 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 
 == Changelog ==
 
+= 1.4.4 =
+* Updated WordPress compatibility to version 7.1.
+* Verified compatibility with WordPress 7.1.
+
 = 1.4.3 =
 * Tested and confirmed compatibility with WordPress 7.1.
 
@@ -400,6 +404,9 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 * Stripe Subscription Button for recurring payments
  
 == Upgrade Notice ==
+
+= 1.4.4 =
+* Updated and tested for compatibility with WordPress 7.1.
 
 = 1.4.3 =
 * Compatibility confirmed with WordPress 7.1. No functional changes were required.
