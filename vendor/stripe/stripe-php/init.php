@@ -11,6 +11,7 @@ require __DIR__ . '/lib/Stripe.php';
 require __DIR__ . '/lib/StripeContext.php';
 
 // Utilities
+require __DIR__ . '/lib/Util/AgentPluginHint.php';
 require __DIR__ . '/lib/Util/CaseInsensitiveArray.php';
 require __DIR__ . '/lib/Util/LoggerInterface.php';
 require __DIR__ . '/lib/Util/DefaultLogger.php';
@@ -67,6 +68,7 @@ require __DIR__ . '/lib/ApiOperations/Update.php';
 // Plumbing
 require __DIR__ . '/lib/ApiResponse.php';
 require __DIR__ . '/lib/RequestTelemetry.php';
+require __DIR__ . '/lib/TelemetryId.php';
 require __DIR__ . '/lib/StripeObject.php';
 require __DIR__ . '/lib/ApiRequestor.php';
 require __DIR__ . '/lib/ApiResource.php';
@@ -92,6 +94,12 @@ require __DIR__ . '/lib/StripeStreamingClientInterface.php';
 require __DIR__ . '/lib/BaseStripeClient.php';
 require __DIR__ . '/lib/StripeClient.php';
 
+// EventRouter
+require __DIR__ . '/lib/UnhandledNotificationDetails.php';
+require __DIR__ . '/lib/AbstractEventNotificationHandler.php';
+require __DIR__ . '/lib/StripeEventNotificationHandler.php';
+require __DIR__ . '/lib/StripeEventNotificationHandlerWithoutVerification.php';
+
 // The beginning of the section generated from our OpenAPI spec
 require __DIR__ . '/lib/Account.php';
 require __DIR__ . '/lib/AccountLink.php';
@@ -110,6 +118,7 @@ require __DIR__ . '/lib/Billing/AlertTriggered.php';
 require __DIR__ . '/lib/Billing/CreditBalanceSummary.php';
 require __DIR__ . '/lib/Billing/CreditBalanceTransaction.php';
 require __DIR__ . '/lib/Billing/CreditGrant.php';
+require __DIR__ . '/lib/Billing/FeedbackOption.php';
 require __DIR__ . '/lib/Billing/Meter.php';
 require __DIR__ . '/lib/Billing/MeterEvent.php';
 require __DIR__ . '/lib/Billing/MeterEventAdjustment.php';
@@ -206,6 +215,7 @@ require __DIR__ . '/lib/FileLink.php';
 require __DIR__ . '/lib/FinancialConnections/Account.php';
 require __DIR__ . '/lib/FinancialConnections/AccountOwner.php';
 require __DIR__ . '/lib/FinancialConnections/AccountOwnership.php';
+require __DIR__ . '/lib/FinancialConnections/Authorization.php';
 require __DIR__ . '/lib/FinancialConnections/Session.php';
 require __DIR__ . '/lib/FinancialConnections/Transaction.php';
 require __DIR__ . '/lib/Forwarding/Request.php';
@@ -271,6 +281,7 @@ require __DIR__ . '/lib/Service/Billing/BillingServiceFactory.php';
 require __DIR__ . '/lib/Service/Billing/CreditBalanceSummaryService.php';
 require __DIR__ . '/lib/Service/Billing/CreditBalanceTransactionService.php';
 require __DIR__ . '/lib/Service/Billing/CreditGrantService.php';
+require __DIR__ . '/lib/Service/Billing/FeedbackOptionService.php';
 require __DIR__ . '/lib/Service/Billing/MeterEventAdjustmentService.php';
 require __DIR__ . '/lib/Service/Billing/MeterEventService.php';
 require __DIR__ . '/lib/Service/Billing/MeterService.php';

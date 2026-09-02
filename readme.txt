@@ -1,11 +1,11 @@
 === Easy Stripe Payments & Donations ===
 Contributors: ecosys365
 Donate link: https://buymeacoffee.com/ecosys365
-Tags: stripe, payments, donation, ecommerce, checkout
+Tags: stripe, payments, donations, ecommerce, checkout
 Requires at least: 5.5
 Tested up to: 7.1
 Requires PHP: 7.4 
-Stable tag: 1.4.4
+Stable tag: 1.4.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -206,6 +206,11 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 
 == Changelog ==
 
+= 1.4.5 =
+* Updated Stripe PHP library from v20.2.0 to v21.3.1.
+* Updated minimum PHP requirement to PHP 7.4.
+* Improved compatibility with the latest Stripe API and SDK updates.
+
 = 1.4.4 =
 * Updated WordPress compatibility to version 7.1.
 * Verified compatibility with WordPress 7.1.
@@ -404,6 +409,9 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 * Stripe Subscription Button for recurring payments
  
 == Upgrade Notice ==
+
+= 1.4.5 =
+* Updated Stripe PHP library to v21.3.1 and raised the minimum PHP requirement to PHP 7.4. Please ensure your server is running PHP 7.4 or later before updating.
 
 = 1.4.4 =
 * Updated and tested for compatibility with WordPress 7.1.
