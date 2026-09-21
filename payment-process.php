@@ -44,7 +44,7 @@ if ( isset($_GET['payment_intent']) && preg_match('/^pi_[a-zA-Z0-9]+$/', sanitiz
 
     // subscription_payment aus success_url auslesen
     $params = [];
-    $query_string = parse_url($success_url, PHP_URL_QUERY);
+    $query_string = wp_parse_url($success_url, PHP_URL_QUERY);
  
     if ( is_string($query_string) && $query_string !== '' ) {
         parse_str($query_string, $params);
