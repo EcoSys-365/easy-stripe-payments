@@ -6,12 +6,12 @@ espad_check_first_visit();
 
 global $wpdb;
 
-$theme = wp_get_theme();
-$is_child_theme = is_child_theme() ? 'Yes' : 'No';
-$current_user = wp_get_current_user();
-$upload_dir = wp_upload_dir();
+$espad_theme = wp_get_theme();
+$espad_is_child_theme = is_child_theme() ? 'Yes' : 'No';
+$espad_current_user = wp_get_current_user();
+$espad_upload_dir = wp_upload_dir();
 
-$info = array(
+$espad_info = array(
     // Website & WordPress
     'Site URL'              => site_url(),
     'Home URL'              => home_url(),
@@ -33,14 +33,14 @@ $info = array(
     'WP Memory Usage'       => round(memory_get_usage(true) / 1024 / 1024, 2) . ' MB',
 
     // Theme
-    'Active Theme'          => $theme->get('Name') . ' ' . $theme->get('Version'),
-    'Child Theme'           => $is_child_theme,
+    'Active Theme'          => $espad_theme->get('Name') . ' ' . $espad_theme->get('Version'),
+    'Child Theme'           => $espad_is_child_theme,
 
     // User
-    'Current User'          => $current_user->user_login,
+    'Current User'          => $espad_current_user->user_login,
 
     // Uploads
-    'Uploads Directory'     => $upload_dir['basedir'],
+    'Uploads Directory'     => $espad_upload_dir['basedir'],
 
     // Debug
     'WP Debug Mode'         => (defined('WP_DEBUG') && WP_DEBUG) ? 'Enabled' : 'Disabled',
@@ -50,15 +50,15 @@ $info = array(
 );
 
 // Active Plugins
-$active_plugins = get_option('active_plugins');
-$plugins_output = "";
+$espad_active_plugins = get_option('active_plugins');
+$espad_plugins_output = "";
 
-foreach ($active_plugins as $plugin_path) {
-    $plugin_data = get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin_path);
-    $plugins_output .= $plugin_data['Name'] . ' ' . $plugin_data['Version'] . "\n";
+foreach ($espad_active_plugins as $espad_plugin_path) {
+    $espad_plugin_data = get_plugin_data(WP_PLUGIN_DIR . '/' . $espad_plugin_path);
+    $espad_plugins_output .= $espad_plugin_data['Name'] . ' ' . $espad_plugin_data['Version'] . "\n";
 }
 
-$info['Active Plugins'] = trim($plugins_output);
+$espad_info['Active Plugins'] = trim($espad_plugins_output);
 ?>
 
 <?php espd_domain_is_not_registered(); ?>
@@ -122,8 +122,8 @@ $info['Active Plugins'] = trim($plugins_output);
 <button id="copySystemInfo" class="button"><?php echo esc_html(__('Copy to Clipboard', 'easy-stripe-payments')); ?></button>
 
 <textarea id="systemInfoText" readonly rows="7" style="width: 100%; font-family: monospace; margin-top: 10px;"><?php
-foreach ($info as $label => $value) {
-    echo esc_html( $label . ': ' . $value ) . "\n";
+foreach ($espad_info as $espad_label => $espad_value) {
+    echo esc_html( $espad_label . ': ' . $espad_value ) . "\n";
 } 
 ?></textarea>
 

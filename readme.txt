@@ -5,7 +5,7 @@ Tags: stripe, payments, donations, ecommerce, checkout
 Requires at least: 5.5
 Tested up to: 7.1
 Requires PHP: 7.4 
-Stable tag: 1.4.6
+Stable tag: 1.4.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -205,6 +205,9 @@ This plugin supports all payment methods that Stripe currently provides. The fol
 ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, Amazon Pay, American Express, Apple Pay, Bacs Direct Debit, Bancontact, Bank Transfers, BECS Direct Debit, Billie, BLIK, Boleto, Canadian Pre-authorized Debits (PADs), Capchase Pay, Cartes Bancaires, Cash App Pay, Cash-based Vouchers, China UnionPay, Click to Pay, Diners Club, Discover, EPS, FPX, Giropay, Google Pay, GrabPay, iDEAL, Interac, Japan Bank Transfer (Furikomi), JCB, Kakao Pay, Klarna, Konbini, Kriya, Link, Maestro, Mastercard, MB WAY, Mexico Bank Transfer (SPEI), MobilePay, Mondu, Multibanco, Naver Pay, OXXO, P24 (Przelewy24), Pay by Bank, PayCo, PayNow, PayPal, PayTo, Pix, PromptPay, Revolut Pay, Samsung Pay, Satispay, Scalapay, SEPA Direct Debit, SEPA Bank Transfer, SeQura, Sofort, South Korean Cards, Stablecoins (USDC/USDT), Sunbit, Swish, TWINT, UK Bank Transfer, USD Bank Transfer, Visa, WeChat Pay, Zip.
 
 == Changelog ==
+
+= 1.4.7 =
+* Improvement: Updated variable naming in the Help & FAQ section to comply with WordPress coding standards and eliminate Plugin Check warnings. No functional changes.
 
 = 1.4.6 =
 * Replaced PHP `parse_url()` with the WordPress-recommended `wp_parse_url()` function for improved compatibility and coding standards compliance.
@@ -412,6 +415,9 @@ ACH Direct Debit, ACH Credit Transfer, Affirm, Afterpay/Clearpay, Alipay, Alma, 
 * Stripe Subscription Button for recurring payments
  
 == Upgrade Notice ==
+
+= 1.4.7 =
+* Code quality improvement to ensure compliance with WordPress coding standards. No functional changes were required.
 
 = 1.4.6 =
 * Code quality and compatibility update. Replaced `parse_url()` with the WordPress-recommended `wp_parse_url()` function. No functional changes.
